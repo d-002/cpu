@@ -4,9 +4,7 @@ Utilities, world downloads, schematics for my Minecraft Computers and CPUs
 
 ## First generation
 
-### DIKC-8 (summer of 2023)
-
-[**Link**](https://github.com/d-002/cpu/tree/main/dikc-8)
+### [DIKC-8 (summer of 2023)](https://github.com/d-002/cpu/tree/main/dikc-8)
 
 Working computer, with built-in screen and a limited range of operations.
 Designed while having basically no knowledge of how computers actually work...
@@ -31,9 +29,7 @@ Designed while having basically no knowledge of how computers actually work...
     - 91-tick clock (0.11Hz)
     - Serial observer rom (so not MCHPR compatible)
 
-### smol DIKC-4 (April 2024)
-
-[**Link**](https://github.com/d-002/cpu/tree/main/smol_dikc-4)
+### [smol DIKC-4 (April 2024)](https://github.com/d-002/cpu/tree/main/smol_dikc-4)
 
 A small project for a small CPU, which fits in a 16x16x16 area!
 Unfortunately not Turing-complete, as there was no space to implement
@@ -53,9 +49,7 @@ conditional branching.
       instruction and letting the program loop
     - 50-tick clock (0.2Hz)
 
-### DIKC-8 2 (2023 - 2025)
-
-[**Link**](https://github.com/d-002/cpu/tree/main/dikc-8_2)
+### [DIKC-8 2 (2023 - 2025)](https://github.com/d-002/cpu/tree/main/dikc-8_2)
 
 A revamp of the DIKC-8 in every aspect.
 It had a major focus on speed and pipelining, which actually ended up killing
@@ -104,9 +98,7 @@ project and start over, hence the second generation.
 
 ## Second generation
 
-### PUSSI-8 (2025 - ...)
-
-[**Link**](https://github.com/d-002/cpu/tree/main/pussi-8)
+### [PUSSI-8 (2025 - ...)](https://github.com/d-002/cpu/tree/main/pussi-8)
 
 Born from the ashes of the DIKC-8 2. Made to be better in every way,
 incorporating some of my fresh knowledge on computer architecture.
@@ -114,7 +106,7 @@ incorporating some of my fresh knowledge on computer architecture.
 The main motivation for its specs was to make it run Tetris, or even a custom
 operating system.
 
-> [!INFO]
+> [!NOTE]
 > This computer is currently under creation, most of the following specs are
 > subject to change.
 
