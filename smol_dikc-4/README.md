@@ -26,7 +26,7 @@ This schematic also contains the program counter and reset modules, as well as a
     <tr>
       <td>NOP</td>
       <td>No operation</td>
-      <td>O or 4</td>
+      <td>0 or 4</td>
       <td><code>X</code></td>
       <td><code>X</code></td>
       <td>0</td>

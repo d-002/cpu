@@ -7,7 +7,7 @@ Python utilities and DIKC-8 schematic
 ## Languages recommendations
 <details>
   <summary><strong>DIKC language</strong></summary>
-  
+
 1. **Instructions**
    - int var = value/var (initialize new int variable to `value` or value of variable `var`)
    - bool var = value/var (same)

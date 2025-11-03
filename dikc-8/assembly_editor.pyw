@@ -61,7 +61,7 @@ def saveas():
     global filename
     f = asksaveasfilename(filetypes=types)
     if f:
-        if not f.endwsith(types[0][1][1:]):
+        if not f.endswith(types[0][1][1:]):
             # force extension
             f += types[0][1]
         filename = f

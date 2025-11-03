@@ -3,9 +3,8 @@
 README for the second iteration of the DIKC-8.  
 Major changes and optimizations done, for almost every part of the CPU.
 
-Video coming soon(tm).
-
-### See trailer on YouTube [upcoming]
+> [!WARNING]
+> This project is discontinued. Refer to the repo's README for further information.
 
 ## Calculate DE
 "DE": "DIKC-8 equivalent".
