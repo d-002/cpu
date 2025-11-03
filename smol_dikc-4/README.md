@@ -1,6 +1,6 @@
 # smol DIKC-4
 
-![smol DIKC-4](https://github.com/d-002/cpu/smol_dikc-4/image.png)
+![smol DIKC-4](https://raw.githubusercontent.com/d-002/cpu/main/smol_dikc-4/image.png)
 
 Schematic for the smol DIKC-4 Minecraft CPU.
 

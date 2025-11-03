@@ -1,6 +1,6 @@
 # DIKC-8 2
 
-![DIKC-8 2](https://github.com/d-002/cpu/dikc-8_2/image.png)
+![DIKC-8 2](https://raw.githubusercontent.com/d-002/cpu/main/dikc-8_2/image.png)
 
 README for the second iteration of the DIKC-8.  
 Major changes and optimizations done, for almost every part of the CPU.

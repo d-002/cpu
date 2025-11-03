@@ -1,6 +1,6 @@
 # DIKC-8
 
-![DIKC-8](https://github.com/d-002/cpu/dikc-8/image.png)
+![DIKC-8](https://raw.githubusercontent.com/d-002/cpu/main/dikc-8/image.png)
 
 Python utilities and DIKC-8 schematic
 
