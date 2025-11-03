@@ -1,5 +1,7 @@
 # smol DIKC-4
 
+![smol DIKC-4](https://github.com/d-002/cpu/smol_dikc-4/image.png)
+
 Schematic for the smol DIKC-4 Minecraft CPU.
 
 This schematic also contains the program counter and reset modules, as well as a Fibonacci program and an attached 7-segment display.

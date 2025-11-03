@@ -1,5 +1,7 @@
 # DIKC-8
 
+![DIKC-8](https://github.com/d-002/cpu/dikc-8/image.png)
+
 Python utilities and DIKC-8 schematic
 
 ### Recommended: watch this video before doing anything: https://youtu.be/G53FWyzu7fc
