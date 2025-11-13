@@ -14,7 +14,7 @@ const specs = {
     mainMemoryCache: 8,
     mainMemoryCacheModules: 2,
 
-    IO: 10,
+    io: 10,
 
     stack: 12,
 
