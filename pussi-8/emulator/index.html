@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <title>PUSSI-8 emulator</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <h1>PUSSI-8 web emulator</h1>
+
+        <div id="main">
+            <div id="rom-page" class="block">
+                <p>Instruction page cache</p>
+
+                <div id="rom-page-hi" class="block">
+                    <p>Opcodes (high 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <div id="rom-page-lo" class="block">
+                    <p>Args (low 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <p>Current instruction</p>
+                <span></span>
+            </div>
+
+            <div id="rom-memory" class="block">
+                <p>Instruction memory "ROM"</p>
+                <div class="list"></div>
+            </div>
+
+            <div id="registers" class="block">
+                <p>Registers</p>
+                <div class="list"></div>
+            </div>
+
+            <div id="memory-cache" class="block">
+                <p>Main memory cache</p>
+
+                <div class="block">
+                    <p>Module 0</p>
+                    <div class="list"></div>
+                    <p>High address</p>
+                    <span></span>
+                </div>
+
+                <div class="block">
+                    <p>Module 1</p>
+                    <div class="list"></div>
+                    <p>High address</p>
+                    <span></span>
+                </div>
+            </div>
+
+            <div id="main-memory" class="block">
+                <p>Main memory "RAM"</p>
+                <div class="list"></div>
+            </div>
+
+            <div id="io" class="block">
+                <p>Input-output ports "IO"</p>
+                <div class="list"></div>
+            </div>
+
+            <div id="stack" class="block">
+                <p>Call stack</p>
+                <div class="list"></div>
+                <p>Stack index</p>
+                <span></span>
+            </div>
+
+            <div id="buffers" class="block">
+                <p>ALU buffer</p>
+                <span></span>
+                <p>State register (SR)</p>
+                <span></span>
+                <p>Condition buffer (CB)</p>
+                <span></span>
+                <p>Program counter (PC)</p>
+                <span></span>
+                <p>Timer</p>
+                <span></span>
+            </div>
+        </div>
+    </body>
+
+    <script src="main.js" type="module"></script>
+</html>
