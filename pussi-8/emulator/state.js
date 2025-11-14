@@ -44,25 +44,24 @@ class Data {
             simple = getInstructionName(this.#value);
         else if (show.asInstruction)
             simple = formatInstruction(this.#value);
-        else {
-            simple = this.#value.toString(16);
-            if (simple.length == 1)
-                simple = "0" + simple;
-        }
+        else
+            simple = this.#value.toString(16).toUpperCase().padStart(2, "0");
 
         // split this.#value into 4-bit parts for ease of reading
         const parts = [];
         let value = this.#value;
         if (value) {
-            parts.unshift(value & 0xf);
-            value >>= 4;
+            while (value) {
+                parts.unshift((value & 0xf).toString().padStart(4, "0"));
+                value >>= 4;
+            }
         }
         else
-            parts.push(0);
+            parts.push("0000 0000");
 
-        detailed.push("dec: " + this.#value.toString(10));
+        detailed.push("dec: " + this.#value);
         detailed.push("bin: " + parts.join(" "));
-        detailed.push("hex: " + this.#value.toString(16));
+        detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(2, "0"));
 
         timings.push(this.readTime == -1
             ? "Never read"
@@ -123,7 +122,7 @@ class State {
                 data: new DataArray(specs.mainMemoryCache, specs.wordSize, this.timer),
             });
 
-        this.stackIndex = 0;
+        this.stackIndex = new Data(specs.wordSize, this.timer);
         this.aluBuffer = new Data(specs.wordSize, this.timer);
         this.stateRegister = new Data(specs.wordSize, this.timer);
         this.conditionBuffer = new Data(specs.wordSize, this.timer);

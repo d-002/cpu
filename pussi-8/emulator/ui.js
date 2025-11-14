@@ -28,7 +28,7 @@ class UiManager {
         Array.from(document.querySelectorAll("#memory-cache>.block")).forEach(elt => {
                 this.elts.memoryCache.push({
                     list: elt.querySelector(".list"),
-                    highAddress: elt.querySelector("span"),
+                    highAddress: elt.querySelector(".lone-data"),
                 });
         });
         const spanElements = document.querySelectorAll("#buffers>span");
@@ -39,47 +39,52 @@ class UiManager {
         this.elts.buffers.timer = spanElements[4];
     }
 
-    displayList(elt, arr, detailed = false) {
+    displayList(elt, arr, format_i, detailed) {
         elt.innerHTML = "";
 
         let line;
 
         for (let i = 0; i < arr.nmemb; i++) {
-            if (i % 8 == 0) {
+            if (i % 8 == 0 || detailed) {
                 if (line)
                     elt.appendChild(line);
                 line = document.createElement("div");
+
+                if (!detailed) {
+                    const pre = document.createElement("span")
+                    pre.textContent = format_i(i / 8) + " :";
+                    line.appendChild(pre);
+                }
             }
 
             const display = arr.getSilent(i).display();
 
             const div = document.createElement("div");
+            const editable = document.createElement("input");
+            const onHover = document.createElement("span");
+
             div.className = "data";
+            editable.setAttribute("type", "number");
+            editable.setAttribute("min", "0");
+            editable.value = display.simple;
+            onHover.className = "on-hover";
+
             if (detailed) {
                 const pre = document.createElement("span")
-                const editable = document.createElement("input");
                 const post = document.createElement("span");
-                pre.textContent = i + " :";
-                editable.setAttribute("type", "number");
-                editable.setAttribute("min", "0");
-                editable.value = display.simple;
-                post.textContent = display.detailed.join("\n");
+                pre.textContent = format_i(i) + " :";
+                onHover.innerHTML = display.timings.join("<br>");
+                post.textContent = "| " + display.detailed.join(", ");
                 div.appendChild(pre);
                 div.appendChild(editable);
                 div.appendChild(post);
             }
             else {
-                const editable = document.createElement("input");
-                const onHover = document.createElement("span");
-                editable.setAttribute("type", "number");
-                editable.setAttribute("min", "0");
-                editable.value = display.simple;
-                onHover.innerHTML = display.detailed.join("<br>");
-                onHover.class = "on-hover";
+                onHover.innerHTML = [...display.detailed, ...display.timings].join("<br>");
                 div.appendChild(editable);
-                div.appendChild(onHover);
             }
 
+            div.appendChild(onHover);
             line.appendChild(div);
         }
 
@@ -87,40 +92,64 @@ class UiManager {
             elt.appendChild(line);
     }
 
-    displayData(elt, data, show = {}) {
-        elt.innerHTML = data.display(show).simple;
+    displayData(elt, data, raw, show = {}) {
+        const display = data.display(show);
+
+        const div = document.createElement("div");
+        const center = document.createElement(raw ? "span" : "input");
+        const onHover = document.createElement("span");
+
+        div.className = "data";
+        if (raw)
+            center.textContent = display.simple;
+        else {
+            center.setAttribute("type", "number");
+            center.setAttribute("min", "0");
+            center.value = display.simple;
+        }
+        onHover.innerHTML = [...display.detailed, ...display.timings].join("<br>");
+        onHover.className = "on-hover";
+        div.appendChild(center);
+        div.appendChild(onHover);
+
+        elt.appendChild(div);
     }
 
     display() {
-        this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, true);
-        this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, true);
+        const show_i = i => i;
+        const show_i_mul = i => (8 * i).toString(16).toUpperCase().padStart(4, "0");
+        const show_stack = i => i == 0 ? "btm" : i == specs.stack - 1 ? "top" : i;
+
+        this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, show_i, true);
+        this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, show_i, true);
         this.displayData(this.elts.romPage.current,
             this.state.rom.getSilent(this.state.programCounter.getSilent()),
+            true,
             { asInstruction: true });
 
-        this.displayList(this.elts.rom, this.state.rom);
+        this.displayList(this.elts.rom, this.state.rom, show_i_mul, false);
 
-        this.displayList(this.elts.registers, this.state.registers, true);
+        this.displayList(this.elts.registers, this.state.registers, show_i, true);
 
         for (let i = 0; i < specs.mainMemoryCacheModules; i++) {
             const elt = this.elts.memoryCache[i];
             const data = this.state.mainMemoryCache[i];
-            this.displayList(elt.list, data.data, true);
-            this.displayData(elt.highAddress, data.highAddress);
+            this.displayList(elt.list, data.data, show_i, true);
+            this.displayData(elt.highAddress, data.highAddress, false);
         }
 
-        this.displayList(this.elts.mainMemory, this.state.mainMemory);
+        this.displayList(this.elts.mainMemory, this.state.mainMemory, show_i_mul, false);
 
-        this.displayList(this.elts.io, this.state.io, true);
+        this.displayList(this.elts.io, this.state.io, show_i, true);
 
-        this.displayList(this.elts.stack.list, this.state.stack, true);
-        this.elts.stack.index.textContent = this.state.stackIndex;
+        this.displayList(this.elts.stack.list, this.state.stack, show_stack, true);
+        this.displayData(this.elts.stack.index, this.state.stackIndex, false);
 
-        this.displayData(this.elts.buffers.alu, this.state.aluBuffer);
-        this.displayData(this.elts.buffers.stateRegister, this.state.stateRegister);
-        this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer);
-        this.displayData(this.elts.buffers.programCounter, this.state.programCounter);
-        this.displayData(this.elts.buffers.timer, this.state.timer);
+        this.displayData(this.elts.buffers.alu, this.state.aluBuffer, false);
+        this.displayData(this.elts.buffers.stateRegister, this.state.stateRegister, false);
+        this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer, false);
+        this.displayData(this.elts.buffers.programCounter, this.state.programCounter, false);
+        this.displayData(this.elts.buffers.timer, this.state.timer, false);
     }
 }
 
