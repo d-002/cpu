@@ -22,14 +22,14 @@ class Data {
     }
 
     get() {
-        if (this.timer !== null)
+        if (this.timer != null)
             this.readTime = timer.#value;
 
         return this.#value;
     }
 
     set(value) {
-        if (this.timer !== null)
+        if (this.timer != null)
             this.writeTime = timer.#value;
 
         this.setSilent(value);

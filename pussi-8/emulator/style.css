@@ -26,6 +26,7 @@ h1 {
 
 #main {
     overflow: auto hidden;
+    min-width: 100%;
     width: fit-content;
 
     padding: 3rem;
@@ -74,4 +75,8 @@ h1 {
 .list {
     max-height: 10em;
     overflow: hidden auto;
+}
+
+.data {
+    display: flex;
 }

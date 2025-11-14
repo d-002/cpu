@@ -5,7 +5,7 @@ class UiManager {
         this.state = state;
 
         const get_list = id => document.getElementById(id).querySelector(".list");
-        const get_span = id => document.getElementById(id).querySelector("span");
+        const get_span = id => document.getElementById(id).querySelector(".lone-data");
 
         this.elts = {
             romPage: {
@@ -39,28 +39,52 @@ class UiManager {
         this.elts.buffers.timer = spanElements[4];
     }
 
-    displayList(elt, arr) {
-        const lines = [];
+    displayList(elt, arr, detailed = false) {
+        elt.innerHTML = "";
+
+        let line;
 
         for (let i = 0; i < arr.nmemb; i++) {
-            if (i % 8 == 0)
-                lines.push([]);
-            lines[lines.length - 1].push(arr.getSilent(i).display().simple);
+            if (i % 8 == 0) {
+                if (line)
+                    elt.appendChild(line);
+                line = document.createElement("div");
+            }
+
+            const display = arr.getSilent(i).display();
+
+            const div = document.createElement("div");
+            div.className = "data";
+            if (detailed) {
+                const pre = document.createElement("span")
+                const editable = document.createElement("input");
+                const post = document.createElement("span");
+                pre.textContent = i + " :";
+                editable.setAttribute("type", "number");
+                editable.setAttribute("min", "0");
+                editable.value = display.simple;
+                post.textContent = display.detailed.join("\n");
+                div.appendChild(pre);
+                div.appendChild(editable);
+                div.appendChild(post);
+            }
+            else {
+                const editable = document.createElement("input");
+                const onHover = document.createElement("span");
+                editable.setAttribute("type", "number");
+                editable.setAttribute("min", "0");
+                editable.value = display.simple;
+                onHover.innerHTML = display.detailed.join("<br>");
+                onHover.class = "on-hover";
+                div.appendChild(editable);
+                div.appendChild(onHover);
+            }
+
+            line.appendChild(div);
         }
 
-        for (let i = 0; i < lines.length; i++)
-            lines[i] = lines[i].join(" ");
-
-        elt.innerHTML = lines.join("<br>");
-    }
-
-    displayListDetailed(elt, arr) {
-        const lines = [];
-
-        for (let i = 0; i < arr.nmemb; i++)
-            lines.push(i + ": " + arr.getSilent(i).display().detailed.join(" "));
-
-        elt.innerHTML = lines.join("<br>");
+        if (line)
+            elt.appendChild(line);
     }
 
     displayData(elt, data, show = {}) {
@@ -68,28 +92,28 @@ class UiManager {
     }
 
     display() {
-        this.displayListDetailed(this.elts.romPage.hi, this.state.rom_cache.hi);
-        this.displayListDetailed(this.elts.romPage.lo, this.state.rom_cache.lo);
+        this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, true);
+        this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, true);
         this.displayData(this.elts.romPage.current,
             this.state.rom.getSilent(this.state.programCounter.getSilent()),
             { asInstruction: true });
 
         this.displayList(this.elts.rom, this.state.rom);
 
-        this.displayListDetailed(this.elts.registers, this.state.registers);
+        this.displayList(this.elts.registers, this.state.registers, true);
 
         for (let i = 0; i < specs.mainMemoryCacheModules; i++) {
             const elt = this.elts.memoryCache[i];
             const data = this.state.mainMemoryCache[i];
-            this.displayListDetailed(elt.list, data.data);
+            this.displayList(elt.list, data.data, true);
             this.displayData(elt.highAddress, data.highAddress);
         }
 
         this.displayList(this.elts.mainMemory, this.state.mainMemory);
 
-        this.displayListDetailed(this.elts.io, this.state.io);
+        this.displayList(this.elts.io, this.state.io, true);
 
-        this.displayListDetailed(this.elts.stack.list, this.state.stack);
+        this.displayList(this.elts.stack.list, this.state.stack, true);
         this.elts.stack.index.textContent = this.state.stackIndex;
 
         this.displayData(this.elts.buffers.alu, this.state.aluBuffer);
