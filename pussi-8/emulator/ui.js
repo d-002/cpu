@@ -26,10 +26,12 @@ class UiManager {
         };
 
         Array.from(document.querySelectorAll("#memory-cache>.block")).forEach(elt => {
-                this.elts.memoryCache.push({
-                    list: elt.querySelector(".list"),
-                    highAddress: elt.querySelector(".lone-data"),
-                });
+            const [unusedCounter, highAddress] = elt.querySelectorAll(".lone-data");
+            this.elts.memoryCache.push({
+                list: elt.querySelector(".list"),
+                unusedCounter: unusedCounter,
+                highAddress: highAddress,
+            });
         });
         const spanElements = document.querySelectorAll("#buffers>span");
         this.elts.buffers.alu = spanElements[0];
@@ -39,7 +41,7 @@ class UiManager {
         this.elts.buffers.timer = spanElements[4];
     }
 
-    displayList(elt, arr, format_i, detailed) {
+    displayList(elt, arr, path, format_i, detailed) {
         elt.innerHTML = "";
 
         let line;
@@ -57,7 +59,7 @@ class UiManager {
                 }
             }
 
-            const data = arr.getSilent(i);
+            const data = arr.data[i];
             const display = data.display();
 
             const div = document.createElement("div");
@@ -86,6 +88,7 @@ class UiManager {
             }
 
             div.appendChild(onHover);
+            div.setAttribute("path", path + ".data." + i);
             this.colorData(div, data);
             line.appendChild(div);
         }
@@ -94,7 +97,9 @@ class UiManager {
             elt.appendChild(line);
     }
 
-    displayData(elt, data, raw, show = {}) {
+    displayData(elt, data, path, raw, show = {}) {
+        elt.innerHTML = "";
+
         const display = data.display(show);
 
         const div = document.createElement("div");
@@ -113,6 +118,7 @@ class UiManager {
         onHover.className = "on-hover";
         div.appendChild(center);
         div.appendChild(onHover);
+        div.setAttribute("path", path);
         this.colorData(div, data);
 
         elt.appendChild(div);
@@ -137,36 +143,39 @@ class UiManager {
         const show_i_mul = i => (8 * i).toString(16).toUpperCase().padStart(4, "0");
         const show_stack = i => i == 0 ? "btm" : i == specs.stack - 1 ? "top" : i;
 
-        this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, show_i, true);
-        this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, show_i, true);
+        this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, "rom_cache.hi", show_i, true);
+        this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, "rom_cache.lo", show_i, true);
         this.displayData(this.elts.romPage.current,
-            this.state.rom.getSilent(this.state.programCounter.getSilent()),
+            this.state.rom.data[this.state.programCounter.getSilent()],
+            null,
             true,
             { asInstruction: true });
 
-        this.displayList(this.elts.rom, this.state.rom, show_i_mul, false);
+        this.displayList(this.elts.rom, this.state.rom, "rom", show_i_mul, false);
 
-        this.displayList(this.elts.registers, this.state.registers, show_i, true);
+        this.displayList(this.elts.registers, this.state.registers, "registers", show_i, true);
 
         for (let i = 0; i < specs.mainMemoryCacheModules; i++) {
             const elt = this.elts.memoryCache[i];
             const data = this.state.mainMemoryCache[i];
-            this.displayList(elt.list, data.data, show_i, true);
-            this.displayData(elt.highAddress, data.highAddress, false);
+            const path_prefix = "mainMemoryCache." + i;
+            this.displayList(elt.list, data.data, path_prefix + "data", show_i, true);
+            this.displayData(elt.unusedCounter, data.unusedCounter, path_prefix + "unusedCounter", false);
+            this.displayData(elt.highAddress, data.highAddress, path_prefix + "highAddress", false);
         }
 
-        this.displayList(this.elts.mainMemory, this.state.mainMemory, show_i_mul, false);
+        this.displayList(this.elts.mainMemory, this.state.mainMemory, "mainMemory", show_i_mul, false);
 
-        this.displayList(this.elts.io, this.state.io, show_i, true);
+        this.displayList(this.elts.io, this.state.io, "io", show_i, true);
 
-        this.displayList(this.elts.stack.list, this.state.stack, show_stack, true);
-        this.displayData(this.elts.stack.index, this.state.stackIndex, false);
+        this.displayList(this.elts.stack.list, this.state.stack, "stack", show_stack, true);
+        this.displayData(this.elts.stack.index, this.state.stackIndex, "stackIndex", false);
 
-        this.displayData(this.elts.buffers.alu, this.state.aluBuffer, false);
-        this.displayData(this.elts.buffers.stateRegister, this.state.stateRegister, false);
-        this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer, false);
-        this.displayData(this.elts.buffers.programCounter, this.state.programCounter, false);
-        this.displayData(this.elts.buffers.timer, this.state.timer, false);
+        this.displayData(this.elts.buffers.alu, this.state.aluBuffer, "aluBuffer", false);
+        this.displayData(this.elts.buffers.stateRegister, this.state.stateRegister, "stateRegister", false);
+        this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer, "conditionBuffer", false);
+        this.displayData(this.elts.buffers.programCounter, this.state.programCounter, "programCounter", false);
+        this.displayData(this.elts.buffers.timer, this.state.timer, "timer", false);
     }
 }
 

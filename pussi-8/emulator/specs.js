@@ -18,7 +18,7 @@ const specs = {
 
     stack: 12,
 
-    timerSize: 32,
+    timerSize: 16, // actually 32 but Number(BigInt) can freeze the browser
 };
 
 export default specs;

@@ -18,8 +18,8 @@ class Data {
     }
 
     setSilent(value) {
-        const mask = Number((BigInt(1) << BigInt(this.size)) - BigInt(1));
-        this.#value = value & mask;
+        const mask = (BigInt(1) << BigInt(this.size)) - BigInt(1);
+        this.#value = Number(value & mask);
     }
 
     get() {
@@ -80,23 +80,13 @@ class Data {
 }
 
 class DataArray {
-    #data;
-
     constructor(nmemb, size, timer, show={}) {
-        this.#data = [];
+        this.data = [];
         this.nmemb = nmemb;
         this.size = size;
 
         for (let i = 0; i < nmemb; i++)
-            this.#data.push(new Data(size, timer, show));
-    }
-
-    getSilent(i) {
-        return this.#data[i];
-    }
-
-    setSilent(i, value) {
-        this.#data[i] = value & ((1 << this.size) - 1);
+            this.data.push(new Data(size, timer, show));
     }
 }
 
@@ -128,17 +118,35 @@ class State {
         this.stateRegister = new Data(specs.wordSize, this.timer);
         this.conditionBuffer = new Data(specs.wordSize, this.timer);
         this.programCounter = new Data(specs.wordSize, this.timer);
+    }
 
-        this.rom.getSilent(0).get();
-        this.timer.setSilent(1);
-        this.rom.getSilent(1).get();
-        this.rom.getSilent(4).set(514);
-        this.timer.setSilent(2);
-        this.rom.getSilent(2).get();
-        this.rom.getSilent(5).set(255);
-        this.timer.setSilent(3);
-        this.rom.getSilent(3).get();
-        this.rom.getSilent(6).set(31);
+    updateState(path, value) {
+        if (value == "")
+            value = "0";
+
+        value = BigInt("0x" + value);
+
+        let target_var = null;
+
+        while (true) {
+            const i = path.indexOf(".");
+            if (i == -1) {
+                if (target_var == null)
+                    target_var = this[path];
+                else
+                    target_var = target_var[path];
+                break;
+            }
+
+            if (target_var == null)
+                target_var = this[path.substring(0, i)];
+            else
+                target_var = target_var[path.substring(0, i)];
+
+            path = path.substring(i + 1);
+        }
+
+        target_var.set(value);
     }
 }
 
