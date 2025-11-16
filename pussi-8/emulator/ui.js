@@ -57,14 +57,15 @@ class UiManager {
                 }
             }
 
-            const display = arr.getSilent(i).display();
+            const data = arr.getSilent(i);
+            const display = data.display();
 
             const div = document.createElement("div");
             const editable = document.createElement("input");
             const onHover = document.createElement("span");
 
             div.className = "data";
-            editable.setAttribute("type", "number");
+            editable.setAttribute("type", "text");
             editable.setAttribute("min", "0");
             editable.value = display.simple;
             onHover.className = "on-hover";
@@ -85,6 +86,7 @@ class UiManager {
             }
 
             div.appendChild(onHover);
+            this.colorData(div, data);
             line.appendChild(div);
         }
 
@@ -103,7 +105,7 @@ class UiManager {
         if (raw)
             center.textContent = display.simple;
         else {
-            center.setAttribute("type", "number");
+            center.setAttribute("type", "text");
             center.setAttribute("min", "0");
             center.value = display.simple;
         }
@@ -111,8 +113,23 @@ class UiManager {
         onHover.className = "on-hover";
         div.appendChild(center);
         div.appendChild(onHover);
+        this.colorData(div, data);
 
         elt.appendChild(div);
+    }
+
+    colorData(elt, data) {
+        if (data.timer == null)
+            return;
+
+        const now = data.timer.getSilent();
+        const readDelay = data.readTime == -1 ? 1000 : now - data.readTime;
+        const writeDelay = data.writeTime == -1 ? 1000 : now - data.writeTime;
+
+        if (readDelay < 3)
+            elt.classList.add("readDist" + readDelay);
+        else if (writeDelay < 3)
+            elt.classList.add("writeDist" + writeDelay);
     }
 
     display() {

@@ -102,6 +102,35 @@ h1 {
 .data {
     position: relative;
     padding: .2em;
+
+    border-radius: .5em;
+
+    background-color: transparent;
+    transition: .3s background-color;
+}
+
+.data.readDist0 {
+    background-color: #54af54ff;
+}
+
+.data.readDist1 {
+    background-color: #54af5480;
+}
+
+.data.readDist2 {
+    background-color: #54af5440;
+}
+
+.data.writeDist0 {
+    background-color: #fb8574ff;
+}
+
+.data.writeDist1 {
+    background-color: #fb857480;
+}
+
+.data.writeDist2 {
+    background-color: #fb857440;
 }
 
 .block input {
@@ -119,6 +148,10 @@ h1 {
     text-align: center;
 }
 
+#rom-memory.block input {
+    width: 4.5ch;
+}
+
 .on-hover {
     display: none;
     position: absolute;
@@ -132,7 +165,7 @@ h1 {
     background-color: #c7c4f7;
 }
 
-.data:hover .on-hover {
+.data:active .on-hover {
     display: block;
 }
 

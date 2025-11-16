@@ -18,19 +18,20 @@ class Data {
     }
 
     setSilent(value) {
-        this.#value = value & ((1 << this.size) - 1);
+        const mask = Number((BigInt(1) << BigInt(this.size)) - BigInt(1));
+        this.#value = value & mask;
     }
 
     get() {
         if (this.timer != null)
-            this.readTime = timer.#value;
+            this.readTime = this.timer.#value;
 
         return this.#value;
     }
 
     set(value) {
         if (this.timer != null)
-            this.writeTime = timer.#value;
+            this.writeTime = this.timer.#value;
 
         this.setSilent(value);
     }
@@ -45,7 +46,7 @@ class Data {
         else if (show.asInstruction)
             simple = formatInstruction(this.#value);
         else
-            simple = this.#value.toString(16).toUpperCase().padStart(2, "0");
+            simple = this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0");
 
         // split this.#value into 4-bit parts for ease of reading
         const parts = [];
@@ -61,7 +62,7 @@ class Data {
 
         detailed.push("dec: " + this.#value);
         detailed.push("bin: " + parts.join(" "));
-        detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(2, "0"));
+        detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
 
         timings.push(this.readTime == -1
             ? "Never read"
@@ -127,6 +128,17 @@ class State {
         this.stateRegister = new Data(specs.wordSize, this.timer);
         this.conditionBuffer = new Data(specs.wordSize, this.timer);
         this.programCounter = new Data(specs.wordSize, this.timer);
+
+        this.rom.getSilent(0).get();
+        this.timer.setSilent(1);
+        this.rom.getSilent(1).get();
+        this.rom.getSilent(4).set(514);
+        this.timer.setSilent(2);
+        this.rom.getSilent(2).get();
+        this.rom.getSilent(5).set(255);
+        this.timer.setSilent(3);
+        this.rom.getSilent(3).get();
+        this.rom.getSilent(6).set(31);
     }
 }
 
