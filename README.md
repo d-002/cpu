@@ -6,6 +6,8 @@ Utilities, world downloads, schematics for my Minecraft Computers and CPUs
 
 ### [DIKC-8 (summer of 2023)](https://github.com/d-002/cpu/tree/main/dikc-8)
 
+![DIKC-8](https://raw.githubusercontent.com/d-002/cpu/main/dikc-8/image.png)
+
 Working computer, with built-in screen and a limited range of operations.
 Designed while having basically no knowledge of how computers actually work...
 
@@ -28,8 +30,11 @@ Designed while having basically no knowledge of how computers actually work...
     - Limited pipelining
     - 91-tick clock (0.11Hz)
     - Serial observer rom (so not MCHPR compatible)
+    - Python simulator
 
 ### [smol DIKC-4 (April 2024)](https://github.com/d-002/cpu/tree/main/smol_dikc-4)
+
+![smol DIKC-4](https://raw.githubusercontent.com/d-002/cpu/main/smol_dikc-4/image.png)
 
 A small project for a small CPU, which fits in a 16x16x16 area!
 Unfortunately not Turing-complete, as there was no space to implement
@@ -50,6 +55,8 @@ conditional branching.
     - 50-tick clock (0.2Hz)
 
 ### [DIKC-8 2 (2023 - 2025)](https://github.com/d-002/cpu/tree/main/dikc-8_2)
+
+![DIKC-8 2](https://raw.githubusercontent.com/d-002/cpu/main/dikc-8_2/image.png)
 
 A revamp of the DIKC-8 in every aspect.
 It had a major focus on speed and pipelining, which actually ended up killing
@@ -91,7 +98,7 @@ project and start over, hence the second generation.
     - 33-tick clock (0.3Hz)
 
 > [!WARNING]
-> This computer is nonfunctional and discontinued.
+> This computer is nonfunctional and discontinued.  
 > Although I spent a lot of time refining it, the assembly took too much effort
 > and its various issues / oversights made it easier to start over, hence the
 > second generation.
@@ -99,6 +106,8 @@ project and start over, hence the second generation.
 ## Second generation
 
 ### [PUSSI-8 (2025 - ...)](https://github.com/d-002/cpu/tree/main/pussi-8)
+
+![unfinished PUSSI-8](https://raw.githubusercontent.com/d-002/cpu/main/pussi-8/image.png)
 
 Born from the ashes of the DIKC-8 2. Made to be better in every way,
 incorporating some of my fresh knowledge on computer architecture.
@@ -112,20 +121,19 @@ operating system.
 
 - Program
     - 1KB built-in analog ROM, or 512 2B instructions
-    - Support for up to 128KB external rom, or 64K instructions
+    - Support for up to 128KB external rom, or 65K instructions
     - 16B decoded instructions cache
 - Memory
     - 8 registers with simulated dual-read. Can be used as pointers.
-      operations.
     - 16B cache, split into 2 modules to implement LRU. Sole interface between
     the registers and the RAM. Can read and write one address at a time, or in
     bulk.
     - 256B RAM, stored as serial for compactness
-    - 10-deep call stack
+    - 12-deep call stack
 - I/O
-    - 8 1B readable and writable ports
-    - 2 reserved output ports (for the ALU buffer as well as the lower bits of
-      the program counter)
+    - 10 1B readable and writable ports
+    - 2 reserved output ports (for the ALU buffer and state register)
+    - PC readable from the outside
     - Plug-in external ROM (see ROM section)
 - Computing
     - ALU with addition, subtraction, all bitwise operations, bit shifts and
@@ -137,8 +145,10 @@ operating system.
 - Misc
     - Word size of 8 bits
     - 32 possible instructions (1 unused)
-    - Most components notice the caller when they are done, to reduce errors
+    - Most components notice the caller when they are done, to reduce timing
+      errors and make debugging easier
+    - Full web emulator
 
 > [!WARNING]
-> Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer"
+> Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
 > Same with PUSSI which means "Powerful Unit for Smart Systems of Information"
