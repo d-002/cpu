@@ -51,17 +51,14 @@ class Data {
         // split this.#value into 4-bit parts for ease of reading
         const parts = [];
         let value = this.#value;
-        if (value) {
-            while (value) {
-                parts.unshift((value & 0xf).toString().padStart(4, "0"));
-                value >>= 4;
-            }
+        let count = 0;
+        while (value || count++ < this.size / 4) {
+            parts.unshift((value & 0xf).toString().padStart(4, "0"));
+            value >>= 4;
         }
-        else
-            parts.push("0000 0000");
 
         detailed.push("dec: " + this.#value);
-        detailed.push("bin: " + parts.join(" "));
+        detailed.push("bin: " + parts.join("_"));
         detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
 
         timings.push(this.readTime == -1

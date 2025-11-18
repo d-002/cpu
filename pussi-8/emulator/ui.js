@@ -191,7 +191,8 @@ class UiManager {
             Z => "128: Z - ALU zero (" + Z + ")",
         ];
         for (let i = 0; i < 8; i++) {
-            const text = names[i](this.state.stateRegister.getSilent() & (1 << i));
+            const value = this.state.stateRegister.getSilent() & (1 << i);
+            const text = names[i](value ? 1 : 0);
             this.elts.stateRegister.list[7 - i].textContent = text;
         }
     }
