@@ -161,7 +161,7 @@ class UiManager {
         for (let i = 0; i < specs.mainMemoryCacheModules; i++) {
             const elt = this.elts.memoryCache[i];
             const data = this.state.mainMemoryCache[i];
-            const path_prefix = "mainMemoryCache." + i;
+            const path_prefix = "mainMemoryCache." + i + ".";
             this.displayList(elt.list, data.data, path_prefix + "data", show_i, true);
             this.displayData(elt.unusedCounter, data.unusedCounter, path_prefix + "unusedCounter", false);
             this.displayData(elt.highAddress, data.highAddress, path_prefix + "highAddress", false);

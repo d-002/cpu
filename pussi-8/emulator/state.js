@@ -52,12 +52,13 @@ class Data {
         const parts = [];
         let value = this.#value;
         let count = 0;
-        while (value || count++ < this.size / 4) {
+        while (count++ < this.size / 4 || value) {
             parts.unshift((value & 0xf).toString().padStart(4, "0"));
             value >>= 4;
         }
 
-        detailed.push("dec: " + this.#value);
+        const num_dec_digits = Math.ceil(this.size * Math.log10(2));
+        detailed.push("dec: " + this.#value.toString().padStart(num_dec_digits, "0"));
         detailed.push("bin: " + parts.join("_"));
         detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
 

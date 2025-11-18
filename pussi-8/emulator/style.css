@@ -148,7 +148,7 @@ h1 {
     text-align: center;
 }
 
-#rom-memory.block input, #stack.block input, #timer input {
+#rom-memory.block input, #stack.block .list input, #timer input {
     width: 4.5ch;
 }
 
