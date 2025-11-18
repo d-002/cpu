@@ -4,8 +4,8 @@ class UiManager {
     constructor(state) {
         this.state = state;
 
-        const get_list = id => document.getElementById(id).querySelector(".list");
-        const get_span = id => document.getElementById(id).querySelector(".lone-data");
+        const get_list = id => document.getElementById(id).querySelector("div.list");
+        const get_span = id => document.getElementById(id).querySelector("span.lone-data");
 
         this.elts = {
             romPage: {
@@ -23,6 +23,10 @@ class UiManager {
                 index: get_span("stack"),
             },
             buffers: {},
+            stateRegister: {
+                compact: get_span("state-register"),
+                list: document.querySelectorAll("#state-register>div.lone-data"),
+            },
         };
 
         Array.from(document.querySelectorAll("#memory-cache>.block")).forEach(elt => {
@@ -33,12 +37,11 @@ class UiManager {
                 highAddress: highAddress,
             });
         });
-        const spanElements = document.querySelectorAll("#buffers>span");
+        const spanElements = document.querySelectorAll("#buffers>span.lone-data");
         this.elts.buffers.alu = spanElements[0];
-        this.elts.buffers.stateRegister = spanElements[1];
-        this.elts.buffers.conditionBuffer = spanElements[2];
-        this.elts.buffers.programCounter = spanElements[3];
-        this.elts.buffers.timer = spanElements[4];
+        this.elts.buffers.conditionBuffer = spanElements[1];
+        this.elts.buffers.programCounter = spanElements[2];
+        this.elts.buffers.timer = spanElements[3];
     }
 
     displayList(elt, arr, path, format_i, detailed) {
@@ -172,10 +175,25 @@ class UiManager {
         this.displayData(this.elts.stack.index, this.state.stackIndex, "stackIndex", false);
 
         this.displayData(this.elts.buffers.alu, this.state.aluBuffer, "aluBuffer", false);
-        this.displayData(this.elts.buffers.stateRegister, this.state.stateRegister, "stateRegister", false);
         this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer, "conditionBuffer", false);
         this.displayData(this.elts.buffers.programCounter, this.state.programCounter, "programCounter", false);
         this.displayData(this.elts.buffers.timer, this.state.timer, "timer", false);
+
+        this.displayData(this.elts.stateRegister.compact, this.state.stateRegister, "stateRegister", false);
+        const names = [
+            _ => "1: 0 - constant zero",
+            _ => "2: 1 - constant one",
+            U => "4: U - stack underflow (" + U + ")",
+            O => "8: O - stack overflow (" + O + ")",
+            V => "16: V - ALU overflow (" + V + ")",
+            N => "32: N - ALU negative (" + N + ")",
+            C => "64: C - ALU carry (" + C + ")",
+            Z => "128: Z - ALU zero (" + Z + ")",
+        ];
+        for (let i = 0; i < 8; i++) {
+            const text = names[i](this.state.stateRegister.getSilent() & (1 << i));
+            this.elts.stateRegister.list[i].textContent = text;
+        }
     }
 }
 

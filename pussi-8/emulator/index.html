@@ -9,32 +9,33 @@
         <h1>PUSSI-8 web emulator</h1>
 
         <div id="main">
-            <div id="rom-page" class="block">
-                <p>Instruction page cache</p>
-
-                <div id="rom-page-hi" class="block">
-                    <p>Opcodes (high 8 bits)</p>
-                    <div class="list"></div>
-                </div>
-
-                <div id="rom-page-lo" class="block">
-                    <p>Args (low 8 bits)</p>
-                    <div class="list"></div>
-                </div>
-
-                <br>
-                <p>Current instruction</p>
-                <span class="lone-data"></span>
-            </div>
-
-            <div id="rom-memory" class="block">
-                <p>Instruction memory "ROM"</p>
-                <div class="list"></div>
-            </div>
-
             <div id="registers" class="block">
                 <p>Registers</p>
                 <div class="list"></div>
+            </div>
+
+            <div id="buffers" class="block">
+                <p>ALU buffer</p>
+                <span class="lone-data"></span>
+                <p>Condition buffer (CB)</p>
+                <span class="lone-data"></span>
+                <p>Program counter (PC)</p>
+                <span class="lone-data"></span>
+                <p>Timer</p>
+                <span id="timer" class="lone-data"></span>
+            </div>
+
+            <div id="state-register" class="block">
+                <p>State register (SR)</p>
+                <span class="lone-data"></span>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
+                <div class="lone-data"></div>
             </div>
 
             <div id="memory-cache" class="block">
@@ -69,24 +70,34 @@
                 <div class="list"></div>
             </div>
 
+            <div id="rom-page" class="block">
+                <p>Instruction page cache</p>
+
+                <div id="rom-page-hi" class="block">
+                    <p>Opcodes (high 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <div id="rom-page-lo" class="block">
+                    <p>Args (low 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <br>
+                <p>Current instruction</p>
+                <span class="lone-data"></span>
+            </div>
+
+            <div id="rom-memory" class="block">
+                <p>Instruction memory "ROM"</p>
+                <div class="list"></div>
+            </div>
+
             <div id="stack" class="block">
                 <p>Call stack</p>
                 <div class="list"></div>
                 <p>Stack index</p>
                 <span class="lone-data"></span>
-            </div>
-
-            <div id="buffers" class="block">
-                <p>ALU buffer</p>
-                <span class="lone-data"></span>
-                <p>State register (SR)</p>
-                <span class="lone-data"></span>
-                <p>Condition buffer (CB)</p>
-                <span class="lone-data"></span>
-                <p>Program counter (PC)</p>
-                <span class="lone-data"></span>
-                <p>Timer</p>
-                <span id="timer" class="lone-data"></span>
             </div>
         </div>
     </body>
