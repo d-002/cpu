@@ -6,9 +6,13 @@ class Data {
 
     constructor(size, timer = null) {
         this.size = size;
-        this.#value = 0;
         this.timer = timer;
 
+        this.reset();
+    }
+
+    reset() {
+        this.#value = 0;
         this.readTime = -1;
         this.writeTime = -1;
     }
@@ -86,6 +90,10 @@ class DataArray {
         for (let i = 0; i < nmemb; i++)
             this.data.push(new Data(size, timer, show));
     }
+
+    reset() {
+        this.data.forEach(data => data.reset());
+    }
 }
 
 class State {
@@ -114,9 +122,30 @@ class State {
         this.stackIndex = new Data(specs.wordSize, this.timer);
         this.aluBuffer = new Data(specs.wordSize, this.timer);
         this.stateRegister = new Data(specs.wordSize, this.timer);
-        this.stateRegister.setSilent(2);
         this.conditionBuffer = new Data(specs.wordSize, this.timer);
         this.programCounter = new Data(specs.wordSize, this.timer);
+
+        this.reset();
+    }
+
+    reset() {
+        this.timer.reset();
+        this.rom.reset();
+        this.rom_cache.hi.reset();
+        this.rom_cache.lo.reset();
+        this.registers.reset();
+        this.mainMemory.reset();
+        this.mainMemoryCache.forEach(cache => {
+            cache.highAddress.reset();
+            cache.unusedCounter.reset();
+            cache.data.reset();
+        });
+        this.stackIndex.reset();
+        this.aluBuffer.reset();
+        this.stateRegister.reset();
+        this.stateRegister.setSilent(2);
+        this.conditionBuffer.reset();
+        this.programCounter.reset();
     }
 
     updateState(path, value) {

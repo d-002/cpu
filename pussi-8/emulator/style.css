@@ -92,6 +92,10 @@ h1 {
 .list {
     max-height: 10em;
     overflow: hidden auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: end;
 }
 
 .data, .list>div, .lone-data {
