@@ -19,7 +19,7 @@ class Data {
 
     setSilent(value) {
         const mask = (BigInt(1) << BigInt(this.size)) - BigInt(1);
-        this.#value = Number(value & mask);
+        this.#value = Number(BigInt(value) & mask);
     }
 
     get() {
@@ -116,6 +116,7 @@ class State {
         this.stackIndex = new Data(specs.wordSize, this.timer);
         this.aluBuffer = new Data(specs.wordSize, this.timer);
         this.stateRegister = new Data(specs.wordSize, this.timer);
+        this.stateRegister.setSilent(2);
         this.conditionBuffer = new Data(specs.wordSize, this.timer);
         this.programCounter = new Data(specs.wordSize, this.timer);
     }

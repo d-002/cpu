@@ -151,4 +151,4 @@ operating system.
 
 > [!WARNING]
 > Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
-> Same with PUSSI which means "Powerful Unit for Smart Systems of Information"
+> Same with PUSSI which means "Powerful Unit for Smart Systems of Information".

@@ -181,8 +181,8 @@ class UiManager {
 
         this.displayData(this.elts.stateRegister.compact, this.state.stateRegister, "stateRegister", false);
         const names = [
-            _ => "1: 0 - constant zero",
-            _ => "2: 1 - constant one",
+            F => "1: 0 - constant zero (" + F + ")",
+            T => "2: 1 - constant one (" + T + ")",
             U => "4: U - stack underflow (" + U + ")",
             O => "8: O - stack overflow (" + O + ")",
             V => "16: V - ALU overflow (" + V + ")",
@@ -192,7 +192,7 @@ class UiManager {
         ];
         for (let i = 0; i < 8; i++) {
             const text = names[i](this.state.stateRegister.getSilent() & (1 << i));
-            this.elts.stateRegister.list[i].textContent = text;
+            this.elts.stateRegister.list[7 - i].textContent = text;
         }
     }
 }
