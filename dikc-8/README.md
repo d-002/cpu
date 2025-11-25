@@ -43,7 +43,7 @@ Python utilities and DIKC-8 schematic
    - EQU a b c (if int `a` and `b` are equal, bool of address `c` will be 1)
    - LES a b c (same, but `c` is 1 when `a`<`b`)
    - LGC AND/ORR/XOR a b c (logic operation of `a` and `b` stored into bool of address `c`)
-   - SRC a b (turn screen pixel (a, b) on, `a` and `b` are INT addresses)
+   - SCR a b (turn screen pixel (a, b) on, `a` and `b` are INT addresses)
    - RST (reset all screen pixels to off)
    - END (end the program execution)
 
@@ -74,3 +74,4 @@ Python utilities and DIKC-8 schematic
 Happy coding!
 
 (I hope everything works)
+
