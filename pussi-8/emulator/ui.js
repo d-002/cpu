@@ -1,3 +1,4 @@
+import { Data } from "./state.js";
 import specs from "./specs.js";
 
 class UiManager {
@@ -148,8 +149,14 @@ class UiManager {
 
         this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, "rom_cache.hi", show_i, true);
         this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, "rom_cache.lo", show_i, true);
+
+        const rom_cache_index = this.state.programCounter.getSilent() % specs.romCacheLength;
+        const opcode = this.state.rom_cache.hi.data[rom_cache_index];
+        const args = this.state.rom_cache.lo.data[rom_cache_index];
+        const temp_data_element = new Data(specs.instructionSize, this.state.timer);
+        temp_data_element.setSilent((opcode.getSilent() << specs.wordSize) + args.getSilent());
         this.displayData(this.elts.romPage.current,
-            this.state.rom.data[this.state.programCounter.getSilent()],
+            temp_data_element,
             null,
             true,
             { asInstruction: true });

@@ -1,7 +1,7 @@
 import specs from "./specs.js";
 import { getInstructionName, formatInstruction } from "./instructions.js"
 
-class Data {
+export class Data {
     #value;
 
     constructor(size, timer = null) {
@@ -68,10 +68,10 @@ class Data {
 
         timings.push(this.readTime == -1
             ? "Never read"
-            : "Last read at " + this.readTime + " (-" + (this.timer.#value - this.readTime) + ")");
+            : "Last read at " + this.readTime + " (" + (this.timer.#value - this.readTime) + " ago)");
         timings.push(this.writeTime == -1
             ? "Never written"
-            : "Last write at " + this.writeTime + " (-" + (this.timer.#value - this.writeTime) + ")");
+            : "Last write at " + this.writeTime + " (" + (this.timer.#value - this.writeTime) + " ago)");
 
         return {
             simple: simple,
