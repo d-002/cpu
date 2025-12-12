@@ -152,7 +152,7 @@ h1 {
     text-align: center;
 }
 
-#rom-memory.block input, #stack.block .list input, #timer input {
+#rom-memory.block input, #stack.block .list input, #timer input, #page-cache-address input {
     width: 4.5ch;
 }
 

@@ -6,13 +6,14 @@ class UiManager {
         this.state = state;
 
         const get_list = id => document.getElementById(id).querySelector("div.list");
-        const get_span = id => document.getElementById(id).querySelector("span.lone-data");
+        const get_span = (id, i = 0) => document.getElementById(id).querySelectorAll("span.lone-data")[i];
 
         this.elts = {
             romPage: {
                 hi: get_list("rom-page-hi"),
                 lo: get_list("rom-page-lo"),
-                current: get_span("rom-page"),
+                addr: get_span("rom-page", 0),
+                current: get_span("rom-page", 1),
             },
             rom: get_list("rom-memory"),
             registers: get_list("registers"),
@@ -21,7 +22,7 @@ class UiManager {
             io: get_list("io"),
             stack: {
                 list: get_list("stack"),
-                index: get_span("stack"),
+                index: get_span("stack", 0),
             },
             buffers: {},
             stateRegister: {
@@ -151,11 +152,12 @@ class UiManager {
         this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, "rom_cache.hi", show_i, true);
         this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, "rom_cache.lo", show_i, true);
 
-        const rom_cache_index = this.state.programCounter.getSilent() % specs.romCacheLength;
+        const rom_cache_index = this.state.programCounter.getSilent() % (1 << specs.romCacheSize);
         const opcode = this.state.rom_cache.hi.data[rom_cache_index];
         const args = this.state.rom_cache.lo.data[rom_cache_index];
         const temp_data_element = new Data(specs.instructionSize, this.state.timer);
         temp_data_element.setSilent((opcode.getSilent() << specs.wordSize) + args.getSilent());
+        this.displayData(this.elts.romPage.addr, temp_data_element, null, false);
         this.displayData(this.elts.romPage.current,
             temp_data_element,
             null,

@@ -5,7 +5,7 @@ const specs = {
     instructionSize: 16,
     numInstructions: 32,
 
-    romCacheLength: 8,
+    romCacheSize: 3,
 
     registers: 8,
 

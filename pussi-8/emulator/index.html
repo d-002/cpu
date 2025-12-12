@@ -12,14 +12,14 @@
             <div id="run" class="block">
                 <p>CPU controls</p>
                 <div>
-                    <a class="button" id="run">Run (10ips)</a>
-                    <a class="button" id="stop">Stop</a>
-                    <a class="button" id="reset">Reset</a>
+                    <a class="button" id="btn-run">Run (10ips)</a>
+                    <a class="button" id="btn-stop">Stop</a>
+                    <a class="button" id="btn-reset">Reset</a>
                 </div>
                 <p>Emulator-exclusive actions</p>
                 <div>
-                    <a class="button" id="step">Step</a>
-                    <a class="button" id="full-reset">Full reset</a>
+                    <a class="button" id="btn-step">Step</a>
+                    <a class="button" id="btn-full-reset">Full reset</a>
                 </div>
             </div>
 
@@ -37,6 +37,8 @@
                 </div>
 
                 <br>
+                <p>Page cache address (high part)</p>
+                <span class="lone-data" id="page-cache-address"></span>
                 <p>Current instruction</p>
                 <span class="lone-data"></span>
             </div>

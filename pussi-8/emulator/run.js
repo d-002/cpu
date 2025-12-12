@@ -1,3 +1,5 @@
+import specs from "./specs.js";
+
 let state, ui;
 
 let interval;
@@ -5,7 +7,13 @@ const tps = 10;
 
 function fetch() {
     // get page cache if needed
-    
+    const targetCacheAddr = state.programCounter.get() >> specs.instructionSize / 2;
+    if (state.forceReadPage.get() != 0 ||
+        targetCacheAddr != state.rom_cache.addr) {
+        state.forceReadPage.set(0);
+
+        state.rom_cache.addr.set(targetCacheAddr);
+    }
 
     const opcode = value >> specs.instructionSize / 2;
     const args = value & ((1 << specs.instructionSize / 2) - 1);
@@ -52,9 +60,9 @@ export function setupRun(_state, _ui) {
     state = _state;
     ui = _ui;
 
-    document.getElementById("step").onclick = step;
-    document.getElementById("run").onclick = run;
-    document.getElementById("stop").onclick = stop;
-    document.getElementById("reset").onclick = reset;
-    document.getElementById("full-reset").onclick = fullReset;
+    document.getElementById("btn-step").onclick = step;
+    document.getElementById("btn-run").onclick = run;
+    document.getElementById("btn-stop").onclick = stop;
+    document.getElementById("btn-reset").onclick = reset;
+    document.getElementById("btn-full-reset").onclick = fullReset;
 }

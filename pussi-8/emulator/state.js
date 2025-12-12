@@ -105,8 +105,9 @@ class State {
 
         this.rom = new DataArray(specs.romLength, specs.instructionSize, this.timer);
         this.rom_cache = {
-            hi: new DataArray(specs.romCacheLength, specs.instructionSize / 2, this.timer),
-            lo: new DataArray(specs.romCacheLength, specs.instructionSize / 2, this.timer),
+            hi: new DataArray(1 << specs.romCacheSize, specs.romCacheSize, this.timer),
+            lo: new DataArray(1 << specs.romCacheSize, specs.romCacheSize, this.timer),
+            addr: new Data(specs.instructionSize - specs.romCacheSize, this.timer),
         };
 
         this.registers = new DataArray(specs.registers, specs.wordSize, this.timer);
@@ -137,6 +138,7 @@ class State {
         this.rom.reset(onlyTimes);
         this.rom_cache.hi.reset(onlyTimes);
         this.rom_cache.lo.reset(onlyTimes);
+        this.rom_cache.addr.reset(onlyTimes);
         this.registers.reset(onlyTimes);
         this.mainMemory.reset(onlyTimes);
         this.mainMemoryCache.forEach(cache => {
