@@ -11,8 +11,9 @@ export class Data {
         this.reset();
     }
 
-    reset() {
-        this.#value = 0;
+    reset(onlyTimes) {
+        if (!onlyTimes)
+            this.#value = 0;
         this.readTime = -1;
         this.writeTime = -1;
     }
@@ -49,6 +50,8 @@ export class Data {
             simple = getInstructionName(this.#value);
         else if (show.asInstruction)
             simple = formatInstruction(this.#value);
+        else if (this.size == 1)
+            simple = this.#value == 0 ? "false" : "true";
         else
             simple = this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0");
 
@@ -91,8 +94,8 @@ class DataArray {
             this.data.push(new Data(size, timer, show));
     }
 
-    reset() {
-        this.data.forEach(data => data.reset());
+    reset(onlyTimes) {
+        this.data.forEach(data => data.reset(onlyTimes));
     }
 }
 
@@ -122,30 +125,34 @@ class State {
         this.stackIndex = new Data(specs.wordSize, this.timer);
         this.aluBuffer = new Data(specs.wordSize, this.timer);
         this.stateRegister = new Data(specs.wordSize, this.timer);
-        this.conditionBuffer = new Data(specs.wordSize, this.timer);
+        this.conditionBuffer = new Data(1, this.timer);
+        this.forceReadPage = new Data(1, this.timer);
         this.programCounter = new Data(specs.wordSize, this.timer);
 
         this.reset();
     }
 
-    reset() {
-        this.timer.reset();
-        this.rom.reset();
-        this.rom_cache.hi.reset();
-        this.rom_cache.lo.reset();
-        this.registers.reset();
-        this.mainMemory.reset();
+    reset(onlyTimes = false) {
+        this.timer.reset(onlyTimes);
+        this.rom.reset(onlyTimes);
+        this.rom_cache.hi.reset(onlyTimes);
+        this.rom_cache.lo.reset(onlyTimes);
+        this.registers.reset(onlyTimes);
+        this.mainMemory.reset(onlyTimes);
         this.mainMemoryCache.forEach(cache => {
-            cache.highAddress.reset();
-            cache.unusedCounter.reset();
-            cache.data.reset();
+            cache.highAddress.reset(onlyTimes);
+            cache.unusedCounter.reset(onlyTimes);
+            cache.data.reset(onlyTimes);
         });
-        this.stackIndex.reset();
-        this.aluBuffer.reset();
-        this.stateRegister.reset();
+        this.stackIndex.reset(onlyTimes);
+        this.aluBuffer.reset(onlyTimes);
+        this.stateRegister.reset(onlyTimes);
         this.stateRegister.setSilent(2);
-        this.conditionBuffer.reset();
-        this.programCounter.reset();
+        this.stateRegister.reset(true);
+        this.conditionBuffer.reset(onlyTimes);
+        this.forceReadPage.setSilent(1);
+        this.forceReadPage.reset(true);
+        this.programCounter.reset(onlyTimes);
     }
 
     updateState(path, value) {

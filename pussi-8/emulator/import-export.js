@@ -34,6 +34,6 @@ export function setupImportExport(_state, _ui) {
     state = _state;
     ui = _ui;
 
-    document.getElementById("import").addEventListener("click", file2rom);
-    document.getElementById("export").addEventListener("click", rom2file);
+    document.getElementById("import").onclick = file2rom;
+    document.getElementById("export").onclick = rom2file;
 }

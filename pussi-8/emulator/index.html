@@ -9,6 +9,38 @@
         <h1>PUSSI-8 web emulator</h1>
 
         <div id="main">
+            <div id="run" class="block">
+                <p>CPU controls</p>
+                <div>
+                    <a class="button" id="run">Run (10ips)</a>
+                    <a class="button" id="stop">Stop</a>
+                    <a class="button" id="reset">Reset</a>
+                </div>
+                <p>Emulator-exclusive actions</p>
+                <div>
+                    <a class="button" id="step">Step</a>
+                    <a class="button" id="full-reset">Full reset</a>
+                </div>
+            </div>
+
+            <div id="rom-page" class="block">
+                <p>Instruction page cache</p>
+
+                <div id="rom-page-hi" class="block">
+                    <p>Opcodes (high 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <div id="rom-page-lo" class="block">
+                    <p>Args (low 8 bits)</p>
+                    <div class="list"></div>
+                </div>
+
+                <br>
+                <p>Current instruction</p>
+                <span class="lone-data"></span>
+            </div>
+
             <div id="registers" class="block">
                 <p>Registers</p>
                 <div class="list"></div>
@@ -18,7 +50,9 @@
                 <p>ALU buffer</p>
                 <span class="lone-data"></span>
                 <p>Condition buffer (CB)</p>
-                <span class="lone-data"></span>
+                <span class="boolean lone-data"></span>
+                <p>Force read instruction page</p>
+                <span class="boolean lone-data"></span>
                 <p>Program counter (PC)</p>
                 <span class="lone-data"></span>
                 <p>Timer</p>
@@ -68,24 +102,6 @@
             <div id="io" class="block">
                 <p>Input-output ports "IO"</p>
                 <div class="list"></div>
-            </div>
-
-            <div id="rom-page" class="block">
-                <p>Instruction page cache</p>
-
-                <div id="rom-page-hi" class="block">
-                    <p>Opcodes (high 8 bits)</p>
-                    <div class="list"></div>
-                </div>
-
-                <div id="rom-page-lo" class="block">
-                    <p>Args (low 8 bits)</p>
-                    <div class="list"></div>
-                </div>
-
-                <br>
-                <p>Current instruction</p>
-                <span class="lone-data"></span>
             </div>
 
             <div id="rom-memory" class="block">

@@ -41,8 +41,9 @@ class UiManager {
         const spanElements = document.querySelectorAll("#buffers>span.lone-data");
         this.elts.buffers.alu = spanElements[0];
         this.elts.buffers.conditionBuffer = spanElements[1];
-        this.elts.buffers.programCounter = spanElements[2];
-        this.elts.buffers.timer = spanElements[3];
+        this.elts.buffers.forceReadPage = spanElements[2];
+        this.elts.buffers.programCounter = spanElements[3];
+        this.elts.buffers.timer = spanElements[4];
     }
 
     displayList(elt, arr, path, format_i, detailed) {
@@ -183,6 +184,7 @@ class UiManager {
 
         this.displayData(this.elts.buffers.alu, this.state.aluBuffer, "aluBuffer", false);
         this.displayData(this.elts.buffers.conditionBuffer, this.state.conditionBuffer, "conditionBuffer", false);
+        this.displayData(this.elts.buffers.forceReadPage, this.state.forceReadPage, "forceReadPage", false);
         this.displayData(this.elts.buffers.programCounter, this.state.programCounter, "programCounter", false);
         this.displayData(this.elts.buffers.timer, this.state.timer, "timer", false);
 
