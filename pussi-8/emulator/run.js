@@ -7,30 +7,41 @@ const tps = 10;
 
 function fetch() {
     // get page cache if needed
-    const targetCacheAddr = state.programCounter.get() >> specs.instructionSize / 2;
-    if (state.forceReadPage.get() != 0 ||
-        targetCacheAddr != state.rom_cache.addr) {
-        state.forceReadPage.set(0);
+    const targetCacheAddr = state.programCounter.get() >> specs.pageCacheSize;
 
+    if (state.forceReadPage.get() != 0 ||
+        targetCacheAddr != state.rom_cache.addr.get()) {
+
+        state.forceReadPage.set(0);
         state.rom_cache.addr.set(targetCacheAddr);
+
+        for (let i = 0; i < (1 << specs.pageCacheSize); i++) {
+            const instruction = state.rom.data[(targetCacheAddr << specs.pageCacheSize) + i].get();
+
+            state.rom_cache.hi.data[i].set(instruction >> specs.instructionSize / 2);
+            state.rom_cache.lo.data[i].set(instruction & ((specs.instructionSize / 2) - 1));
+        }
     }
 
-    const opcode = value >> specs.instructionSize / 2;
-    const args = value & ((1 << specs.instructionSize / 2) - 1);
+    const i = state.programCounter.get() & ((1 << specs.pageCacheSize) - 1);
+    const opcode = state.rom_cache.hi.data[i];
+    const args = state.rom_cache.lo.data[i];
     const argsHi = args >> (specs.instructionSize / 4);
-    const argsLo = args & ((1 << (specs.instructionSize / 4)) - 1);
+    const argsLo = args & ((1 << specs.instructionSize / 4) - 1);
 
     return [opcode, args, argsHi, argsLo];
 }
 
 function execute(opcode, args, argsHi, argsLo) {
+    state.programCounter.set(state.programCounter.get() + 1);
 }
 
 function step() {
-    ui.display();
-
     const [opcode, args, argsHi, argsLo] = fetch();
     execute(opcode, args, argsHi, argsLo);
+
+    ui.display();
+    state.timer.set(state.timer.get() + 1);
 }
 
 function run() {

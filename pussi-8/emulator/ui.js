@@ -140,7 +140,7 @@ class UiManager {
 
         if (readDelay < 3)
             elt.classList.add("readDist" + readDelay);
-        else if (writeDelay < 3)
+        if (writeDelay < 3)
             elt.classList.add("writeDist" + writeDelay);
     }
 
@@ -152,7 +152,7 @@ class UiManager {
         this.displayList(this.elts.romPage.hi, this.state.rom_cache.hi, "rom_cache.hi", show_i, true);
         this.displayList(this.elts.romPage.lo, this.state.rom_cache.lo, "rom_cache.lo", show_i, true);
 
-        const rom_cache_index = this.state.programCounter.getSilent() % (1 << specs.romCacheSize);
+        const rom_cache_index = this.state.programCounter.getSilent() % (1 << specs.pageCacheSize);
         const opcode = this.state.rom_cache.hi.data[rom_cache_index];
         const args = this.state.rom_cache.lo.data[rom_cache_index];
         const temp_data_element = new Data(specs.instructionSize, this.state.timer);
