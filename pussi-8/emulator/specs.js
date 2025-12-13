@@ -11,7 +11,7 @@ const specs = {
 
     mainMemory: 256,
 
-    mainMemoryCache: 8,
+    mainMemoryCacheSize: 3,
     mainMemoryCacheModules: 2,
 
     io: 10,

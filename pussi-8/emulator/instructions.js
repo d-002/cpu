@@ -76,12 +76,12 @@ export function getInstructionName(opcode) {
 
 export function formatInstruction(value) {
     const opcode = value >> specs.instructionSize / 2;
-    const args = value & ((1 << specs.instructionSize / 2) - 1);
-    const argsHi = args >> (specs.instructionSize / 4);
-    const argsLo = args & ((1 << (specs.instructionSize / 4)) - 1);
+    const immediate = value & ((1 << specs.instructionSize / 2) - 1);
+    const argsHi = immediate >> (specs.instructionSize / 4);
+    const argsLo = immediate & ((1 << (specs.instructionSize / 4)) - 1);
 
     const name = getInstructionName(opcode);
     const func = funcs[name];
 
-    return func(opcode, args, argsHi, argsLo);
+    return func(opcode, immediate, argsHi, argsLo);
 }

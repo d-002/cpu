@@ -120,7 +120,7 @@ class State {
             this.mainMemoryCache.push({
                 highAddress: new Data(specs.wordSize / 2, this.timer),
                 unusedCounter: new Data(specs.wordSize / 2, this.timer),
-                data: new DataArray(specs.mainMemoryCache, specs.wordSize, this.timer),
+                data: new DataArray(1 << specs.mainMemoryCacheSize, specs.wordSize, this.timer),
             });
 
         this.stackIndex = new Data(specs.wordSize, this.timer);
@@ -128,7 +128,7 @@ class State {
         this.stateRegister = new Data(specs.wordSize, this.timer);
         this.conditionBuffer = new Data(1, this.timer);
         this.forceReadPage = new Data(1, this.timer);
-        this.programCounter = new Data(specs.wordSize, this.timer);
+        this.programCounter = new Data(specs.instructionSize, this.timer);
 
         this.reset();
     }
