@@ -125,15 +125,28 @@ h1 {
     background-color: #54af5440;
 }
 
-.data.writeDist0 {
+:is(.data.writeDist0, .data.writeDist1, .data.writeDist2)::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    mix-blend-mode: color;
+    border-radius: inherit;
+}
+
+.data.writeDist0::before {
     background-color: #fb8574ff;
 }
 
-.data.writeDist1 {
+.data.writeDist1::before {
     background-color: #fb857480;
 }
 
-.data.writeDist2 {
+.data.writeDist2::before {
     background-color: #fb857440;
 }
 
@@ -152,7 +165,7 @@ h1 {
     text-align: center;
 }
 
-#rom-memory.block input, #stack.block .list input, #timer input, #page-cache-address input {
+:is(#rom-memory.block, #stack.block .list, #timer, #page-cache-address, #pc) input {
     width: 4.5ch;
 }
 
