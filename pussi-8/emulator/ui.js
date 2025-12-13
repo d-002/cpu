@@ -156,8 +156,9 @@ class UiManager {
         const opcode = this.state.rom_cache.hi.data[rom_cache_index];
         const args = this.state.rom_cache.lo.data[rom_cache_index];
         const temp_data_element = new Data(specs.instructionSize, this.state.timer);
-        temp_data_element.setSilent((opcode.getSilent() << specs.wordSize) + args.getSilent());
+        temp_data_element.setSilent(this.state.programCounter.getSilent() >> specs.pageCacheSize);
         this.displayData(this.elts.romPage.addr, temp_data_element, null, false);
+        temp_data_element.setSilent((opcode.getSilent() << specs.wordSize) + args.getSilent());
         this.displayData(this.elts.romPage.current,
             temp_data_element,
             null,
