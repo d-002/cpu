@@ -2,6 +2,10 @@
 
 Utilities, world downloads, schematics for my Minecraft Computers and CPUs
 
+> [!WARNING]
+> Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
+> Same with PUSSI which means "Powerful Unit for Smart Systems of Information".
+
 ## First generation
 
 ### [DIKC-8 (summer of 2023)](https://github.com/d-002/cpu/tree/main/dikc-8)
@@ -99,9 +103,9 @@ project and start over, hence the second generation.
 
 > [!WARNING]
 > This computer is nonfunctional and discontinued.  
-> Although I spent a lot of time refining it, the assembly took too much effort
-> and its various issues / oversights made it easier to start over, hence the
-> second generation.
+> Although I spent a lot of time working on it, the integration and timing
+> parts took too much effort and the various issues / oversights made it easier
+> to start over, hence the second generation below:
 
 ## Second generation
 
@@ -151,7 +155,3 @@ operating system.
     - Most components notice the caller when they are done, to reduce timing
       errors and make debugging easier
     - Full web emulator
-
-> [!WARNING]
-> Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
-> Same with PUSSI which means "Powerful Unit for Smart Systems of Information".
