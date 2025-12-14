@@ -90,6 +90,62 @@ function mmCacheQuery(value, addr, writeToggle) {
         return chosen.data[innerIndex].get();
 }
 
+function setFlagTo(flagName, value) {
+    let bit;
+    switch(flagName) {
+        case "Z": bit = 128; break;
+        case "C": bit = 64; break;
+        case "N": bit = 32; break;
+        case "V": bit = 16; break;
+        case "O": bit = 8; break;
+        case "U": bit = 4; break;
+    }
+
+    if (bit == null) {
+        console.log("Trying to edit the state register with an invalid flag name: " + flagName);
+        return;
+    }
+
+    if (value)
+        state.stateRegister.set(state.stateRegister.get() | bit);
+    else
+        state.stateRegister.set(state.stateRegister.get() & ((1 << specs.wordSize) - 1 - bit));
+}
+
+function getAluRes(A, B, instructionName) {
+    // failsafe to avoid propagating null values
+    let res = 0;
+
+    // compute result
+    const flip = value => (1 << specs.wordSize) - 1 - value;
+    switch(instructionName) {
+        case "OR": res = A | B; break;
+        case "NOR": res = flip(A | B); break;
+        case "ADD": res = A + B; break;
+        case "SUB": res = A < B ? flip(B - A) : A - B; break;
+        case "XOR": res = A ^ B; break;
+        case "XNOR": res = flip(A ^ B); break;
+        case "AND": res = A & B; break;
+        case "NAND": res = flip(A & B); break;
+        case "NOT": res = flip(A); break;
+        case "LSH": res = A << 1; break;
+        case "RSH": res = A >> 1; break;
+        case "ROR": res = (A >> 1) + ((A & 1) << specs.wordSize - 1); break;
+        case "ROL": res = (A << 1) + (A >> specs.wordSize - 1); break;
+    }
+
+    // edit flags
+    const signA = (A >> (specs.wordSize - 1)) & 1;
+    const signB = (B >> (specs.wordSize - 1)) & 1;
+    const signRes = (res >> (specs.wordSize - 1)) & 1;
+    setFlagTo("Z", res == 0);
+    setFlagTo("C", res >> specs.wordSize != 0);
+    setFlagTo("N", signRes);
+    setFlagTo("V", (signA == signB) && (signA ^ signRes));
+
+    return res & (1 << specs.wordSize);
+}
+
 function execute(opcode, immediate, argsHi, argsLo) {
     state.programCounter.set(state.programCounter.get() + 1);
 
@@ -118,14 +174,15 @@ function execute(opcode, immediate, argsHi, argsLo) {
     // B to IO value
     const ioValue = r1.B;
     // A to IO addr
-    const ioAddr = r1.A;
+    const ioAddr = r1.A % specs.io;
     // PC into stack value
     const stackValue = state.programCounter.get();
 
     let bufferedFromA, r2, mmRes;
 
     // instruction-specific actions
-    switch(getInstructionName(opcode)) {
+    const instructionName = getInstructionName(opcode);
+    switch(instructionName) {
         case "NOP":
             break;
         case "COND":
@@ -187,6 +244,60 @@ function execute(opcode, immediate, argsHi, argsLo) {
             regWAddr = argsHi % specs.registers;
             // reg trigger W, allow timer into reg
             state.registers.data[regWAddr].set(state.timer.get());
+            break;
+        case "MUL":
+            // reg trigger W, allow mul into reg
+            state.registers.data[regWAddr].set(r1.A * r1.B);
+            break;
+        case "DIV":
+            // reg trigger W, allow div into reg
+            state.registers.data[regWAddr].set(r1.B == 0
+                ? (1 << specs.wordSize) - 1
+                : Math.floor(r1.A / r1.B));
+            break;
+        case "MOD":
+            // reg trigger W, allow mod into reg
+            state.registers.data[regWAddr].set(r1.B == 0 ? 0 : r1.A % r1.B);
+            break;
+        case "IN":
+            // reg buffer A on r1
+            bufferedFromA = r1.A;
+            // reg w = A (from buffer)
+            regWAddr = bufferedFromA;
+            // reg trigger W, allow io into reg
+            state.registers.data[regWAddr].set(state.io.data[ioAddr].get());
+            break;
+        case "OUT":
+            // io write
+            state.io.data[ioAddr].set(ioValue);
+            break;
+        case "OR", "NOR", "ADD", "SUB", "XOR", "XNOR", "AND", "NAND", "NOT", "LSH", "RSH", "ROR", "ROL":
+            // reg trigger W, allow alu into reg
+            state.registers.data[regWAddr].set(getAluRes(r1.A, r1.B, instructionName));
+            break;
+        case "PUSH":
+            // stack push if possible
+            if (state.stackIndex.get() >= specs.stack)
+                setFlagTo("O", 1);
+            else {
+                setFlagTo("O", 0);
+                state.stack.data[state.stackIndex.get()].set(stackValue);
+                state.stackIndex.set(state.stackIndex.get() + 1);
+            }
+            break;
+        case "POP":
+            // stack pop if possible, pc jump
+            if (state.stackIndex.get() == 0)
+                setFlagTo("U", 1);
+            else {
+                setFlagTo("U", 0);
+                state.programCounter.set(state.stack.data[state.stackIndex.get()]);
+                state.stackIndex.set(state.stackIndex.get() - 1);
+            }
+            break;
+        case "HLT":
+            // stop clock if running
+            stop();
             break;
         default:
             console.error("Found unacceptable instruction with opcode " + opcode);
