@@ -64,8 +64,13 @@ export class Data {
             value >>= 4;
         }
 
+        const signed = this.#value < (1 << this.size - 1)
+            ? this.#value
+            : this.#value - (1 << this.size);
+
         const num_dec_digits = Math.ceil(this.size * Math.log10(2));
         detailed.push("dec: " + this.#value.toString().padStart(num_dec_digits, "0"));
+        detailed.push("signed: " + signed.toString().padStart(num_dec_digits, "0"));
         detailed.push("bin: " + parts.join("_"));
         detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
 
@@ -114,7 +119,8 @@ class State {
         this.mainMemory = new DataArray(specs.mainMemory, specs.wordSize, this.timer);
         this.mainMemoryCache = [];
         this.io = new DataArray(specs.io, specs.wordSize, this.timer);
-        this.stack = new DataArray(specs.stack, specs.instructionSize, this.timer);
+        // we can assume there are less bits in the stack counter than the word size
+        this.stack = new DataArray(specs.wordSize, specs.instructionSize, this.timer);
 
         for (let i = 0; i < specs.mainMemoryCacheModules; i++)
             this.mainMemoryCache.push({

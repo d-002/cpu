@@ -127,6 +127,7 @@ h1 {
 
 :is(.data.writeDist0, .data.writeDist1, .data.writeDist2)::before {
     content: "";
+    pointer-events: none;
 
     position: absolute;
     top: 0;
