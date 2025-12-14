@@ -69,7 +69,7 @@ the many design flaws in the DIKC-8 2. This ultimately made me abandon the
 project and start over, hence the second generation.
 
 - Program
-    - 1KB ROM, or 512 2B instructions
+    - 1KiB ROM, or 512 2B instructions
     - Reads 1 instruction into a buffer at 10Hz speed
     - 32 possible instructions
     - Conditional and unconditional jump
@@ -121,13 +121,13 @@ operating system.
 
 - Program
     - 1KB built-in analog ROM, or 512 2B instructions
-    - Support for up to 128KB external rom, or 65K instructions
+    - Support for up to 128KiB external rom, or 64Ki instructions
     - 16B decoded instructions cache
 - Memory
     - 8 registers with simulated dual-read. Can be used as pointers.
-    - 16B cache, split into 2 modules to implement LRU. Sole interface between
-    the registers and the RAM. Can read and write one address at a time, or in
-    bulk.
+    - 16B cache, split into 2 modules to implement LRU.  
+      Sole interface between the registers and the RAM.  
+      Can read and write one address at a time, or in bulk.
     - 256B RAM, stored as serial for compactness
     - 12-deep call stack
 - I/O
@@ -139,12 +139,15 @@ operating system.
     - ALU with addition, subtraction, all bitwise operations, bit shifts and
       barrels
     - Big math units for multiplication and division
-    - State register for use in conditional jumps: zero, nonzero, carry,
-      ALU overflow, stack overflow and underflow, constant 1, constant 0
+    - State register for use in conditional jumps: zero, carry, negative, signed
+    overflow, stack overflow and underflow, constant 1, constant 0
     - Conditional absolute and relative jumps
+    - Built-in timer, counts from 0 to $2^{32} - 1$ operations (4.3 billion, not
+      overkill at all).  
+      Its bytes can be read individually.
 - Misc
     - Word size of 8 bits
-    - 32 possible instructions (1 unused)
+    - 32 possible instructions
     - Most components notice the caller when they are done, to reduce timing
       errors and make debugging easier
     - Full web emulator
