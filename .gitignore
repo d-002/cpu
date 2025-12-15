@@ -1,3 +1,17 @@
+*.swp
+*~
+
 __pycache__
+
 *Bad Apple*.mp4
 options.txt
+
+*.o
+*.a
+*.i
+*.gcno
+*.gcda
+*.css
+*.html
+assembli
+unit
