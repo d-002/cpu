@@ -1,5 +1,5 @@
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef TOKEN_H
+#define TOKEN_H
 
 #include <stddef.h>
 
@@ -29,6 +29,4 @@ struct token
     size_t length;
 };
 
-int next_token(char *stream, int line, size_t len, struct token *out);
-
-#endif /* ! LEXER_H */
+#endif /* ! TOKEN_H */

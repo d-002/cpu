@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include "err.h"
-#include "lexer.h"
+#include "lexer/lexer.h"
 #include "logger.h"
 
 #define BUF_SIZE 1024
@@ -24,7 +24,7 @@ int parse_line(struct cli_args *args, char *stream, int line, size_t len)
         if (res)
             return res;
 
-        verbose(args, line, "Token: '%s'", token.data);
+        verbose(args, line, "Token: '%s', type %d", token.data, token.type);
         free(token.data);
 
         line += token.length;
