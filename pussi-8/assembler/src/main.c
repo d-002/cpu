@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "files.h"
 
 void cleanup(struct cli_args *args)
 {
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
     if (res)
         return res;
 
+    res = process_files(&args);
+
     cleanup(&args);
-    return 0;
+    return res;
 }
