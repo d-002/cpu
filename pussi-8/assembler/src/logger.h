@@ -3,9 +3,11 @@
 
 #include "cli.h"
 
-void loginfo(const char *format, ...);
-void logerror(const char *format, ...);
-void log_alloc_error();
-void verbose(struct cli_args *cli_args, const char *format, ...);
+#define NO_LINE -1
+
+void loginfo(int line, const char *format, ...);
+void logerror(int line, const char *format, ...);
+void log_alloc_error(int line);
+void verbose(struct cli_args *cli_args, int line, const char *format, ...);
 
 #endif /* ! LOGGER_H */
