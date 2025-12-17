@@ -64,6 +64,6 @@ void queue_destroy(struct queue *queue)
     free(queue);
 }
 
-int isempty(struct queue *queue) {
+int queue_isempty(struct queue *queue) {
     return queue->head == NULL;
 }

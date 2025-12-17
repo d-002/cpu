@@ -22,6 +22,6 @@ struct queue *queue_create(void);
 int queue_enqueue(struct queue *queue, void *data);
 void *queue_dequeue(struct queue *queue);
 void queue_destroy(struct queue *queue);
-int isempty(struct queue *queue);
+int queue_isempty(struct queue *queue);
 
 #endif /* ! QUEUE_H */

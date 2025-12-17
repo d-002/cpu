@@ -10,5 +10,6 @@ struct cli_args {
 };
 
 int parse_cli_args(int argc, char *argv[], struct cli_args *out);
+void cli_args_destroy(struct cli_args *args);
 
 #endif /* ! CLI_H */

@@ -28,11 +28,6 @@ int parse_arg(char c, struct cli_args *out)
         out->run = 0;
         break;
     case FLAG_FILE:
-        if (optarg == NULL)
-        {
-            logerror("Missing argument for -f.");
-            return CLI_ARGS_ERROR;
-        }
         alloc_ed_optarg = malloc((strlen(optarg) + 1) * sizeof(char));
         ;
         if (alloc_ed_optarg == NULL)
@@ -42,6 +37,10 @@ int parse_arg(char c, struct cli_args *out)
         }
 
         return queue_enqueue(out->files_queue, alloc_ed_optarg);
+    case '?':
+    default:
+        logerror("Error parsing CLI arguments.");
+        return CLI_ARGS_ERROR;
     }
 
     return SUCCESS;
@@ -74,6 +73,7 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
         if (res)
         {
             queue_destroy(out->files_queue);
+            out->files_queue = NULL;
             return res;
         }
     }
@@ -81,4 +81,9 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
     out->run = 1;
     out->verbose = 0;
     return SUCCESS;
+}
+
+void cli_args_destroy(struct cli_args *args)
+{
+    queue_destroy(args->files_queue);
 }

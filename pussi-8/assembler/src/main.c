@@ -1,8 +1,7 @@
 #include "cli.h"
-#include "queue.h"
 
 void cleanup(struct cli_args *args) {
-    queue_destroy(args->files_queue);
+    cli_args_destroy(args);
 }
 
 int main(int argc, char *argv[]) {
