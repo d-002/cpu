@@ -44,6 +44,6 @@ void verbose(struct cli_args *cli_args, int line, const char *format, ...)
 
     va_list args;
     va_start(args, format);
-    log_inner(stderr, "", line, format, args);
+    log_inner(stderr, line == NO_LINE ? "" : " ", line, format, args);
     va_end(args);
 }

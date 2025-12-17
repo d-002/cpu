@@ -26,14 +26,13 @@ int next_token(char *stream, int line, size_t len, struct token *out)
 
     if (is_space(c))
         return token_space(stream, line, len, out);
-    else if (isalpha(c))
+    if (isalpha(c))
         return token_identifier(stream, line, len, out);
-    else if (c == '0')
+    if (c == '0')
         return token_number(stream, line, len, out);
-    else if (c == '%')
+    if (c == '%')
         return token_data(stream, line, len, out);
-    else if (c == ';')
+    if (c == ';')
         return token_comment(stream, line, len, out);
-    else
-        return token_opcode(stream, line, len, out);
+    return token_opcode(stream, line, len, out);
 }

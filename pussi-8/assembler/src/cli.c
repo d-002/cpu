@@ -1,5 +1,5 @@
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE
+#    define _GNU_SOURCE
 #endif /* !_GNU_SOURCE */
 
 #include "cli.h"
@@ -35,14 +35,14 @@ int parse_arg(char c, struct cli_args *out)
         ;
         if (alloc_ed_optarg == NULL)
         {
-            log_alloc_error();
+            log_alloc_error(-1);
             return ALLOC_ERROR;
         }
 
         return queue_enqueue(out->files_queue, alloc_ed_optarg);
     case '?':
     default:
-        logerror("Error parsing CLI arguments.");
+        logerror(-1, "Error parsing CLI arguments.");
         return CLI_ARGS_ERROR;
     }
 
@@ -54,7 +54,7 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
     out->files_queue = queue_create();
     if (out->files_queue == NULL)
     {
-        log_alloc_error();
+        log_alloc_error(-1);
         return ALLOC_ERROR;
     }
 

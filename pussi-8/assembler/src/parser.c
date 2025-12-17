@@ -27,7 +27,7 @@ int parse_line(struct cli_args *args, char *stream, int line, size_t len)
         verbose(args, line, "Token: '%s', type %d", token.data, token.type);
         free(token.data);
 
-        line += token.length;
+        stream += token.length;
         len -= token.length;
     }
 
