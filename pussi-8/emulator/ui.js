@@ -193,7 +193,7 @@ class UiManager {
 
         this.displayData(this.elts.stateRegister.compact, this.state.stateRegister, "stateRegister", false);
         const names = [
-            F => "1: 0 - constant zero (" + F + ")",
+            F => "1: undefined (" + F + ")",
             T => "2: 1 - constant one (" + T + ")",
             U => "4: U - stack underflow (" + U + ")",
             O => "8: O - stack overflow (" + O + ")",

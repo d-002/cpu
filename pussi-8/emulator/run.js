@@ -178,7 +178,7 @@ function execute(opcode, immediate, argsHi, argsLo) {
     // PC into stack value
     const stackValue = state.programCounter.get();
 
-    let bufferedFromA, r2, mmRes;
+    let cond, bufferedFromA, r2, mmRes;
 
     // instruction-specific actions
     const instructionName = getInstructionName(opcode);
@@ -187,7 +187,8 @@ function execute(opcode, immediate, argsHi, argsLo) {
             break;
         case "COND":
             // cond value = SR & immediate
-            state.conditionBuffer.set(state.stateRegister.get() & immediate);
+            cond = state.stateRegister.get() & immediate;
+            state.conditionBuffer.set((immediate & 1) ? !cond : cond);
             break;
         case "JUMPI":
             if (state.stateRegister.get() != 0) {
