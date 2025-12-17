@@ -1,10 +1,34 @@
-## List of aliases
+# List of aliases
+
+## Memory management
 
 - `ldi data,destination`
     ```
     ldi data
     movei %r0, destination
     ```
+
+- `rtc r,m`
+    ```
+    movei m,%r0
+    rtc r,%r0
+    ```
+
+- `ctr r,m`
+    ```
+    movei m,%r0
+    ctr %r0,r
+    ```
+
+## Operations
+
+- `alu/mul/div/mod a,b,y`
+    ```
+    [opcode] a,b
+    movei %r0,y
+    ```
+
+## Jumps
 
 - `jeq target`
     ```
