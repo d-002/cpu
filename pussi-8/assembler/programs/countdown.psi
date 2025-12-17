@@ -1,0 +1,14 @@
+    ldi start,%r1
+    ldi decrement_by,%r2
+
+.loop:
+    out %r1,port
+    sub %r1,%r2
+    movei %r0,%r1
+
+    jne .loop
+    hlt
+
+start = 10
+decrement_by = 1
+port = %p0
