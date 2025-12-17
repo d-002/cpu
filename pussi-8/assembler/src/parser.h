@@ -3,6 +3,6 @@
 
 #include "cli.h"
 
-int parse_file(struct cli_args *args, char *file_name);
+int parse_file(struct cli_args *args, char *path);
 
 #endif /* ! PARSER_H */

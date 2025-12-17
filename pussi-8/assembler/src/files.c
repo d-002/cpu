@@ -18,9 +18,9 @@ int process_files(struct cli_args *args)
 
     while (!queue_isempty(args->files_queue))
     {
-        char *file_name = queue_dequeue(args->files_queue);
-        int res = parse_file(args, file_name);
-        free(file_name);
+        char *path = queue_dequeue(args->files_queue);
+        int res = parse_file(args, path);
+        free(path);
 
         if (res)
             return res;
