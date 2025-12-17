@@ -5,29 +5,30 @@
 
 enum token_type
 {
-    UNKNOWN = 0,
-
     SPACE,
     IDENTIFIER,
-    NUMBER,
+    NUMBER_BIN,
+    NUMBER_HEX,
+    NUMBER_DEC,
     REGISTER,
     MEMORY,
     PORT,
-    TEXT,
+    COMMENT,
     OPCODE,
 
+    DOT,
+    COMMA,
     COLON,
     EQUAL_SIGN,
-    DOT,
-    COMMA
 };
 
 struct token
 {
     enum token_type type;
     char *data;
+    size_t length;
 };
 
-int next_token(int fd, struct token *out);
+int next_token(char *stream, int line, size_t len, struct token *out);
 
 #endif /* ! LEXER_H */
