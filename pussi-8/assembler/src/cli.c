@@ -22,13 +22,14 @@ int parse_arg(char c, struct cli_args *out)
     {
     case FLAG_VERBOSE:
         out->verbose = 1;
-        out->run = 0;
         break;
     case FLAG_PRINT:
+        out->verbose = 1;
         out->run = 0;
         break;
     case FLAG_FILE:
         alloc_ed_optarg = malloc((strlen(optarg) + 1) * sizeof(char));
+        memcpy(alloc_ed_optarg, optarg, strlen(optarg) + 1);
         ;
         if (alloc_ed_optarg == NULL)
         {
@@ -62,6 +63,9 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
         { NULL, 0, NULL, 0 },
     };
 
+    out->run = 1;
+    out->verbose = 0;
+
     char c;
     while (1)
     {
@@ -78,8 +82,6 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
         }
     }
 
-    out->run = 1;
-    out->verbose = 0;
     return SUCCESS;
 }
 
