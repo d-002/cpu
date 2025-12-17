@@ -27,3 +27,7 @@ void logerror(const char *format, ...)
     log_inner(stderr, "[ERROR]", format, args);
     va_end(args);
 }
+
+void log_alloc_error() {
+    logerror("Failed to allocate memory.");
+}
