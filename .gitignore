@@ -11,7 +11,7 @@ options.txt
 *.i
 *.gcno
 *.gcda
-*.css
-*.html
+report.*css
+report.*html
 assembli
 unit
