@@ -3,7 +3,7 @@ CPPFLAGS=-Isrc
 
 TARGET=assembli
 OBJ_MAIN=src/main.o
-OBJ=src/cli.c src/logger.c
+OBJ=src/cli.o src/logger.o
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
