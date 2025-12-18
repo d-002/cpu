@@ -2,10 +2,12 @@
 
 #include <stdlib.h>
 
-#include "err.h"
-
-int state_create(struct state *state)
+struct state *state_create(void)
 {
+    struct state *state = malloc(sizeof(struct state));
+    if (state == NULL)
+        return 0;
+
     state->lines = queue_create();
     state->vars = hash_map_create();
 
@@ -13,10 +15,10 @@ int state_create(struct state *state)
     {
         free(state->lines);
         free(state->vars);
-        return ALLOC_ERROR;
+        return NULL;
     }
 
-    return SUCCESS;
+    return state;
 }
 
 void state_destroy(struct state *state)
@@ -34,4 +36,5 @@ void state_destroy(struct state *state)
 
     queue_destroy(state->lines);
     hash_map_destroy(state->vars);
+    free(state);
 }

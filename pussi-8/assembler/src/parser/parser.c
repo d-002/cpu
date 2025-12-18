@@ -40,14 +40,51 @@ int parse_line(struct state *state, struct cli_args *args, struct string string,
     return SUCCESS;
 }
 
+int parse_file_lines(FILE *stream, struct cli_args *args, struct state *state,
+                     char **buf_ptr)
+{
+    size_t n = 0;
+    int line = 1;
+
+    while (1)
+    {
+        ssize_t len = getline(buf_ptr, &n, stream);
+        if (len < 0)
+        {
+            if (feof(stream))
+                break;
+            else
+            {
+                logerror(line, "Could not read line from file: %s.",
+                         strerror(errno));
+                return IO_ERROR;
+            }
+        }
+
+        struct string string = {
+            .stream = *buf_ptr,
+            .len = len,
+        };
+        int res = parse_line(state, args, string, line);
+        if (res)
+            return res;
+
+        line++;
+    }
+
+    return SUCCESS;
+}
+
 int parse_file(struct cli_args *args, char *path)
 {
     verbose(args, NO_LINE, "Assembling file %s...", path);
 
-    struct state state;
-    int res = state_create(&state);
-    if (res)
-        return res;
+    struct state *state = state_create();
+    if (state == NULL)
+    {
+        log_alloc_error(-1);
+        return ALLOC_ERROR;
+    }
 
     FILE *stream = fopen(path, "r");
     if (stream == NULL)
@@ -57,45 +94,10 @@ int parse_file(struct cli_args *args, char *path)
     }
 
     char *buf = NULL;
-    size_t n = 0;
-    int line = 1;
+    int res = parse_file_lines(stream, args, state, &buf);
 
-    while (1)
-    {
-        ssize_t len = getline(&buf, &n, stream);
-        if (len < 0)
-        {
-            if (feof(stream))
-                break;
-            else
-            {
-                logerror(line, "Could not read line from file: %s.",
-                         strerror(errno));
-                state_destroy(&state);
-                free(buf);
-                fclose(stream);
-                return IO_ERROR;
-            }
-        }
-
-        struct string string = {
-            .stream = buf,
-            .len = len,
-        };
-        int res = parse_line(&state, args, string, line);
-        if (res)
-        {
-            state_destroy(&state);
-            free(buf);
-            fclose(stream);
-            return res;
-        }
-
-        line++;
-    }
-
-    state_destroy(&state);
+    state_destroy(state);
     free(buf);
     fclose(stream);
-    return SUCCESS;
+    return res;
 }

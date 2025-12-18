@@ -17,7 +17,7 @@ struct state
     struct hash_map *vars;
 };
 
-int state_create(struct state *state);
+struct state *state_create(void);
 void state_destroy(struct state *state);
 
 #endif /* ! STATE_H */
