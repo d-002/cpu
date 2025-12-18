@@ -1,7 +1,6 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef STATE_H
+#define STATE_H
 
-#include "cli.h"
 #include "hash_map.h"
 #include "lexer/token.h"
 #include "queue.h"
@@ -18,6 +17,7 @@ struct state
     struct hash_map *vars;
 };
 
-int parse_file(struct cli_args *args, char *path);
+int state_create(struct state *state);
+void state_destroy(struct state *state);
 
-#endif /* ! PARSER_H */
+#endif /* ! STATE_H */

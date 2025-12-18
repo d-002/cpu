@@ -4,7 +4,7 @@
 
 #include "err.h"
 #include "logger.h"
-#include "parser.h"
+#include "parser/parser.h"
 #include "queue.h"
 
 int process_files(struct cli_args *args)
