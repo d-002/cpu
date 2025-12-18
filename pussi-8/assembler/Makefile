@@ -8,7 +8,7 @@ OBJ=src/cli.o src/logger.o src/queue.o src/files.o src/parser.o \
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
-OBJ_UNIT=tests/unit.o
+OBJ_UNIT=tests/unit_queue.o tests/unit_lexer.o tests/unit_cli.o
 
 .PHONY: all check debug coverage clean
 
