@@ -5,6 +5,6 @@
 
 #include "token.h"
 
-int alloc_token(char *stream, int line, size_t len, struct token *out);
+int alloc_token(char *stream, int line, size_t token_len, struct token *out);
 
 #endif /* ! LEXER_UTILS_H */

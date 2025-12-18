@@ -6,9 +6,9 @@
 #include "err.h"
 #include "logger.h"
 
-int alloc_token(char *stream, int line, size_t len, struct token *out)
+int alloc_token(char *stream, int line, size_t token_len, struct token *out)
 {
-    char *data = malloc((len + 1) * sizeof(char));
+    char *data = malloc((token_len + 1) * sizeof(char));
 
     if (data == NULL)
     {
@@ -16,11 +16,11 @@ int alloc_token(char *stream, int line, size_t len, struct token *out)
         return ALLOC_ERROR;
     }
 
-    memcpy(data, stream, len);
-    data[len] = '\0';
+    memcpy(data, stream, token_len);
+    data[token_len] = '\0';
 
     out->data = data;
-    out->length = len;
+    out->length = token_len;
 
     return SUCCESS;
 }

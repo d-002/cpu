@@ -21,5 +21,7 @@ int token_opcode(struct string string, int line, struct token *out)
     if (res)
         return res;
 
+    out->type = OPCODE;
+
     return SUCCESS;
 }

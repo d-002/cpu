@@ -6,35 +6,28 @@
 
 int token_number(struct string string, int line, struct token *out)
 {
-    if (string.len == 1)
-    {
-        logerror(line, "Syntax error in number.");
-        return LEXING_ERROR;
-    }
+    out->type = NUMBER_DEC;
+    size_t i = 0;
 
-    size_t i;
+    if (string.stream[0] == '0' && string.len >= 2)
+    {
+        char next = string.stream[1];
+        if (next == 'b')
+        {
+            out->type = NUMBER_BIN;
+            i = 2;
+        }
+        else if (next == 'x')
+        {
+            out->type = NUMBER_HEX;
+            i = 2;
+        }
 
-    char next = string.stream[1];
-    if (next == 'b')
-    {
-        out->type = NUMBER_BIN;
-        i = 2;
-    }
-    else if (next == 'h')
-    {
-        out->type = NUMBER_HEX;
-        i = 2;
-    }
-    else
-    {
-        out->type = NUMBER_DEC;
-        i = 0;
-    }
-
-    if (string.len < i)
-    {
-        logerror(line, "Syntax error in number");
-        return LEXING_ERROR;
+        if (string.len <= i)
+        {
+            logerror(line, "Syntax error in number");
+            return LEXING_ERROR;
+        }
     }
 
     while (i < string.len)
@@ -43,7 +36,7 @@ int token_number(struct string string, int line, struct token *out)
         if (out->type == NUMBER_BIN && (c < '0' || c > '1'))
             break;
         int number = '0' <= c && c <= '9';
-        if (out->type == NUMBER_HEX && (c < 'a' || c > 'z') && !number)
+        if (out->type == NUMBER_HEX && (c < 'a' || c > 'f') && !number)
             break;
         if (out->type == NUMBER_DEC && !number)
             break;

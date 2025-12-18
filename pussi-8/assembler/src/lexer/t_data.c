@@ -6,7 +6,7 @@
 
 int token_data(struct string string, int line, struct token *out)
 {
-    if (string.len < 3)
+    if (string.len < 2)
     {
         logerror(line, "Syntax error in data location identifier.");
         return LEXING_ERROR;
