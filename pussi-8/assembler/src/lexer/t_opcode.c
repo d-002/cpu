@@ -1,14 +1,25 @@
 #include "t_opcode.h"
 
+#include <ctype.h>
+
 #include "err.h"
-#include "logger.h"
+#include "lexer_utils.h"
 
-int token_opcode(char *stream, int line, size_t len, struct token *out)
+int token_opcode(struct string string, int line, struct token *out)
 {
-    stream++;
-    line++;
-    len++;
-    out++;
+    size_t i = 0;
 
-    return 1;
+    while (i < string.len)
+    {
+        if (!isalpha(string.stream[i]))
+            break;
+
+        i++;
+    }
+
+    int res = alloc_token(string.stream, line, i, out);
+    if (res)
+        return res;
+
+    return SUCCESS;
 }

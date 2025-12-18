@@ -1,23 +1,59 @@
 #include "t_number.h"
 
 #include "err.h"
+#include "lexer_utils.h"
 #include "logger.h"
 
-int token_number(char *stream, int line, size_t len, struct token *out)
+int token_number(struct string string, int line, struct token *out)
 {
-    if (len == 1)
+    if (string.len == 1)
     {
         logerror(line, "Syntax error in number.");
         return LEXING_ERROR;
     }
 
-    char next = stream[1];
-    if (next == 'b')
-        out->type = NUMBER_BIN;
-    else if (next == 'h')
-        out->type = NUMBER_HEX;
-    else
-        out->type = NUMBER_DEC;
+    size_t i;
 
-    return 1;
+    char next = string.stream[1];
+    if (next == 'b')
+    {
+        out->type = NUMBER_BIN;
+        i = 2;
+    }
+    else if (next == 'h')
+    {
+        out->type = NUMBER_HEX;
+        i = 2;
+    }
+    else
+    {
+        out->type = NUMBER_DEC;
+        i = 0;
+    }
+
+    if (string.len < i)
+    {
+        logerror(line, "Syntax error in number");
+        return LEXING_ERROR;
+    }
+
+    while (i < string.len)
+    {
+        char c = string.stream[i];
+        if (out->type == NUMBER_BIN && (c < '0' || c > '1'))
+            break;
+        int number = '0' <= c && c <= '9';
+        if (out->type == NUMBER_HEX && (c < 'a' || c > 'z') && !number)
+            break;
+        if (out->type == NUMBER_DEC && !number)
+            break;
+
+        i++;
+    }
+
+    int res = alloc_token(string.stream, line, i, out);
+    if (res)
+        return res;
+
+    return SUCCESS;
 }

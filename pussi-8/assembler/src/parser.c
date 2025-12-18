@@ -12,23 +12,26 @@
 #include "err.h"
 #include "lexer/lexer.h"
 #include "logger.h"
+#include "mystring.h"
 
 #define BUF_SIZE 1024
 
-int parse_line(struct cli_args *args, char *stream, int line, size_t len)
+int parse_line(struct cli_args *args, struct string string, int line)
 {
-    while (len)
+    int expecting_opcode = 0;
+
+    while (string.len)
     {
         struct token token;
-        int res = next_token(stream, line, len, &token);
+        int res = next_token(string, line, expecting_opcode, &token);
         if (res)
             return res;
 
         verbose(args, line, "Token: '%s', type %d", token.data, token.type);
         free(token.data);
 
-        stream += token.length;
-        len -= token.length;
+        string.stream += token.length;
+        string.len -= token.length;
     }
 
     return SUCCESS;
@@ -66,7 +69,11 @@ int parse_file(struct cli_args *args, char *path)
             }
         }
 
-        int res = parse_line(args, buf, line, len);
+        struct string string = {
+            .stream = buf,
+            .len = len,
+        };
+        int res = parse_line(args, string, line);
         if (res)
         {
             free(buf);

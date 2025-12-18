@@ -10,29 +10,36 @@
 #include "t_identifier.h"
 #include "t_number.h"
 #include "t_opcode.h"
+#include "t_simple.h"
 #include "t_space.h"
 
-int next_token(char *stream, int line, size_t len, struct token *out)
+int next_token(struct string string, int line, int expecting_opcode,
+               struct token *out)
 {
     out->data = NULL;
 
-    if (!len)
+    if (!string.len)
     {
-        logerror(line, "Failed to read token.");
+        logerror(line, "Failed to read next token.");
         return LEXING_ERROR;
     }
 
-    char c = stream[0];
+    char c = string.stream[0];
 
     if (is_space(c))
-        return token_space(stream, line, len, out);
+        return token_space(string, line, out);
     if (isalpha(c))
-        return token_identifier(stream, line, len, out);
-    if (c == '0')
-        return token_number(stream, line, len, out);
+        return expecting_opcode ? token_opcode(string, line, out)
+                                : token_identifier(string, line, out);
+    if (isdigit(c))
+        return token_number(string, line, out);
     if (c == '%')
-        return token_data(stream, line, len, out);
+        return token_data(string, line, out);
     if (c == ';')
-        return token_comment(stream, line, len, out);
-    return token_opcode(stream, line, len, out);
+        return token_comment(string, line, out);
+    if (c == '.' || c == ',' || c == ':' || c == '=')
+        return token_simple(string, line, out);
+
+    logerror(line, "Failed to identify token type.");
+    return LEXING_ERROR;
 }

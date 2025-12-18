@@ -8,16 +8,17 @@ int is_space(char c)
     return c == ' ' || c == '\r' || c == '\n' || c == '\t';
 }
 
-int token_space(char *stream, int line, size_t len, struct token *out)
+int token_space(struct string string, int line, struct token *out)
 {
     size_t i = 0;
-    while (is_space(stream[i]) && i < len)
+    while (is_space(string.stream[i]) && i < string.len)
         i++;
 
-    struct bounds bounds = { 0, i };
-    int res = alloc_token(stream, line, bounds, out);
+    int res = alloc_token(string.stream, line, i, out);
     if (res)
         return res;
+
+    out->type = SPACE;
 
     return SUCCESS;
 }

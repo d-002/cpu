@@ -1,14 +1,15 @@
 #include "t_comment.h"
 
 #include "err.h"
-#include "logger.h"
+#include "lexer_utils.h"
 
-int token_comment(char *stream, int line, size_t len, struct token *out)
+int token_comment(struct string string, int line, struct token *out)
 {
-    stream++;
-    line++;
-    len++;
-    out++;
+    out->type = COMMENT;
 
-    return 1;
+    int res = alloc_token(string.stream, line, string.len, out);
+    if (res)
+        return res;
+
+    return SUCCESS;
 }

@@ -3,8 +3,10 @@
 
 #include <stddef.h>
 
+#include "mystring.h"
 #include "token.h"
 
-int next_token(char *stream, int line, size_t len, struct token *out);
+int next_token(struct string string, int line, int expecting_opcode,
+               struct token *out);
 
 #endif /* ! LEXER_H */
