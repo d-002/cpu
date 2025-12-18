@@ -1,7 +1,6 @@
 #include "lexer.h"
 
 #include <ctype.h>
-#include <stdlib.h>
 
 #include "err.h"
 #include "logger.h"
@@ -13,16 +12,16 @@
 #include "t_simple.h"
 #include "t_space.h"
 
-int next_token(struct string string, int line, int expecting_opcode,
+int next_token(struct string *string, int line, int expecting_opcode,
                struct token **out)
 {
-    if (!string.len)
+    if (!string->len)
     {
         logerror(line, "Failed to read next token.");
         return LEXING_ERROR;
     }
 
-    char c = string.stream[0];
+    char c = string->stream[0];
 
     if (is_space(c))
         return token_space(string, line, out);

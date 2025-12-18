@@ -30,6 +30,7 @@ struct token
 };
 
 struct token *token_create(enum token_type type, char *stream, size_t len);
+char *type2name(enum token_type type);
 void token_destroy(struct token *token);
 
 #endif /* ! TOKEN_H */

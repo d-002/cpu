@@ -15,6 +15,8 @@ struct state
 {
     struct queue *lines;
     struct hash_map *vars;
+
+    struct token *current_token;
 };
 
 struct state *state_create(void);

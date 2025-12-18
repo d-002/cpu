@@ -3,9 +3,9 @@
 #include "err.h"
 #include "logger.h"
 
-int token_data(struct string string, int line, struct token **out)
+int token_data(struct string *string, int line, struct token **out)
 {
-    if (string.len < 2)
+    if (string->len < 2)
     {
         logerror(line, "Syntax error in data location identifier.");
         return LEXING_ERROR;
@@ -13,7 +13,7 @@ int token_data(struct string string, int line, struct token **out)
 
     enum token_type type;
 
-    char next = string.stream[1];
+    char next = string->stream[1];
     if (next == 'r')
         type = REGISTER;
     else if (next == 'm')
@@ -28,9 +28,9 @@ int token_data(struct string string, int line, struct token **out)
 
     size_t i = 2;
 
-    while (i < string.len)
+    while (i < string->len)
     {
-        char c = string.stream[i];
+        char c = string->stream[i];
         if (c < '0' || c > '9')
             break;
 
@@ -43,7 +43,7 @@ int token_data(struct string string, int line, struct token **out)
         return LEXING_ERROR;
     }
 
-    struct token *token = token_create(type, string.stream, i);
+    struct token *token = token_create(type, string->stream, i);
     if (token == NULL)
     {
         log_alloc_error(line);

@@ -11,6 +11,8 @@ struct state *state_create(void)
     state->lines = queue_create();
     state->vars = hash_map_create();
 
+    state->current_token = NULL;
+
     if (state->lines == NULL || state->vars == NULL)
     {
         free(state->lines);
@@ -36,5 +38,6 @@ void state_destroy(struct state *state)
 
     queue_destroy(state->lines);
     hash_map_destroy(state->vars);
+    token_destroy(state->current_token);
     free(state);
 }

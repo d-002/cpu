@@ -6,7 +6,7 @@
     sub %r1,%r2
     movei %r0,%r1
 
-    jne .loop
+    jne loop
     hlt
 
 start = 10

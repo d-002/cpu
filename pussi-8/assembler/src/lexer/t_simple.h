@@ -4,6 +4,6 @@
 #include "mystring.h"
 #include "token.h"
 
-int token_simple(struct string string, int line, struct token **out);
+int token_simple(struct string *string, int line, struct token **out);
 
 #endif /* ! T_SIMPLE_H */

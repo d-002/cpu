@@ -13,7 +13,7 @@ T_OPCODE ::= (NOP|ADD|SUB|...)
   <instruction_line> <optional_space> <comment>
   | <instruction_assignation> <optional_space> <comment>
 
-<instruction_line> ::= <label> <T_SPACE> <instruction>
+<instruction_line> ::= <label> <instruction>
 <instruction_assignation> ::= <T_IDENTIFIER> <optional_space> = <optional_space> <argument>
 
 <optional_space> ::=
@@ -24,11 +24,15 @@ T_OPCODE ::= (NOP|ADD|SUB|...)
   :
   | \epsilon
 
-<label> ::= . <optional_space> <T_IDENTIFIER> <optional_colon>
+<label> ::=
+  . <optional_space> <T_IDENTIFIER> <optional_colon>
+  | \epsilon
 
 <comma> ::= <optional_space> , <optional_space>
 
-<instruction> ::= <T_OPCODE> <instruction_arg1>
+<instruction> ::=
+  <T_SPACE> <T_OPCODE> <instruction_arg1>
+  | \epsilon
 <instruction_arg1> ::=
   <comma> <argument> <instruction_arg2>
   | \epsilon

@@ -3,6 +3,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+char *token_names[] = {
+    "space",
+    "identifier",
+    "number (bin format)",
+    "number (hex format)",
+    "number",
+    "register",
+    "memory",
+    "port",
+    "comment",
+    "opcode",
+
+    "single dot",
+    "comma",
+    "colon",
+    "equal sign",
+};
+
 struct token *token_create(enum token_type type, char *stream, size_t len)
 {
     struct token *token = malloc(sizeof(struct token));
@@ -33,4 +51,9 @@ void token_destroy(struct token *token)
 
     free(token->data);
     free(token);
+}
+
+char *type2name(enum token_type type)
+{
+    return token_names[type];
 }
