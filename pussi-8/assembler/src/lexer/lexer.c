@@ -14,10 +14,8 @@
 #include "t_space.h"
 
 int next_token(struct string string, int line, int expecting_opcode,
-               struct token *out)
+               struct token **out)
 {
-    out->data = NULL;
-
     if (!string.len)
     {
         logerror(line, "Failed to read next token.");

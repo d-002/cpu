@@ -1,9 +1,9 @@
 #include "t_identifier.h"
 
 #include "err.h"
-#include "lexer_utils.h"
+#include "logger.h"
 
-int token_identifier(struct string string, int line, struct token *out)
+int token_identifier(struct string string, int line, struct token **out)
 {
     size_t i = 0;
     while (i < string.len)
@@ -16,11 +16,13 @@ int token_identifier(struct string string, int line, struct token *out)
         i++;
     }
 
-    int res = alloc_token(string.stream, line, i, out);
-    if (res)
-        return res;
+    struct token *token = token_create(IDENTIFIER, string.stream, i);
+    if (token == NULL)
+    {
+        log_alloc_error(line);
+        return ALLOC_ERROR;
+    }
 
-    out->type = IDENTIFIER;
-
+    *out = token;
     return SUCCESS;
 }

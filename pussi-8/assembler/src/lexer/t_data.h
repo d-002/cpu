@@ -4,6 +4,6 @@
 #include "mystring.h"
 #include "token.h"
 
-int token_data(struct string string, int line, struct token *out);
+int token_data(struct string string, int line, struct token **out);
 
 #endif /* ! T_DATA_H */

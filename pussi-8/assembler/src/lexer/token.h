@@ -29,4 +29,7 @@ struct token
     size_t length;
 };
 
+struct token *token_create(enum token_type type, char *stream, size_t len);
+void token_destroy(struct token *token);
+
 #endif /* ! TOKEN_H */

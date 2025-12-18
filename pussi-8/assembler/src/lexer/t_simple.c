@@ -1,23 +1,28 @@
 #include "t_simple.h"
 
 #include "err.h"
-#include "lexer_utils.h"
+#include "logger.h"
 
-int token_simple(struct string string, int line, struct token *out)
+int token_simple(struct string string, int line, struct token **out)
 {
-    int res = alloc_token(string.stream, line, 1, out);
-    if (res)
-        return res;
-
     char c = string.stream[0];
+    enum token_type type;
     if (c == '.')
-        out->type = DOT;
+        type = DOT;
     if (c == ',')
-        out->type = COMMA;
+        type = COMMA;
     if (c == ':')
-        out->type = COLON;
+        type = COLON;
     if (c == '=')
-        out->type = EQUAL_SIGN;
+        type = EQUAL_SIGN;
 
+    struct token *token = token_create(type, string.stream, 1);
+    if (token == NULL)
+    {
+        log_alloc_error(line);
+        return ALLOC_ERROR;
+    }
+
+    *out = token;
     return SUCCESS;
 }

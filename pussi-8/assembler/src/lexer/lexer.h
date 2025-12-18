@@ -7,6 +7,6 @@
 #include "token.h"
 
 int next_token(struct string string, int line, int expecting_opcode,
-               struct token *out);
+               struct token **out);
 
 #endif /* ! LEXER_H */

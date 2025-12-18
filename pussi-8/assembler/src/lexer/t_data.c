@@ -1,10 +1,9 @@
 #include "t_data.h"
 
 #include "err.h"
-#include "lexer_utils.h"
 #include "logger.h"
 
-int token_data(struct string string, int line, struct token *out)
+int token_data(struct string string, int line, struct token **out)
 {
     if (string.len < 2)
     {
@@ -12,13 +11,15 @@ int token_data(struct string string, int line, struct token *out)
         return LEXING_ERROR;
     }
 
+    enum token_type type;
+
     char next = string.stream[1];
     if (next == 'r')
-        out->type = REGISTER;
+        type = REGISTER;
     else if (next == 'm')
-        out->type = MEMORY;
+        type = MEMORY;
     else if (next == 'p')
-        out->type = PORT;
+        type = PORT;
     else
     {
         logerror(line, "Unrecognized data location type.");
@@ -42,9 +43,13 @@ int token_data(struct string string, int line, struct token *out)
         return LEXING_ERROR;
     }
 
-    int res = alloc_token(string.stream, line, i, out);
-    if (res)
-        return res;
+    struct token *token = token_create(type, string.stream, i);
+    if (token == NULL)
+    {
+        log_alloc_error(line);
+        return ALLOC_ERROR;
+    }
 
+    *out = token;
     return SUCCESS;
 }

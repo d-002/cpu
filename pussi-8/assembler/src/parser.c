@@ -16,22 +16,56 @@
 
 #define BUF_SIZE 1024
 
-int parse_line(struct cli_args *args, struct string string, int line)
+int state_create(struct state *state)
+{
+    state->lines = queue_create();
+    state->vars = hash_map_create();
+
+    if (state->lines == NULL || state->vars == NULL)
+    {
+        free(state->lines);
+        free(state->vars);
+        return ALLOC_ERROR;
+    }
+
+    return SUCCESS;
+}
+
+void state_destroy(struct state *state)
+{
+    while (!queue_isempty(state->lines))
+    {
+        struct line *line = queue_dequeue(state->lines);
+
+        token_destroy(line->opcode);
+
+        while (!queue_isempty(line->args_list))
+            token_destroy(queue_dequeue(line->args_list));
+        queue_destroy(line->args_list);
+    }
+
+    queue_destroy(state->lines);
+    hash_map_destroy(state->vars);
+}
+
+int parse_line(struct state *state, struct cli_args *args, struct string string,
+               int line)
 {
     int expecting_opcode = 0;
+    state++;
 
     while (string.len)
     {
-        struct token token;
+        struct token *token;
         int res = next_token(string, line, expecting_opcode, &token);
         if (res)
             return res;
 
-        verbose(args, line, "Token: '%s', type %d", token.data, token.type);
-        free(token.data);
+        verbose(args, line, "Token: '%s', type %d", token->data, token->type);
 
-        string.stream += token.length;
-        string.len -= token.length;
+        string.stream += token->length;
+        string.len -= token->length;
+        token_destroy(token);
     }
 
     return SUCCESS;
@@ -40,6 +74,11 @@ int parse_line(struct cli_args *args, struct string string, int line)
 int parse_file(struct cli_args *args, char *path)
 {
     verbose(args, NO_LINE, "Assembling file %s...", path);
+
+    struct state state;
+    int res = state_create(&state);
+    if (res)
+        return res;
 
     FILE *stream = fopen(path, "r");
     if (stream == NULL)
@@ -63,6 +102,7 @@ int parse_file(struct cli_args *args, char *path)
             {
                 logerror(line, "Could not read line from file: %s.",
                          strerror(errno));
+                state_destroy(&state);
                 free(buf);
                 fclose(stream);
                 return IO_ERROR;
@@ -73,9 +113,10 @@ int parse_file(struct cli_args *args, char *path)
             .stream = buf,
             .len = len,
         };
-        int res = parse_line(args, string, line);
+        int res = parse_line(&state, args, string, line);
         if (res)
         {
+            state_destroy(&state);
             free(buf);
             fclose(stream);
             return res;
@@ -84,6 +125,7 @@ int parse_file(struct cli_args *args, char *path)
         line++;
     }
 
+    state_destroy(&state);
     free(buf);
     fclose(stream);
     return SUCCESS;

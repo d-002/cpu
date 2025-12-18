@@ -4,7 +4,7 @@ CPPFLAGS=-Isrc
 TARGET=assembli
 OBJ_MAIN=src/main.o
 OBJ=src/cli.o src/logger.o src/queue.o src/files.o src/parser.o src/hash_map.o \
-	src/lexer/lexer.o src/lexer/t_space.o src/lexer/t_identifier.o src/lexer/t_number.o src/lexer/t_data.o src/lexer/t_comment.o src/lexer/t_opcode.o src/lexer/t_simple.o src/lexer/lexer_utils.o
+	src/lexer/lexer.o src/lexer/t_space.o src/lexer/t_identifier.o src/lexer/t_number.o src/lexer/t_data.o src/lexer/t_comment.o src/lexer/t_opcode.o src/lexer/t_simple.o src/lexer/token.o
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
