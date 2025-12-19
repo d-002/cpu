@@ -1,6 +1,8 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include <stddef.h>
+
 struct queue_node
 {
     void *data;
@@ -16,12 +18,13 @@ struct queue
 {
     struct queue_node *head;
     struct queue_node *tail;
+
+    size_t length;
 };
 
 struct queue *queue_create(void);
 int queue_enqueue(struct queue *queue, void *data);
 void *queue_dequeue(struct queue *queue);
-int queue_isempty(struct queue *queue);
 void queue_destroy(struct queue *queue);
 
 #endif /* ! QUEUE_H */

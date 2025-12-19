@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "t_comment.h"
 #include "t_data.h"
+#include "t_eol.h"
 #include "t_identifier.h"
 #include "t_number.h"
 #include "t_opcode.h"
@@ -17,8 +18,7 @@ int next_token(struct string *string, int line, int expecting_opcode,
 {
     if (!string->len)
     {
-        logerror(line, "Failed to read next token.");
-        return LEXING_ERROR;
+        return token_eol(line, out);
     }
 
     char c = string->stream[0];

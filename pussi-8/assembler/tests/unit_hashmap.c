@@ -18,9 +18,13 @@ Test(HashMap, HashMapInsert)
 {
     struct hash_map *hash_map = hash_map_create();
 
+    char *key = malloc(6);
+    memcpy(key, "hello", 6);
+    char *value = malloc(6);
+    memcpy(value, "world", 6);
     struct pair pair = {
-        .key = "hello",
-        .value = "world",
+        .key = key,
+        .value = value,
     };
 
     cr_expect(ne(ptr, hash_map, NULL));
@@ -32,9 +36,13 @@ Test(HashMap, HashMapInsertTwice)
 {
     struct hash_map *hash_map = hash_map_create();
 
+    char *key = malloc(6);
+    memcpy(key, "hello", 6);
+    char *value = malloc(6);
+    memcpy(value, "world", 6);
     struct pair pair = {
-        .key = "hello",
-        .value = "world",
+        .key = key,
+        .value = value,
     };
 
     cr_expect(ne(ptr, hash_map, NULL));
@@ -47,9 +55,13 @@ Test(HashMap, HashMapInsertGet)
 {
     struct hash_map *hash_map = hash_map_create();
 
+    char *key = malloc(6);
+    memcpy(key, "hello", 6);
+    char *value = malloc(6);
+    memcpy(value, "world", 6);
     struct pair pair = {
-        .key = "hello",
-        .value = "world",
+        .key = key,
+        .value = value,
     };
 
     cr_expect(ne(ptr, hash_map, NULL));

@@ -4,6 +4,7 @@
 #include <string.h>
 
 char *token_names[] = {
+    "end of line",
     "space",
     "identifier",
     "number (bin format)",
@@ -44,12 +45,13 @@ struct token *token_create(enum token_type type, char *stream, size_t len)
     return token;
 }
 
-void token_destroy(struct token *token)
+void token_destroy(struct token *token, int empty_data)
 {
     if (token == NULL)
         return;
 
-    free(token->data);
+    if (empty_data)
+        free(token->data);
     free(token);
 }
 

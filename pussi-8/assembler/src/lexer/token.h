@@ -5,6 +5,7 @@
 
 enum token_type
 {
+    EOL,
     SPACE,
     IDENTIFIER,
     NUMBER_BIN,
@@ -31,6 +32,6 @@ struct token
 
 struct token *token_create(enum token_type type, char *stream, size_t len);
 char *type2name(enum token_type type);
-void token_destroy(struct token *token);
+void token_destroy(struct token *token, int empty_data);
 
 #endif /* ! TOKEN_H */

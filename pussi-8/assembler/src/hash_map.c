@@ -24,7 +24,7 @@ size_t hash(const char *key)
     return hash;
 }
 
-struct hash_map *hash_map_create()
+struct hash_map *hash_map_create(void)
 {
     struct hash_map *hash_map = malloc(sizeof(struct hash_map));
     if (hash_map == NULL)
@@ -109,6 +109,18 @@ void hash_map_destroy(struct hash_map *hash_map)
         return;
 
     for (size_t i = 0; i < HASH_MAP_SIZE; i++)
-        queue_destroy(hash_map->arr[i]);
+    {
+        struct queue *queue = hash_map->arr[i];
+        while (queue->length)
+        {
+            struct pair *data = queue_dequeue(queue);
+            free(data->key);
+            free(data->value);
+            free(data);
+        }
+
+        queue_destroy(queue);
+    }
+
     free(hash_map);
 }

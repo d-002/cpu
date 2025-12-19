@@ -19,9 +19,9 @@ Test(Queue, QueueEnqueue)
     struct queue *queue = queue_create();
     void *data = malloc(1);
     cr_expect(ne(ptr, queue, NULL));
-    cr_expect(eq(int, queue_isempty(queue), 1));
+    cr_expect(eq(int, queue->length, 0));
     cr_expect(eq(int, queue_enqueue(queue, data), SUCCESS));
-    cr_expect(eq(int, queue_isempty(queue), 0));
+    cr_expect(eq(int, queue->length, 1));
     queue_destroy(queue);
 }
 
@@ -33,7 +33,7 @@ Test(Queue, QueueDequeue)
     cr_expect(eq(int, queue_enqueue(queue, data), SUCCESS));
     cr_expect(eq(ptr, queue_dequeue(queue), data));
     free(data);
-    cr_expect(eq(int, queue_isempty(queue), 1));
+    cr_expect(eq(int, queue->length, 0));
     queue_destroy(queue);
 }
 
@@ -42,7 +42,7 @@ Test(Queue, QueueDequeueEmpty)
     struct queue *queue = queue_create();
     cr_expect(ne(ptr, queue, NULL));
     cr_expect(eq(ptr, queue_dequeue(queue), NULL));
-    cr_expect(eq(int, queue_isempty(queue), 1));
+    cr_expect(eq(int, queue->length, 0));
     queue_destroy(queue);
 }
 
@@ -57,6 +57,6 @@ Test(Queue, QueueComplex)
         cr_expect(eq(ptr, queue_dequeue(queue), data));
     free(data);
 
-    cr_expect(eq(int, queue_isempty(queue), 1));
+    cr_expect(eq(int, queue->length, 0));
     queue_destroy(queue);
 }

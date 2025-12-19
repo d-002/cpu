@@ -5,7 +5,13 @@
 #include "lexer/token.h"
 #include "queue.h"
 
-struct line
+struct label
+{
+    struct token *token;
+    int line; // todo: change these to size_t
+};
+
+struct instruction
 {
     struct token *opcode;
     struct queue *args_list;
@@ -13,12 +19,17 @@ struct line
 
 struct state
 {
-    struct queue *lines;
+    struct queue *instructions;
     struct hash_map *vars;
+    struct queue *labels;
 
     struct token *current_token;
+
+    int line;
 };
 
+struct label *label_create(struct token *token, int line);
+struct instruction *instruction_create(struct token *opcode);
 struct state *state_create(void);
 void state_destroy(struct state *state);
 

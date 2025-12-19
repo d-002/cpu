@@ -11,10 +11,10 @@ T_OPCODE ::= (NOP|ADD|SUB|...)
 
 <line> ::=
   <instruction_line> <optional_space> <comment>
-  | <instruction_assignation> <optional_space> <comment>
+  | <assignation_line> <optional_space> <comment>
 
 <instruction_line> ::= <label> <instruction>
-<instruction_assignation> ::= <T_IDENTIFIER> <optional_space> = <optional_space> <argument>
+<assignation_line> ::= <T_IDENTIFIER> <optional_space> = <optional_space> <argument>
 
 <optional_space> ::=
   <T_SPACE>

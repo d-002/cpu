@@ -12,6 +12,7 @@ struct queue *queue_create(void)
 
     queue->head = NULL;
     queue->tail = NULL;
+    queue->length = 0;
 
     return queue;
 }
@@ -29,6 +30,7 @@ int queue_enqueue(struct queue *queue, void *data)
     if (queue->tail == NULL)
         queue->tail = node;
 
+    queue->length++;
     return SUCCESS;
 }
 
@@ -44,12 +46,9 @@ void *queue_dequeue(struct queue *queue)
 
     void *res = node->data;
     free(node);
-    return res;
-}
 
-int queue_isempty(struct queue *queue)
-{
-    return queue->head == NULL;
+    queue->length--;
+    return res;
 }
 
 void queue_destroy(struct queue *queue)

@@ -26,7 +26,7 @@ Test(Cli, AllCorrect)
                  SUCCESS));
     cr_expect(eq(int, args.run, 0));
     cr_expect(eq(int, args.verbose, 1));
-    cr_expect(eq(int, queue_isempty(args.files_queue), 0));
+    cr_expect(eq(int, args.files_queue->length, 2));
     cli_args_destroy(&args);
 }
 
