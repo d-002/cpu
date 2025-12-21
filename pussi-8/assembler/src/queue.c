@@ -24,13 +24,16 @@ int queue_enqueue(struct queue *queue, void *data)
         return ALLOC_ERROR;
 
     node->data = data;
-    node->next = queue->head;
+    node->next = NULL;
 
-    queue->head = node;
     if (queue->tail == NULL)
-        queue->tail = node;
+        queue->head = node;
+    else
+        queue->tail->next = node;
 
+    queue->tail = node;
     queue->length++;
+
     return SUCCESS;
 }
 
