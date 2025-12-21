@@ -27,7 +27,7 @@ Test(HashMap, HashMapInsert)
         .value = value,
     };
 
-    cr_expect(ne(ptr, hash_map, NULL));
+    cr_assert(ne(ptr, hash_map, NULL));
     cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
     hash_map_destroy(hash_map);
 }
@@ -45,7 +45,7 @@ Test(HashMap, HashMapInsertTwice)
         .value = value,
     };
 
-    cr_expect(ne(ptr, hash_map, NULL));
+    cr_assert(ne(ptr, hash_map, NULL));
     cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
     cr_expect(eq(int, hash_map_insert(hash_map, pair), HASHMAP_DUPE_ERROR));
     hash_map_destroy(hash_map);
@@ -64,10 +64,10 @@ Test(HashMap, HashMapInsertGet)
         .value = value,
     };
 
-    cr_expect(ne(ptr, hash_map, NULL));
+    cr_assert(ne(ptr, hash_map, NULL));
     cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
     char *get = hash_map_get(hash_map, pair.key);
-    cr_expect(ne(ptr, get, NULL));
+    cr_assert(ne(ptr, get, NULL));
     cr_expect(eq(int, strcmp(get, pair.value), 0));
     hash_map_destroy(hash_map);
 }

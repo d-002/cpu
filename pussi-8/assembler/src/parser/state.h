@@ -30,6 +30,8 @@ struct state
 
 struct label *label_create(struct token *token, int line);
 struct instruction *instruction_create(struct token *opcode);
+void label_destroy(struct label *label);
+void instruction_destroy(struct instruction *instruction);
 struct state *state_create(void);
 void state_destroy(struct state *state);
 

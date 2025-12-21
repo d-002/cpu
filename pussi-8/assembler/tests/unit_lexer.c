@@ -14,7 +14,7 @@ Test(Lexer, Empty, .init = cr_redirect_stderr)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, EOL));
     cr_expect(eq(ptr, token->data, NULL));
     cr_expect(eq(int, token->length, 0));
@@ -26,9 +26,9 @@ Test(Lexer, Space)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, SPACE));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
 
     token_destroy(token, 1);
@@ -40,9 +40,9 @@ Test(Lexer, Opcode)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 1, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 1, &token), SUCCESS));
     cr_expect(eq(int, token->type, OPCODE));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "abcde"), 0));
 
     token_destroy(token, 1);
@@ -54,9 +54,9 @@ Test(Lexer, Identifier)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, IDENTIFIER));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "abcde0_"), 0));
 
     token_destroy(token, 1);
@@ -68,25 +68,25 @@ Test(Lexer, Number)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_BIN));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "0b101"), 0));
     token_destroy(token, 1);
 
     line.stream = "0x12ag";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_HEX));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "0x12a"), 0));
     token_destroy(token, 1);
 
     line.stream = "123aa";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_DEC));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "123"), 0));
     token_destroy(token, 1);
 }
@@ -97,25 +97,25 @@ Test(Lexer, Data)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, REGISTER));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
     token_destroy(token, 1);
 
     line.stream = "%m1234a";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, MEMORY));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "%m1234"), 0));
     token_destroy(token, 1);
 
     line.stream = "%p00_ ";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, PORT));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "%p00"), 0));
     token_destroy(token, 1);
 }
@@ -126,9 +126,9 @@ Test(Lexer, Comment)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, COMMENT));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
 
     token_destroy(token, 1);
@@ -140,33 +140,33 @@ Test(Lexer, Simple)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, DOT));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "."), 0));
     token_destroy(token, 1);
 
     line.stream++;
     line.length--;
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, COMMA));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, ","), 0));
     token_destroy(token, 1);
 
     line.stream++;
     line.length--;
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, COLON));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, ":"), 0));
     token_destroy(token, 1);
 
     line.stream++;
     line.length--;
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, EQUAL_SIGN));
-    cr_expect(ne(ptr, token->data, NULL));
+    cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "="), 0));
     token_destroy(token, 1);
 }

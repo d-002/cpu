@@ -32,6 +32,23 @@ struct instruction *instruction_create(struct token *opcode)
     return instruction;
 }
 
+void label_destroy(struct label *label)
+{
+    token_destroy(label->token, 1);
+    free(label);
+}
+
+void instruction_destroy(struct instruction *instruction)
+{
+    token_destroy(instruction->opcode, 1);
+
+    while (instruction->args_list->length)
+        token_destroy(queue_dequeue(instruction->args_list), 1);
+    queue_destroy(instruction->args_list);
+
+    free(instruction);
+}
+
 struct state *state_create(void)
 {
     struct state *state = malloc(sizeof(struct state));
@@ -61,21 +78,13 @@ void state_destroy(struct state *state)
     while (state->labels->length)
     {
         struct label *label = queue_dequeue(state->labels);
-        token_destroy(label->token, 1);
-        free(label);
+        label_destroy(label);
     }
 
     while (state->instructions->length)
     {
         struct instruction *instruction = queue_dequeue(state->instructions);
-
-        token_destroy(instruction->opcode, 1);
-
-        while (instruction->args_list->length)
-            token_destroy(queue_dequeue(instruction->args_list), 1);
-        queue_destroy(instruction->args_list);
-
-        free(instruction);
+        instruction_destroy(instruction);
     }
 
     queue_destroy(state->labels);

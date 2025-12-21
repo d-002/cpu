@@ -16,13 +16,13 @@ int state_assignation(struct state *state, struct string *string)
         return res;
     }
 
-    int comma = is_surrounded_type(state, string, EQUAL_SIGN, 0);
-    if (comma < 0)
+    int equal_sign = is_surrounded_type(state, string, EQUAL_SIGN, 0);
+    if (equal_sign < 0)
     {
         free(key);
-        return -comma;
+        return -equal_sign;
     }
-    if (!comma)
+    if (!equal_sign)
     {
         expected(state->line, EQUAL_SIGN);
         free(key);

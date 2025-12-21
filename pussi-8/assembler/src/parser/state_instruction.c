@@ -132,12 +132,5 @@ int state_potential_instruction(struct state *state, struct string *string)
             return res;
     }
 
-    if (state->current_token->type == SPACE)
-    {
-        int res = eat_current_token(state, string, 0, 1);
-        if (res)
-            return res;
-    }
-
     return SUCCESS;
 }

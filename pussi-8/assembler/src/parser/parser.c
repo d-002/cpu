@@ -15,8 +15,6 @@
 #include "state_assignation.h"
 #include "state_instruction.h"
 
-#define BUF_SIZE 1024
-
 int state_start(struct state *state, struct string *string)
 {
     int res = get_current_token(state, string, 0);
@@ -89,12 +87,6 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
         int res = state_start(state, &string);
         if (res)
             return res;
-
-        if (string.length)
-        {
-            unexpected(state->line, EOL, state->current_token->type);
-            return PARSING_ERROR;
-        }
 
         token_destroy(state->current_token, 1);
         state->current_token = NULL;
