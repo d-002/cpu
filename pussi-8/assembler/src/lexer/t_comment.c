@@ -5,7 +5,7 @@
 
 int token_comment(struct string *string, int line, struct token **out)
 {
-    struct token *token = token_create(COMMENT, string->stream, string->len);
+    struct token *token = token_create(COMMENT, string->stream, string->length);
     if (token == NULL)
     {
         log_alloc_error(line);

@@ -6,7 +6,7 @@
 int token_identifier(struct string *string, int line, struct token **out)
 {
     size_t i = 0;
-    while (i < string->len)
+    while (i < string->length)
     {
         char c = string->stream[i];
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9')

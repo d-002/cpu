@@ -66,7 +66,7 @@ int get_current_token(struct state *state, struct string *string,
 int skip_token(struct state *state, struct string *string, int expecting_opcode)
 {
     size_t len = state->current_token->length;
-    string->len -= len;
+    string->length -= len;
     string->stream += len;
 
     state->current_token = NULL;
@@ -349,35 +349,33 @@ int state_start(struct state *state, struct string *string)
     return PARSING_ERROR;
 }
 
-int parse_file_lines(FILE *stream, struct state *state, char **buf_ptr)
+int parse_lines(line_query line_query, FILE *stream, struct state *state,
+                char **buf_ptr)
 {
     size_t n = 0;
     state->line = 1;
 
     while (1)
     {
-        ssize_t len = getline(buf_ptr, &n, stream);
+        ssize_t len = line_query(buf_ptr, &n, stream);
+        if (len == 0)
+            break;
         if (len < 0)
         {
-            if (feof(stream))
-                break;
-            else
-            {
-                logerror(state->line, "Could not read line from file: %s.",
-                         strerror(errno));
-                return IO_ERROR;
-            }
+            logerror(state->line, "Could not read line from file: %s.",
+                     strerror(errno));
+            return IO_ERROR;
         }
 
         struct string string = {
             .stream = *buf_ptr,
-            .len = len,
+            .length = len,
         };
         int res = state_start(state, &string);
         if (res)
             return res;
 
-        if (string.len)
+        if (string.length)
         {
             unexpected(state->line, EOL, state->current_token->type);
             return PARSING_ERROR;
@@ -389,6 +387,18 @@ int parse_file_lines(FILE *stream, struct state *state, char **buf_ptr)
     }
 
     return SUCCESS;
+}
+
+ssize_t get_line(char **buf_ptr, size_t *n, FILE *stream)
+{
+    ssize_t res = getline(buf_ptr, n, stream);
+    if (res >= 0)
+        return res;
+
+    if (feof(stream))
+        return 0;
+
+    return res;
 }
 
 int parse_file(struct cli_args *args, char *path)
@@ -410,7 +420,7 @@ int parse_file(struct cli_args *args, char *path)
     }
 
     char *buf = NULL;
-    int res = parse_file_lines(stream, state, &buf);
+    int res = parse_lines(get_line, stream, state, &buf);
 
     state_destroy(state);
     free(buf);

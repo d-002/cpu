@@ -6,7 +6,7 @@
 struct string
 {
     char *stream;
-    size_t len;
+    size_t length;
 };
 
 #endif /* ! MYSTRING_H */

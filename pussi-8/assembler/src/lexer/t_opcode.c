@@ -9,7 +9,7 @@ int token_opcode(struct string *string, int line, struct token **out)
 {
     size_t i = 0;
 
-    while (i < string->len)
+    while (i < string->length)
     {
         if (!isalpha(string->stream[i]))
             break;

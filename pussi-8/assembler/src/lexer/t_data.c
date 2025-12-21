@@ -5,7 +5,7 @@
 
 int token_data(struct string *string, int line, struct token **out)
 {
-    if (string->len < 2)
+    if (string->length < 2)
     {
         logerror(line, "Syntax error in data location identifier.");
         return LEXING_ERROR;
@@ -28,7 +28,7 @@ int token_data(struct string *string, int line, struct token **out)
 
     size_t i = 2;
 
-    while (i < string->len)
+    while (i < string->length)
     {
         char c = string->stream[i];
         if (c < '0' || c > '9')

@@ -8,7 +8,7 @@ int token_number(struct string *string, int line, struct token **out)
     enum token_type type = NUMBER_DEC;
     size_t i = 0;
 
-    if (string->stream[0] == '0' && string->len >= 2)
+    if (string->stream[0] == '0' && string->length >= 2)
     {
         char next = string->stream[1];
         if (next == 'b')
@@ -22,14 +22,14 @@ int token_number(struct string *string, int line, struct token **out)
             i = 2;
         }
 
-        if (string->len <= i)
+        if (string->length <= i)
         {
             logerror(line, "Syntax error in number");
             return LEXING_ERROR;
         }
     }
 
-    while (i < string->len)
+    while (i < string->length)
     {
         char c = string->stream[i];
         if (type == NUMBER_BIN && (c < '0' || c > '1'))
