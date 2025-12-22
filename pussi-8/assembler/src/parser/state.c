@@ -21,9 +21,9 @@ struct instruction *instruction_create(struct token *opcode)
         return NULL;
 
     instruction->opcode = opcode;
-    instruction->args_list = queue_create();
+    instruction->args_queue = queue_create();
 
-    if (instruction->args_list == NULL)
+    if (instruction->args_queue == NULL)
     {
         free(instruction);
         return NULL;
@@ -42,9 +42,9 @@ void instruction_destroy(struct instruction *instruction)
 {
     token_destroy(instruction->opcode, 1);
 
-    while (instruction->args_list->length)
-        token_destroy(queue_dequeue(instruction->args_list), 1);
-    queue_destroy(instruction->args_list);
+    while (instruction->args_queue->length)
+        token_destroy(queue_dequeue(instruction->args_queue), 1);
+    queue_destroy(instruction->args_queue);
 
     free(instruction);
 }

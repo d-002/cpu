@@ -16,6 +16,6 @@ typedef ssize_t (*line_query)(char **buf_ptr, size_t *n, FILE *stream);
 
 int parse_lines(line_query line_query, FILE *stream, struct state *state,
                 char **buf_ptr);
-int parse_file(struct cli_args *args, char *path);
+int parse_file(struct cli_args *args, char *path, struct state *state);
 
 #endif /* ! PARSER_H */

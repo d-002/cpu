@@ -112,8 +112,8 @@ Test(Parser, InstructionWithLabel)
 
     struct instruction *instruction = queue_dequeue(state->instructions);
     cr_expect(eq(int, strcmp(instruction->opcode->data, "add"), 0));
-    cr_expect(eq(int, instruction->args_list->length, 2));
-    struct token *token = queue_dequeue(instruction->args_list);
+    cr_expect(eq(int, instruction->args_queue->length, 2));
+    struct token *token = queue_dequeue(instruction->args_queue);
     cr_expect(eq(int, strcmp(token->data, "%r1"), 0));
     cr_expect(eq(int, token->type, REGISTER));
     token_destroy(token, 1);

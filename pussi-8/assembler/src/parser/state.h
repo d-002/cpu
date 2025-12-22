@@ -14,7 +14,7 @@ struct label
 struct instruction
 {
     struct token *opcode;
-    struct queue *args_list;
+    struct queue *args_queue;
 };
 
 struct state

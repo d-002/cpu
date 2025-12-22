@@ -108,16 +108,9 @@ ssize_t get_line(char **buf_ptr, size_t *n, FILE *stream)
     return res;
 }
 
-int parse_file(struct cli_args *args, char *path)
+int parse_file(struct cli_args *args, char *path, struct state *state)
 {
     verbose(args, NO_LINE, "Parsing '%s'", path);
-
-    struct state *state = state_create();
-    if (state == NULL)
-    {
-        log_alloc_error(-1);
-        return ALLOC_ERROR;
-    }
 
     FILE *stream = fopen(path, "r");
     if (stream == NULL)
@@ -129,7 +122,6 @@ int parse_file(struct cli_args *args, char *path)
     char *buf = NULL;
     int res = parse_lines(get_line, stream, state, &buf);
 
-    state_destroy(state);
     free(buf);
     fclose(stream);
 

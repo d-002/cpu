@@ -54,7 +54,7 @@ int state_arguments(struct state *state, struct string *string,
 
         if (is_argument_type(state->current_token->type))
         {
-            if (queue_enqueue(instruction->args_list, state->current_token))
+            if (queue_enqueue(instruction->args_queue, state->current_token))
             {
                 log_alloc_error(state->line);
                 return ALLOC_ERROR;
