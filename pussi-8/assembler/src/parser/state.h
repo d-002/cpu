@@ -8,7 +8,7 @@
 struct label
 {
     struct token *token;
-    int line; // todo: change these to size_t
+    int line;
 };
 
 struct instruction

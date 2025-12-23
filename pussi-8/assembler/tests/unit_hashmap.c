@@ -71,3 +71,40 @@ Test(HashMap, HashMapInsertGet)
     cr_expect(eq(int, strcmp(get, pair.value), 0));
     hash_map_destroy(hash_map);
 }
+
+Test(HashMap, HashMapIter)
+{
+    struct hash_map *hash_map = hash_map_create();
+
+    char *key1 = malloc(2);
+    memcpy(key1, "a", 2);
+    struct pair pair = {
+        .key = key1,
+        .value = NULL,
+    };
+
+    cr_assert(ne(ptr, hash_map, NULL));
+    cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
+
+    char *key2 = malloc(2);
+    // should have the same hash as 'a', can fail if the hash map size gets
+    // changed
+    memcpy(key2, "A", 2);
+    pair.key = key2;
+    pair.value = NULL;
+    cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
+
+    int i = 0;
+    for (char *key = hash_map_iter_start(hash_map); key;
+         key = hash_map_iter_next(hash_map))
+    {
+        if (i == 0)
+            cr_expect(eq(int, strcmp(key, key1), 0));
+        if (i == 1)
+            cr_expect(eq(int, strcmp(key, key2), 0));
+        i++;
+    }
+
+    cr_expect(eq(int, i, 2));
+    hash_map_destroy(hash_map);
+}

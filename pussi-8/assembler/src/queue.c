@@ -13,6 +13,8 @@ struct queue *queue_create(void)
     queue->head = NULL;
     queue->tail = NULL;
     queue->length = 0;
+    queue->iter_index = 0;
+    queue->iter_last = NULL;
 
     return queue;
 }
@@ -51,7 +53,30 @@ void *queue_dequeue(struct queue *queue)
     free(node);
 
     queue->length--;
+    if (queue->iter_index)
+        queue->iter_index--;
+    else
+        queue->iter_last = NULL;
     return res;
+}
+
+void *queue_iter_start(struct queue *queue)
+{
+    queue->iter_index = 0;
+    queue->iter_last = queue->head;
+
+    return queue->head == NULL ? NULL : queue->iter_last->data;
+}
+
+void *queue_iter_next(struct queue *queue)
+{
+    if (queue->iter_last == NULL)
+        return NULL;
+
+    queue->iter_index++;
+    queue->iter_last = queue->iter_last->next;
+
+    return queue->iter_last == NULL ? NULL : queue->iter_last->data;
 }
 
 void queue_destroy(struct queue *queue)

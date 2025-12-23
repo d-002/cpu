@@ -8,5 +8,6 @@
 #define IO_ERROR 3
 #define LEXING_ERROR 4
 #define PARSING_ERROR 5
+#define VARS_ERROR 6
 
 #endif /* ! ERR_H */
