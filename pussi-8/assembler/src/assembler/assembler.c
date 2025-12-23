@@ -49,6 +49,9 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
             return res;
         }
 
+        if (queue->length == 0)
+            break;
+
         while (queue->length)
         {
             struct instruction *instruction = queue_dequeue(queue);

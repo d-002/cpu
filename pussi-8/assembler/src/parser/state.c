@@ -49,6 +49,13 @@ void instruction_destroy(struct instruction *instruction)
     free(instruction);
 }
 
+void token_free(void *ptr)
+{
+    struct token *token = ptr;
+    free(token->data);
+    free(token);
+}
+
 struct state *state_create(void)
 {
     struct state *state = malloc(sizeof(struct state));
@@ -57,7 +64,7 @@ struct state *state_create(void)
 
     state->labels = queue_create();
     state->instructions = queue_create();
-    state->vars = hash_map_create();
+    state->vars = hash_map_create(token_free);
 
     state->current_token = NULL;
     state->line = 0;

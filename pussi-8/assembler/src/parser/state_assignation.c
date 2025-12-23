@@ -36,8 +36,8 @@ int state_assignation(struct state *state, struct string *string)
         return PARSING_ERROR;
     }
 
-    char *value = state->current_token->data;
-    res = eat_current_token(state, string, 0, 0);
+    struct token *value = state->current_token;
+    res = skip_token(state, string, 0);
     if (res)
         return res;
 
@@ -46,11 +46,11 @@ int state_assignation(struct state *state, struct string *string)
         .value = value,
     };
     res = hash_map_insert(state->vars, pair);
-    if (res == HASHMAP_DUPE_ERROR)
+    if (res == HASH_MAP_DUPE_ERROR)
     {
         logerror(state->line, "Duplicate macro name: '%s'", key);
         free(key);
-        free(value);
+        token_destroy(value, 1);
         return PARSING_ERROR;
     }
     if (res)

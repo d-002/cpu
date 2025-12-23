@@ -24,7 +24,7 @@ size_t hash(const char *key)
     return hash;
 }
 
-struct hash_map *hash_map_create(void)
+struct hash_map *hash_map_create(free_func free_func)
 {
     struct hash_map *hash_map = malloc(sizeof(struct hash_map));
     if (hash_map == NULL)
@@ -56,17 +56,18 @@ struct hash_map *hash_map_create(void)
 
     hash_map->iter_index = 0;
     hash_map->iter_starting = 0;
+    hash_map->free_func = free_func;
 
     return hash_map;
 }
 
-char *get_in_queue(struct queue *queue, char *key)
+struct pair *get_in_queue(struct queue *queue, char *key)
 {
     for (struct queue_node *node = queue->head; node; node = node->next)
     {
         struct pair *elt = node->data;
         if (strcmp(key, elt->key) == 0)
-            return elt->value;
+            return elt;
     }
 
     return NULL;
@@ -77,10 +78,10 @@ int hash_map_insert(struct hash_map *hash_map, struct pair pair)
     size_t h = hash(pair.key) % HASH_MAP_SIZE;
     struct queue *queue = hash_map->arr[h];
 
-    char *found = get_in_queue(queue, pair.key);
+    struct pair *found = get_in_queue(queue, pair.key);
 
     if (found != NULL)
-        return HASHMAP_DUPE_ERROR;
+        return HASH_MAP_DUPE_ERROR;
 
     struct pair *alloc_ed = malloc(sizeof(struct pair));
     if (alloc_ed == NULL)
@@ -98,12 +99,31 @@ int hash_map_insert(struct hash_map *hash_map, struct pair pair)
     return SUCCESS;
 }
 
-char *hash_map_get(struct hash_map *hash_map, char *key)
+void *hash_map_get(struct hash_map *hash_map, char *key)
 {
     size_t h = hash(key) % HASH_MAP_SIZE;
     struct queue *queue = hash_map->arr[h];
 
-    return get_in_queue(queue, key);
+    struct pair *pair = get_in_queue(queue, key);
+    if (pair == NULL)
+        return NULL;
+    return pair->value;
+}
+
+int hash_map_update(struct hash_map *hash_map, struct pair pair)
+{
+    size_t h = hash(pair.key) % HASH_MAP_SIZE;
+    struct queue *queue = hash_map->arr[h];
+
+    struct pair *found = get_in_queue(queue, pair.key);
+
+    if (found == NULL)
+        return HASH_MAP_CANNOT_UPDATE;
+
+    hash_map->free_func(found->value);
+    found->value = pair.value;
+
+    return SUCCESS;
 }
 
 char *hash_map_iter_start(struct hash_map *hash_map)
@@ -146,7 +166,7 @@ void hash_map_destroy(struct hash_map *hash_map)
         {
             struct pair *data = queue_dequeue(queue);
             free(data->key);
-            free(data->value);
+            hash_map->free_func(data->value);
             free(data);
         }
 

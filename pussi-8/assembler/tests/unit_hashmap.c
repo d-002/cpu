@@ -9,14 +9,14 @@ TestSuite(HashMap);
 
 Test(HashMap, HashMapInit)
 {
-    struct hash_map *hash_map = hash_map_create();
+    struct hash_map *hash_map = hash_map_create(free);
     cr_expect(ne(ptr, hash_map, NULL));
     hash_map_destroy(hash_map);
 }
 
 Test(HashMap, HashMapInsert)
 {
-    struct hash_map *hash_map = hash_map_create();
+    struct hash_map *hash_map = hash_map_create(free);
 
     char *key = malloc(6);
     memcpy(key, "hello", 6);
@@ -34,7 +34,7 @@ Test(HashMap, HashMapInsert)
 
 Test(HashMap, HashMapInsertTwice)
 {
-    struct hash_map *hash_map = hash_map_create();
+    struct hash_map *hash_map = hash_map_create(free);
 
     char *key = malloc(6);
     memcpy(key, "hello", 6);
@@ -47,13 +47,13 @@ Test(HashMap, HashMapInsertTwice)
 
     cr_assert(ne(ptr, hash_map, NULL));
     cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
-    cr_expect(eq(int, hash_map_insert(hash_map, pair), HASHMAP_DUPE_ERROR));
+    cr_expect(eq(int, hash_map_insert(hash_map, pair), HASH_MAP_DUPE_ERROR));
     hash_map_destroy(hash_map);
 }
 
 Test(HashMap, HashMapInsertGet)
 {
-    struct hash_map *hash_map = hash_map_create();
+    struct hash_map *hash_map = hash_map_create(free);
 
     char *key = malloc(6);
     memcpy(key, "hello", 6);
@@ -74,7 +74,7 @@ Test(HashMap, HashMapInsertGet)
 
 Test(HashMap, HashMapIter)
 {
-    struct hash_map *hash_map = hash_map_create();
+    struct hash_map *hash_map = hash_map_create(free);
 
     char *key1 = malloc(2);
     memcpy(key1, "a", 2);

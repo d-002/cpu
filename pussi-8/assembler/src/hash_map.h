@@ -15,7 +15,7 @@ typedef void (*free_func)(void *arg);
 struct pair
 {
     char *key;
-    char *value;
+    void *value;
 };
 
 struct hash_map
@@ -23,11 +23,13 @@ struct hash_map
     struct queue *arr[HASH_MAP_SIZE];
     size_t iter_index;
     int iter_starting;
+    free_func free_func;
 };
 
-struct hash_map *hash_map_create(void);
+struct hash_map *hash_map_create(free_func free_func);
 int hash_map_insert(struct hash_map *hash_map, struct pair pair);
-char *hash_map_get(struct hash_map *hash_map, char *key);
+void *hash_map_get(struct hash_map *hash_map, char *key);
+int hash_map_update(struct hash_map *hash_map, struct pair pair);
 char *hash_map_iter_start(struct hash_map *hash_map);
 char *hash_map_iter_next(struct hash_map *hash_map);
 void hash_map_destroy(struct hash_map *hash_map);
