@@ -37,27 +37,32 @@ int state_assignation(struct state *state, struct string *string)
     }
 
     struct token *value = state->current_token;
-    res = skip_token(state, string, 0);
-    if (res)
-        return res;
 
     struct pair pair = {
         .key = key,
         .value = value,
     };
     res = hash_map_insert(state->vars, pair);
-    if (res == HASH_MAP_DUPE_ERROR)
-    {
-        logerror(state->line, "Duplicate macro name: '%s'", key);
-        free(key);
-        token_destroy(value, 1);
-        return PARSING_ERROR;
-    }
     if (res)
     {
-        log_alloc_error(state->line);
-        return ALLOC_ERROR;
+        int err;
+        if (res == HASH_MAP_DUPE_ERROR)
+        {
+            logerror(state->line, "Duplicate macro name: '%s'", key);
+            err = PARSING_ERROR;
+        }
+        else
+        {
+            log_alloc_error(state->line);
+            err = ALLOC_ERROR;
+        }
+        free(key);
+        return err;
     }
+
+    res = skip_token(state, string, 0);
+    if (res)
+        return res;
 
     return SUCCESS;
 }

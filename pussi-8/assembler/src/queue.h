@@ -29,6 +29,7 @@ int queue_enqueue(struct queue *queue, void *data);
 void *queue_dequeue(struct queue *queue);
 void *queue_iter_start(struct queue *queue);
 void *queue_iter_next(struct queue *queue);
+void queue_update_at_iter_last(struct queue *queue, void *data);
 void queue_destroy(struct queue *queue);
 
 #endif /* ! QUEUE_H */

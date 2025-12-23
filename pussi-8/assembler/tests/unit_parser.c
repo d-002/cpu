@@ -16,7 +16,6 @@ Test(Parser, Empty)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     cr_expect(eq(int, state->instructions->length, 0));
-    cr_expect(eq(int, state->labels->length, 0));
 
     free(buf);
     state_destroy(state);
@@ -54,10 +53,8 @@ Test(Parser, InstructionWithLabel)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     cr_assert(eq(int, state->instructions->length, 1));
-    cr_assert(eq(int, state->labels->length, 1));
 
-    struct label *label = queue_dequeue(state->labels);
-    cr_expect(eq(int, strcmp(label->token->data, "a"), 0));
+    cr_expect(ne(ptr, hash_map_get(state->labels, "a"), NULL));
 
     struct instruction *instruction = queue_dequeue(state->instructions);
     cr_expect(eq(int, strcmp(instruction->opcode->data, "add"), 0));
@@ -67,7 +64,6 @@ Test(Parser, InstructionWithLabel)
     cr_expect(eq(int, token->type, REGISTER));
     token_destroy(token, 1);
 
-    label_destroy(label);
     instruction_destroy(instruction);
 
     free(buf);
@@ -83,12 +79,6 @@ Test(Parser, InstructionWithIdentifier)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     cr_assert(eq(int, state->instructions->length, 1));
-    cr_assert(eq(int, state->labels->length, 1));
-
-    struct label *label = queue_dequeue(state->labels);
-    cr_expect(eq(int, strcmp(label->token->data, "a"), 0));
-
-    label_destroy(label);
 
     free(buf);
     state_destroy(state);
@@ -164,6 +154,18 @@ Test(Parser, InstructionMissingSpace, .init = cr_redirect_stderr)
 
     init_current_string(".a nop=1");
     state = state_create();
+    cr_expect(
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
+    free(buf);
+    state_destroy(state);
+    free_current_string();
+}
+
+Test(Parser, InstructionDupe, .init = cr_redirect_stderr)
+{
+    init_current_string(".a nop\n.a nop\n");
+    struct state *state = state_create();
+    char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
     free(buf);

@@ -1,6 +1,7 @@
 #include "state_instruction.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "err.h"
 #include "logger.h"
@@ -14,15 +15,41 @@ int state_label(struct state *state, struct string *string)
         return PARSING_ERROR;
     }
 
-    struct label *label = label_create(state->current_token, state->line);
-    if (label == NULL || queue_enqueue(state->labels, label))
+    char *key = malloc((state->current_token->length + 1) * sizeof(char));
+    int *value = calloc(1, sizeof(int));
+    if (key == NULL || value == NULL)
     {
-        free(label);
+        free(key);
+        free(value);
         log_alloc_error(state->line);
         return ALLOC_ERROR;
     }
+    memcpy(key, state->current_token->data, state->current_token->length + 1);
 
-    int res = skip_token(state, string, 0);
+    struct pair pair = {
+        .key = key,
+        .value = value,
+    };
+    int res = hash_map_insert(state->labels, pair);
+    if (res)
+    {
+        int err;
+        if (res == HASH_MAP_DUPE_ERROR)
+        {
+            logerror(state->line, "Duplicate label name: '%s'", key);
+            err = PARSING_ERROR;
+        }
+        else
+        {
+            log_alloc_error(state->line);
+            err = ALLOC_ERROR;
+        }
+        free(key);
+        free(value);
+        return err;
+    }
+
+    res = eat_current_token(state, string, 0, 1);
     if (res)
         return res;
 

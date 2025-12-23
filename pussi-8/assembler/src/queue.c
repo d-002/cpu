@@ -79,6 +79,14 @@ void *queue_iter_next(struct queue *queue)
     return queue->iter_last == NULL ? NULL : queue->iter_last->data;
 }
 
+void queue_update_at_iter_last(struct queue *queue, void *data)
+{
+    if (queue->iter_last == NULL)
+        return; // out of bounds, I'll decide to do nothing here because yes
+
+    queue->iter_last->data = data;
+}
+
 void queue_destroy(struct queue *queue)
 {
     if (queue == NULL)

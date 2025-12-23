@@ -21,6 +21,9 @@ int eval_vars(struct state *state)
                 struct token *other = hash_map_get(state->vars, value->data);
                 if (other == NULL)
                 {
+                    if (hash_map_get(state->labels, value->data))
+                        continue;
+
                     logerror(NO_LINE, "Unknown macro name: '%s'", value->data);
                     return VARS_ERROR;
                 }
@@ -45,6 +48,7 @@ int eval_vars(struct state *state)
                     .key = key,
                     .value = other_copy,
                 };
+
                 // should not throw an error
                 hash_map_update(state->vars, pair);
 
@@ -58,7 +62,37 @@ int eval_vars(struct state *state)
 
 int apply_vars(struct state *state)
 {
-    state++;
+    for (struct instruction *instruction =
+             queue_iter_start(state->instructions);
+         instruction; instruction = queue_iter_next(state->instructions))
+        for (struct token *token = queue_iter_start(instruction->args_queue);
+             token; token = queue_iter_next(instruction->args_queue))
+        {
+            if (token->type != IDENTIFIER)
+                continue;
+
+            struct token *value = hash_map_get(state->vars, token->data);
+            if (value == NULL)
+            {
+                if (hash_map_get(state->labels, token->data))
+                    continue;
+
+                logerror(NO_LINE, "Unknown macro or label name: '%s'",
+                         token->data);
+                return VARS_ERROR;
+            }
+
+            struct token *copy =
+                token_create(value->type, value->data, value->length);
+            if (copy == NULL)
+            {
+                log_alloc_error(NO_LINE);
+                return ALLOC_ERROR;
+            }
+
+            token_destroy(token, 1);
+            queue_update_at_iter_last(instruction->args_queue, copy);
+        }
 
     return SUCCESS;
 }
