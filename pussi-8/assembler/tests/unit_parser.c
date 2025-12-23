@@ -167,7 +167,7 @@ Test(Parser, InstructionDupe, .init = cr_redirect_stderr)
     struct state *state = state_create();
     char *buf = NULL;
     cr_expect(
-        eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
     free(buf);
     state_destroy(state);
     free_current_string();
@@ -205,7 +205,7 @@ Test(Parser, AssignationDupe, .init = cr_redirect_stderr)
     struct state *state = state_create();
     char *buf = NULL;
     cr_expect(
-        eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
     free(buf);
     state_destroy(state);
     free_current_string();
@@ -230,6 +230,30 @@ Test(Parser, AssignationIncorrectArgument, .init = cr_redirect_stderr)
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
+    free(buf);
+    state_destroy(state);
+    free_current_string();
+}
+
+Test(Vars, DupeVarLabel, .init = cr_redirect_stderr)
+{
+    init_current_string("a=0\n.a:");
+    struct state *state = state_create();
+    char *buf = NULL;
+    cr_expect(
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
+    free(buf);
+    state_destroy(state);
+    free_current_string();
+}
+
+Test(Vars, DupeLabelVar, .init = cr_redirect_stderr)
+{
+    init_current_string(".a:\na=0");
+    struct state *state = state_create();
+    char *buf = NULL;
+    cr_expect(
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
     free(buf);
     state_destroy(state);
     free_current_string();

@@ -16,6 +16,13 @@ int state_assignation(struct state *state, struct string *string)
         return res;
     }
 
+    if (hash_map_get(state->labels, key))
+    {
+        logerror(state->line,
+                 "Cannot have a label and a macro with the same name");
+        return VARS_ERROR;
+    }
+
     int equal_sign = is_surrounded_type(state, string, EQUAL_SIGN, 0);
     if (equal_sign < 0)
     {
@@ -49,7 +56,7 @@ int state_assignation(struct state *state, struct string *string)
         if (res == HASH_MAP_DUPE_ERROR)
         {
             logerror(state->line, "Duplicate macro name: '%s'", key);
-            err = PARSING_ERROR;
+            err = VARS_ERROR;
         }
         else
         {
