@@ -1,5 +1,6 @@
 #include "state.h"
 
+#include <ctype.h>
 #include <stdlib.h>
 
 struct instruction *instruction_create(struct token *opcode)
@@ -16,6 +17,10 @@ struct instruction *instruction_create(struct token *opcode)
         free(instruction);
         return NULL;
     }
+
+    // make the opcode uppercase for comparisons later
+    for (size_t i = 0; i < opcode->length; i++)
+        opcode->data[i] = toupper(opcode->data[i]);
 
     return instruction;
 }

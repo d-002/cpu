@@ -6,12 +6,13 @@
 void log_inner(FILE *stream, const char *prefix, int line, const char *format,
                va_list args)
 {
+    fputs(prefix, stream);
+
     if (line == NO_LINE)
         fputs("assembli: ", stream);
     else
-        fprintf(stream, "assembli:%d:", line);
+        fprintf(stream, "assembli:%d: ", line);
 
-    fputs(prefix, stream);
     vfprintf(stream, format, args);
     putc('\n', stream);
 }
@@ -20,7 +21,7 @@ void loginfo(int line, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_inner(stdout, " [INFO]  ", line, format, args);
+    log_inner(stdout, "[INFO]  ", line, format, args);
     va_end(args);
 }
 
@@ -28,7 +29,7 @@ void logerror(int line, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_inner(stderr, " [ERROR] ", line, format, args);
+    log_inner(stderr, "[ERROR] ", line, format, args);
     va_end(args);
 }
 

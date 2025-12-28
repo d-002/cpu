@@ -42,13 +42,13 @@
     jump target
     ```
 
-- `jca target`
+- `jcs target`
     ```
     cond 64
     jump target
     ```
 
-- `jnc target`
+- `jcc target`
     ```
     cond 65
     jump target

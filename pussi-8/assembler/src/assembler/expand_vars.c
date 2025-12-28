@@ -5,7 +5,7 @@
 #include "err.h"
 #include "logger.h"
 
-int eval_vars(struct state *state)
+int resolve_vars(struct state *state)
 {
     int changes;
     do
@@ -99,7 +99,7 @@ int apply_vars(struct state *state)
 
 int expand_vars(struct state *state)
 {
-    int res = eval_vars(state);
+    int res = resolve_vars(state);
     if (res)
         return res;
     return apply_vars(state);

@@ -104,11 +104,11 @@ Test(Vars, ApplySimple)
     cr_expect(eq(int, expand_vars(state), SUCCESS));
 
     struct instruction *instruction = state->instructions->head->data;
-    cr_expect(eq(int, strcmp(instruction->opcode->data, "add"), 0));
+    cr_expect(eq(int, strcmp(instruction->opcode->data, "ADD"), 0));
     cr_expect(eq(int, instruction->args_queue->length, 2));
     struct token *arg1 = instruction->args_queue->head->data;
     struct token *arg2 = instruction->args_queue->tail->data;
-    cr_expect(eq(int, strcmp(instruction->opcode->data, "add"), 0));
+    cr_expect(eq(int, strcmp(instruction->opcode->data, "ADD"), 0));
     cr_expect(eq(int, strcmp(arg1->data, "%r0"), 0));
     cr_expect(eq(int, strcmp(arg2->data, "%m1"), 0));
     cr_expect(eq(int, arg1->type, REGISTER));
