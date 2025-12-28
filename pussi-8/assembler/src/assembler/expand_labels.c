@@ -37,12 +37,6 @@ int resolve_labels(struct state *state)
          instruction; instruction = queue_iter_next(state->instructions))
     {
         enum opcodes opcode = get_opcode(instruction);
-        if (opcode == UNKNOWN)
-        {
-            logerror(NO_LINE, "Unrecognized opcode: '%s'",
-                     instruction->opcode->data);
-            return INSTRUCTION_ERROR;
-        }
 
         if (line == label_line)
         {

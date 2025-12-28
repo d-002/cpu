@@ -17,7 +17,7 @@ Test(Vars, Empty)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
 
-    cr_expect(eq(int, expand_vars(state), 0));
+    cr_expect(eq(int, expand_vars(state), SUCCESS));
 
     free(buf);
     state_destroy(state);
@@ -32,7 +32,7 @@ Test(Vars, Simple)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
 
-    cr_expect(eq(int, expand_vars(state), 0));
+    cr_expect(eq(int, expand_vars(state), SUCCESS));
 
     struct token *token = hash_map_get(state->vars, "a");
     cr_assert(ne(ptr, token, NULL));
@@ -52,7 +52,7 @@ Test(Vars, DoubleRecursive)
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
 
-    cr_expect(eq(int, expand_vars(state), 0));
+    cr_expect(eq(int, expand_vars(state), SUCCESS));
 
     struct token *token = hash_map_get(state->vars, "a");
     cr_assert(ne(ptr, token, NULL));

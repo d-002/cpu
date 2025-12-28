@@ -12,7 +12,7 @@ OBJ=src/cli.o src/logger.o src/queue.o src/files.o src/hash_map.o src/itoa.o \
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
-OBJ_UNIT=tests/unit_queue.o tests/unit_hashmap.o tests/unit_lexer.o tests/unit_cli.o tests/unit_parser_utils.o tests/unit_parser.o tests/unit_vars.o
+OBJ_UNIT=tests/unit_queue.o tests/unit_hashmap.o tests/unit_lexer.o tests/unit_cli.o tests/unit_parser_utils.o tests/unit_parser.o tests/unit_vars.o tests/unit_other.o tests/unit_labels.o
 
 .PHONY: all check debug coverage clean
 
