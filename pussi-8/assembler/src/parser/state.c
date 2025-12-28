@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-struct instruction *instruction_create(struct token *opcode)
+struct instruction *instruction_create(int line, struct token *opcode)
 {
     struct instruction *instruction = malloc(sizeof(struct instruction));
     if (instruction == NULL)
@@ -11,6 +11,7 @@ struct instruction *instruction_create(struct token *opcode)
 
     instruction->opcode = opcode;
     instruction->args_queue = queue_create();
+    instruction->line = line;
 
     if (instruction->args_queue == NULL)
     {

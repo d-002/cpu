@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "aliases.h"
+#include "aliases/aliases.h"
 #include "err.h"
 #include "itoa.h"
 #include "logger.h"
+#include "opcodes.h"
 
 int next_label(struct state *state, char **label_name, int *label_line,
                int first)
@@ -43,7 +44,7 @@ int resolve_labels(struct state *state)
             char *encoded_line = itoa(real_line);
             if (encoded_line == NULL)
             {
-                log_alloc_error(NO_LINE);
+                log_alloc_error(instruction->line);
                 return ALLOC_ERROR;
             }
 

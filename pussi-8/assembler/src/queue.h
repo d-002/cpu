@@ -10,9 +10,9 @@ struct queue_node
 };
 
 /**
- * Queue of void pointers.
+ * Generic queue.
  * These pointers should be NULL or point to heap-allocated data.
- * The data will be deallocated when the queue is destroyed.
+ * The data will be free()d when the queue is destroyed.
  */
 struct queue
 {

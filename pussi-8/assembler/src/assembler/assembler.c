@@ -1,5 +1,7 @@
 #include "assembler.h"
 
+#include <stdio.h>
+
 #include "binary_content.h"
 #include "err.h"
 #include "expand_labels.h"
@@ -8,7 +10,6 @@
 #include "export/schematic.h"
 #include "list_instructions.h"
 #include "logger.h"
-
 int assemble_file(struct cli_args *args, char *path, struct state *state)
 {
     verbose(args, NO_LINE, "Expanding variables");
@@ -33,11 +34,9 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
         return ALLOC_ERROR;
     }
 
-    int first = 1;
     while (1)
     {
-        res = add_next_instruction(state, queue, first);
-        first = 0;
+        res = add_next_instruction(state, queue);
 
         if (res)
         {
@@ -52,8 +51,18 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
         while (queue->length)
         {
             struct instruction *instruction = queue_dequeue(queue);
-            loginfo(NO_LINE, "%s (%ld arguments)\n", instruction->opcode->data,
-                    instruction->args_queue->length);
+            printf("%s ", instruction->opcode->data);
+            int first = 1;
+            for (struct token *arg = queue_iter_start(instruction->args_queue);
+                 arg; arg = queue_iter_next(instruction->args_queue))
+            {
+                if (first)
+                    first = 0;
+                else
+                    putchar(',');
+                printf("%s", arg->data);
+            }
+            putchar('\n');
             instruction_destroy(instruction);
         }
     }

@@ -9,6 +9,7 @@ struct instruction
 {
     struct token *opcode;
     struct queue *args_queue;
+    int line;
 };
 
 struct state
@@ -23,7 +24,7 @@ struct state
     int line_instr;
 };
 
-struct instruction *instruction_create(struct token *opcode);
+struct instruction *instruction_create(int line, struct token *opcode);
 void instruction_destroy(struct instruction *instruction);
 struct state *state_create(void);
 void state_destroy(struct state *state);

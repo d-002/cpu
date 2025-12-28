@@ -41,8 +41,6 @@ enum opcodes
 
     // qol aliases
     LDI_2,
-    RTC_2,
-    CTR_2,
     OR_3,
     NOR_3,
     ADD_3,
@@ -76,7 +74,7 @@ enum opcodes
     JMP,
 
     // other
-    UNKNOWN,
+    UNKNOWN_OPCODE,
 };
 
 enum opcodes get_opcode(struct instruction *instruction);

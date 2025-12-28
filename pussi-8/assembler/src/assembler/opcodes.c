@@ -21,12 +21,6 @@ enum opcodes get_opcode(struct instruction *instruction)
 
     if (COMP(LDI) && arg2)
         return LDI_2;
-    if (COMP(RTC)
-        && (arg2 == NUMBER_DEC || arg2 == NUMBER_HEX || arg2 == NUMBER_BIN))
-        return RTC_2;
-    if (COMP(CTR)
-        && (arg2 == NUMBER_DEC || arg2 == NUMBER_HEX || arg2 == NUMBER_BIN))
-        return CTR_2;
 
     TEST_ALU_3(OR);
     TEST_ALU_3(NOR);
@@ -92,5 +86,5 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_SIMPLE(POP);
     TEST_SIMPLE(HLT);
 
-    return UNKNOWN;
+    return UNKNOWN_OPCODE;
 }

@@ -5,8 +5,6 @@ int length_from_opcode(enum opcodes opcode)
     switch (opcode)
     {
     case LDI_2:
-    case RTC_2:
-    case CTR_2:
     case OR_3:
     case NOR_3:
     case ADD_3:

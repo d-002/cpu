@@ -8,18 +8,6 @@
     movei %r0, destination
     ```
 
-- `rtc r,m`
-    ```
-    movei m,%r0
-    rtc r,%r0
-    ```
-
-- `ctr r,m`
-    ```
-    movei m,%r0
-    ctr %r0,r
-    ```
-
 ## Operations
 
 - `alu/mul/div/mod a,b,y`
@@ -68,37 +56,37 @@
 
 - `jvs target`
     ```
-    cond 17
+    cond 16
     jump target
     ```
 
 - `jvc target`
     ```
-    cond 16
+    cond 17
     jump target
     ```
 
 - `jos target`
     ```
-    cond 9
+    cond 8
     jump target
     ```
 
 - `joc target`
     ```
-    cond 8
+    cond 9
     jump target
     ```
 
 - `jus target`
     ```
-    cond 5
+    cond 4
     jump target
     ```
 
 - `juc target`
     ```
-    cond 4
+    cond 5
     jump target
     ```
 
