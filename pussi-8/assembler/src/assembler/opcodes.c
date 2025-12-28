@@ -2,12 +2,12 @@
 
 #include <string.h>
 
-#define COMP(value) strcmp(instruction->opcode->data, #value)
+#define COMP(value) strcmp(instruction->opcode->data, #value) == 0
 #define TEST_SIMPLE(value)                                                     \
-    if (COMP(value) == 0)                                                      \
+    if (COMP(value))                                                           \
         return value;
 #define TEST_ALU_3(value)                                                      \
-    if (COMP(value) == 0 && arg3)                                              \
+    if (COMP(value) && arg3)                                                   \
         return value##_3;
 
 enum opcodes get_opcode(struct instruction *instruction)

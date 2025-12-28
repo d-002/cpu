@@ -4,7 +4,6 @@
 #include "parser/state.h"
 #include "queue.h"
 
-int add_next_instruction(struct state *state, struct queue *queue,
-                         size_t *index);
+int add_next_instruction(struct state *state, struct queue *queue, int first);
 
 #endif /* ! LIST_INSTRUCTIONS_H */

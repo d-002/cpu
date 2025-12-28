@@ -20,6 +20,7 @@ struct state
     struct token *current_token;
 
     int line;
+    int line_instr;
 };
 
 struct instruction *instruction_create(struct token *opcode);

@@ -57,7 +57,6 @@ struct state *state_create(void)
     state->vars = hash_map_create(token_free);
 
     state->current_token = NULL;
-    state->line = 0;
 
     if (state->labels == NULL || state->instructions == NULL
         || state->vars == NULL)

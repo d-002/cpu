@@ -2,12 +2,11 @@
 
 #include "err.h"
 
-int add_next_instruction(struct state *state, struct queue *queue,
-                         size_t *index)
+int add_next_instruction(struct state *state, struct queue *queue, int first)
 {
     state++;
     queue++;
-    (*index)++;
+    first++;
 
     return SUCCESS;
 }

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "err.h"
+#include "itoa.h"
 #include "logger.h"
 #include "parser_utils.h"
 
@@ -22,8 +23,9 @@ int state_label(struct state *state, struct string *string)
         return VARS_ERROR;
     }
 
+    // start with the labels having the line they appeared at as value
     char *key = malloc((state->current_token->length + 1) * sizeof(char));
-    int *value = calloc(1, sizeof(int));
+    char *value = itoa(state->line_instr);
     if (key == NULL || value == NULL)
     {
         free(key);
@@ -129,7 +131,9 @@ int state_instruction(struct state *state, struct string *string)
         return res;
 
     // arguments
-    return state_arguments(state, string, instruction);
+    res = state_arguments(state, string, instruction);
+    state->line_instr++;
+    return res;
 }
 
 int state_potential_instruction(struct state *state, struct string *string)

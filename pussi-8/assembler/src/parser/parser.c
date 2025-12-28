@@ -67,6 +67,7 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
 {
     size_t n = 0;
     state->line = 1;
+    state->line_instr = 0;
 
     while (1)
     {
