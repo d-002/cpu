@@ -77,11 +77,7 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
 
         int res = parse_arg(c, out);
         if (res)
-        {
-            queue_destroy(out->files_queue);
-            out->files_queue = NULL;
             return res;
-        }
     }
 
     return SUCCESS;
