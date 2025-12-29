@@ -6,8 +6,7 @@
 #include "export_utils.h"
 #include "logger.h"
 
-int to_schematic(struct cli_args *args, char *path,
-                 struct binary_content *content)
+int to_schematic(struct cli_args *args, char *path, struct queue *content)
 {
     char *export_path = change_extension(path, "schematic");
     if (export_path == NULL)

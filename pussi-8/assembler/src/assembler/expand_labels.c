@@ -5,8 +5,8 @@
 
 #include "aliases/aliases.h"
 #include "err.h"
-#include "itoa.h"
 #include "logger.h"
+#include "numstr.h"
 #include "opcodes.h"
 
 int next_label(struct state *state, char **label_name, int *label_line,

@@ -11,7 +11,7 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
 {
     if (instruction->args_queue->length != 3)
     {
-        logerror(instruction->line, "Instruction expected 3 arguments, got %ld",
+        logerror(instruction->line, "Expected 3 arguments, got %ld",
                  instruction->args_queue->length);
         return INSTRUCTION_ERROR;
     }

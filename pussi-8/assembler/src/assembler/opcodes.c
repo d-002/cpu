@@ -84,7 +84,7 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_SIMPLE(ROL);
     TEST_SIMPLE(PUSH);
     TEST_SIMPLE(POP);
-    TEST_SIMPLE(HLT);
+    TEST_SIMPLE(HALT);
 
     return UNKNOWN_OPCODE;
 }

@@ -6,8 +6,9 @@
 #include "err.h"
 #include "logger.h"
 #include "opcodes.h"
+#include "to_machine.h"
 
-int add_next_instruction(struct state *state, struct queue *queue)
+int gen_next_instruction(struct state *state, struct queue *queue)
 {
     struct instruction *instruction = queue_dequeue(state->instructions);
     if (instruction == NULL)
@@ -121,4 +122,33 @@ int add_next_instruction(struct state *state, struct queue *queue)
         instruction_destroy(instruction);
 
     return res;
+}
+
+int to_machine_code(struct state *state, struct queue *queue,
+                    struct queue *content)
+{
+    while (state->instructions->length)
+    {
+        int res = gen_next_instruction(state, queue);
+        if (res)
+            return res;
+
+        while (queue->length)
+        {
+            struct instruction *instruction = queue_dequeue(queue);
+
+            enum opcodes opcode = get_opcode(instruction);
+            res = to_machine_i_jumps(instruction, opcode, content);
+            res |= to_machine_i_data(instruction, opcode, content);
+            res |= to_machine_i_calc(instruction, opcode, content);
+            res |= to_machine_i_misc(instruction, opcode, content);
+
+            if (res)
+                return res;
+
+            instruction_destroy(instruction);
+        }
+    }
+
+    return SUCCESS;
 }

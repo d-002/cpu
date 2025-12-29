@@ -74,12 +74,12 @@ Test(Lexer, Number)
     cr_expect(eq(int, strcmp(token->data, "0b101"), 0));
     token_destroy(token, 1);
 
-    line.stream = "0x12ag";
+    line.stream = "0x12abg";
     line.length = strlen(line.stream);
     cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_HEX));
     cr_assert(ne(ptr, token->data, NULL));
-    cr_expect(eq(int, strcmp(token->data, "0x12a"), 0));
+    cr_expect(eq(int, strcmp(token->data, "0x12AB"), 0));
     token_destroy(token, 1);
 
     line.stream = "123aa";

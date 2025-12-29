@@ -11,7 +11,7 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     // ldi data; movei %r0,destination
     if (instruction->args_queue->length != 2)
     {
-        logerror(instruction->line, "Instruction expected 2 arguments, got %ld",
+        logerror(instruction->line, "Expected 2 arguments, got %ld",
                  instruction->args_queue->length);
         return INSTRUCTION_ERROR;
     }

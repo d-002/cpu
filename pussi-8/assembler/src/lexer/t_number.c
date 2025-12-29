@@ -50,6 +50,13 @@ int token_number(struct string *string, int line, struct token **out)
         return ALLOC_ERROR;
     }
 
+    for (size_t i = 2; i < token->length; i++)
+    {
+        char c = token->data[i];
+        if ('a' <= c && c <= 'f')
+            token->data[i] = c + 'A' - 'a';
+    }
+
     *out = token;
     return SUCCESS;
 }

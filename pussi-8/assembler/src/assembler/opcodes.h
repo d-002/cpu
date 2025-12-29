@@ -37,7 +37,7 @@ enum opcodes
     ROL = 28,
     PUSH = 29,
     POP = 30,
-    HLT = 31,
+    HALT = 31,
 
     // qol aliases
     LDI_2,

@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-#include "binary_content.h"
 #include "err.h"
 #include "expand_labels.h"
 #include "expand_vars.h"
@@ -25,53 +24,23 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
     verbose(args, NO_LINE, "Assembling");
 
     struct queue *queue = queue_create();
-    struct binary_content *content = binary_content_create();
+    struct queue *content = queue_create();
     if (queue == NULL || content == NULL)
     {
         queue_destroy(queue);
-        binary_content_destroy(content);
+        queue_destroy(content);
         log_alloc_error(NO_LINE);
         return ALLOC_ERROR;
     }
 
-    while (1)
-    {
-        res = add_next_instruction(state, queue);
+    res = to_machine_code(state, queue, content);
+    if (!res)
+        res = to_binary_file(args, path, content);
 
-        if (res)
-        {
-            queue_destroy(queue);
-            binary_content_destroy(content);
-            return res;
-        }
-
-        if (queue->length == 0)
-            break;
-
-        while (queue->length)
-        {
-            struct instruction *instruction = queue_dequeue(queue);
-            printf("%s ", instruction->opcode->data);
-            int first = 1;
-            for (struct token *arg = queue_iter_start(instruction->args_queue);
-                 arg; arg = queue_iter_next(instruction->args_queue))
-            {
-                if (first)
-                    first = 0;
-                else
-                    putchar(',');
-                printf("%s", arg->data);
-            }
-            putchar('\n');
-            instruction_destroy(instruction);
-        }
-    }
-
-    res = to_binary_file(args, path, content);
     if (!res)
         res = to_schematic(args, path, content);
 
     queue_destroy(queue);
-    binary_content_destroy(content);
+    queue_destroy(content);
     return res;
 }

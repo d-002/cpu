@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "err.h"
-#include "itoa.h"
 #include "logger.h"
+#include "numstr.h"
 #include "parser_utils.h"
 
 int state_label(struct state *state, struct string *string)
