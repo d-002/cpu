@@ -3,8 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "logger.h"
-
 char *itoa(int n)
 {
     int len = n ? floor(log10(n)) + 1 : 1;
@@ -30,7 +28,7 @@ char *itoa(int n)
     return res;
 }
 
-int atoi_base(int line, struct token *token)
+int atoi_token(struct token *token)
 {
     int n = 0;
 
@@ -53,8 +51,11 @@ int atoi_base(int line, struct token *token)
                 n += c - 'A' + 10;
         }
         return n;
+    case REGISTER:
+    case MEMORY:
+    case PORT:
+        return atoi(token->data + 2);
     default:
-        logerror(line, "Expected number but got %s", type2name(token->type));
         return -1;
     }
 }

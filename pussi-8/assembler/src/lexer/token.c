@@ -20,6 +20,8 @@ char *token_names[] = {
     "comma",
     "colon",
     "equal sign",
+
+    "number",
 };
 
 struct token *token_create(enum token_type type, char *stream, size_t len)

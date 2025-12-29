@@ -8,3 +8,13 @@ Syntax: `assembli [--verbose] [--print] [--help] { --file file }`
 - `--print`: only print, don't assemble
 - `--file`: assemble file, can specify multiple files to assemble in this order
 - `--help`: print an error message to stdout
+
+## Todo
+
+- help message
+- assemble to file
+- ctr / rtc aliases
+- handle jump that actually work differently (expand aliases to whichever works
+  best)
+- assemble to schematic
+- display multiple errors if possible

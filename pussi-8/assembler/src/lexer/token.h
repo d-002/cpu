@@ -21,6 +21,8 @@ enum token_type
     COMMA,
     COLON,
     EQUAL_SIGN,
+
+    NUMBER_PSEUDOTYPE, // to use internally outside of lexing
 };
 
 struct token

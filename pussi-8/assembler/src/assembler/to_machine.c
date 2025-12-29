@@ -6,141 +6,239 @@
 #include "logger.h"
 #include "numstr.h"
 
-int expect_n_args(struct instruction *instruction, size_t count)
+int expect_n_args(struct instruction *instruction, size_t count, int values[],
+                  enum token_type types[])
 {
-    if (instruction->args_queue->length == count)
-        return SUCCESS;
+    if (instruction->args_queue->length != count)
+    {
+        logerror(instruction->line, "Expected %ld arguments for %s, got %ld",
+                 count, instruction->opcode->data,
+                 instruction->args_queue->length);
+        return INSTRUCTION_ERROR;
+    }
 
-    logerror(instruction->line, "Expected %ld arguments, got %ld",
-             instruction->args_queue->length);
-    return INSTRUCTION_ERROR;
+    size_t i = 0;
+    for (struct token *token = queue_iter_start(instruction->args_queue); token;
+         token = queue_iter_next(instruction->args_queue))
+    {
+        int ok = token->type == types[i];
+        if (!ok && types[i] == NUMBER_PSEUDOTYPE)
+            ok = token->type == NUMBER_DEC || token->type == NUMBER_BIN
+                || token->type == NUMBER_HEX;
+
+        if (!ok)
+        {
+            logerror(instruction->line,
+                     "Expected %s but got %s as argument for %s",
+                     type2name(types[i]), type2name(token->type),
+                     instruction->args_queue->length);
+            return INSTRUCTION_ERROR;
+        }
+
+        int n = atoi_token(token);
+        values[i++] = n;
+    }
+
+    return SUCCESS;
+}
+
+int add_to_content(int line, struct queue *content, short n)
+{
+    short *data = malloc(sizeof(short));
+    if (data == NULL)
+    {
+        log_alloc_error(line);
+        return ALLOC_ERROR;
+    }
+
+    *data = n;
+
+    if (queue_enqueue(content, data))
+    {
+        free(data);
+        log_alloc_error(line);
+        return ALLOC_ERROR;
+    }
+
+    return SUCCESS;
 }
 
 int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
                        struct queue *content)
 {
-    int res;
+    int res = SUCCESS;
+    int args[1];
+    enum token_type types[1] = { NUMBER_PSEUDOTYPE };
 
-    int arg1 =
-        atoi_base(instruction->line, queue_iter_start(instruction->args_queue));
-    struct token *token = queue_iter_next(instruction->args_queue);
-    int arg2 = token ? atoi_base(instruction->line, token) : 0;
-
-    content++;
     switch (opcode)
     {
     case COND:
-        res = expect_n_args(instruction, 1);
-        if (res)
-            return res;
-        return (COND << 8) + (arg1 & 255);
-        break;
     case JUMPI:
-        res = expect_n_args(instruction, 2);
+        res = expect_n_args(instruction, 1, args, types);
         if (res)
             return res;
-        return (JUMPI << 8) + (arg1 & 255);
         break;
     case JUMP:
-        break;
     case JUMPR:
+        return res;
+    default:
+        return res;
+    }
+
+    switch (opcode)
+    {
+    case COND:
+        return add_to_content(instruction->line, content,
+                              (COND << 8) + (args[0] & 255));
+    case JUMPI:
+        return add_to_content(instruction->line, content,
+                              (JUMPI << 8) + (args[0] & 255));
+    case JUMP:
         break;
     default:
         break;
     }
 
-    return SUCCESS;
+    return res;
 }
 
 int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
                       struct queue *content)
 {
-    instruction++;
-    content++;
+    int res = SUCCESS;
+    int args[2];
+    enum token_type types[2] = { REGISTER, REGISTER };
+
     switch (opcode)
     {
     case LDI:
+        types[0] = NUMBER_PSEUDOTYPE;
+        res = expect_n_args(instruction, 1, args, types);
+        if (res)
+            return res;
         break;
     case MOVEI:
-        break;
     case MOVEA:
-        break;
     case RTC:
-        break;
     case CTR:
-        break;
     case TIMER:
+        res = expect_n_args(instruction, 2, args, types);
+        if (res)
+            return res;
         break;
     default:
-        break;
+        return res;
     }
 
-    return SUCCESS;
+    switch (opcode)
+    {
+    case LDI:
+        return add_to_content(instruction->line, content,
+                              (LDI << 8) + (args[0] & 255));
+    case MOVEI:
+    case MOVEA:
+    case RTC:
+    case TIMER:
+        return add_to_content(instruction->line, content,
+                              (opcode << 8) + (args[1] << 4 & 15)
+                                  + (args[0] & 15));
+    default:
+        return add_to_content(instruction->line, content,
+                              (CTR << 8) + (args[0] << 4 & 15)
+                                  + (args[1] & 15));
+    }
+
+    return res;
 }
 
 int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
                       struct queue *content)
 {
-    instruction++;
-    content++;
+    int res = SUCCESS;
+    int args[2];
+    enum token_type types[2] = { REGISTER, REGISTER };
+
     switch (opcode)
     {
-    case MUL:
-        break;
-    case DIV:
-        break;
-    case MOD:
-        break;
-    case OR:
-        break;
-    case NOR:
-        break;
-    case ADD:
-        break;
-    case SUB:
-        break;
-    case XOR:
-        break;
-    case XNOR:
-        break;
-    case AND:
-        break;
-    case NAND:
-        break;
     case NOT:
-        break;
     case LSH:
-        break;
     case RSH:
-        break;
     case ROR:
-        break;
     case ROL:
+        res = expect_n_args(instruction, 1, args, types);
+        if (res)
+            return res;
+        break;
+    case MUL:
+    case DIV:
+    case MOD:
+    case OR:
+    case NOR:
+    case ADD:
+    case SUB:
+    case XOR:
+    case XNOR:
+    case AND:
+    case NAND:
+        res = expect_n_args(instruction, 2, args, types);
+        if (res)
+            return res;
         break;
     default:
-        break;
+        return res;
     }
 
-    return SUCCESS;
+    return add_to_content(instruction->line, content,
+                          (opcode << 8) + (args[0] << 4 & 15) + (args[1] & 15));
 }
 
 int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
                       struct queue *content)
 {
-    instruction++;
-    content++;
+    int res = SUCCESS;
+    int args[2];
+    enum token_type types[2];
+
     switch (opcode)
     {
+    case IN:
+        types[0] = PORT;
+        types[1] = REGISTER;
+        res = expect_n_args(instruction, 2, args, types);
+        if (res)
+            return res;
+        break;
+    case OUT:
+        types[0] = REGISTER;
+        types[1] = PORT;
+        res = expect_n_args(instruction, 2, args, types);
+        if (res)
+            return res;
+        break;
     case PUSH:
-        break;
     case POP:
-        break;
     case HALT:
-        break;
     case NOP:
+        res = expect_n_args(instruction, 0, args, types);
+        if (res)
+            return res;
         break;
     default:
+        return res;
+    }
+
+    switch (opcode)
+    {
+    case IN:
+        return add_to_content(instruction->line, content,
+                              (args[0] << 4 & 15) + (args[1] & 15));
         break;
+    case OUT:
+        return add_to_content(instruction->line, content,
+                              (args[1] << 4 & 15) + (args[0] & 15));
+        break;
+    default:
+        return add_to_content(instruction->line, content, 0);
     }
 
     return SUCCESS;

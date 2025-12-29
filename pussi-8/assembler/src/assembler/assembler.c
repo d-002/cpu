@@ -9,6 +9,7 @@
 #include "export/schematic.h"
 #include "list_instructions.h"
 #include "logger.h"
+
 int assemble_file(struct cli_args *args, char *path, struct state *state)
 {
     verbose(args, NO_LINE, "Expanding variables");
@@ -33,13 +34,17 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
         return ALLOC_ERROR;
     }
 
-    res = to_machine_code(state, queue, content);
-    if (!res)
-        res = to_binary_file(args, path, content);
+    res = to_machine_code(args, state, queue, content);
+    if (args->run)
+    {
+        if (!res)
+            res = to_binary_file(args, path, content);
+        if (!res)
+            res = to_schematic(args, path, content);
+    }
 
-    if (!res)
-        res = to_schematic(args, path, content);
-
+    while (queue->length)
+        instruction_destroy(queue_dequeue(queue));
     queue_destroy(queue);
     queue_destroy(content);
     return res;

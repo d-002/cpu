@@ -24,41 +24,71 @@ Test(Other, ItoaSimple)
     free(s);
 }
 
-Test(Other, AtoiBaseDec)
+Test(Other, AtoiTokenDec)
 {
     struct token *token = token_create(NUMBER_DEC, "42", 2);
     cr_assert(ne(ptr, token, NULL));
-    int n = atoi_base(0, token);
+    int n = atoi_token(token);
     cr_expect(eq(int, n, 42));
 
     token_destroy(token, 1);
 }
 
-Test(Other, AtoiBaseBin)
+Test(Other, AtoiTokenBin)
 {
     struct token *token = token_create(NUMBER_BIN, "0b101010", 8);
     cr_assert(ne(ptr, token, NULL));
-    int n = atoi_base(0, token);
+    int n = atoi_token(token);
     cr_expect(eq(int, n, 42));
 
     token_destroy(token, 1);
 }
 
-Test(Other, AtoiBaseHex)
+Test(Other, AtoiTokenHex)
 {
     struct token *token = token_create(NUMBER_HEX, "0xBEEF0", 7);
     cr_assert(ne(ptr, token, NULL));
-    int n = atoi_base(0, token);
+    int n = atoi_token(token);
     cr_expect(eq(int, n, 782064));
 
     token_destroy(token, 1);
 }
 
-Test(Other, AtoiBaseWrong, .init = cr_redirect_stderr)
+Test(Other, AtoiTokenRegister)
+{
+    struct token *token = token_create(NUMBER_HEX, "%r5", 3);
+    cr_assert(ne(ptr, token, NULL));
+    int n = atoi_token(token);
+    cr_expect(eq(int, n, 5));
+
+    token_destroy(token, 1);
+}
+
+Test(Other, AtoiTokenMemory)
+{
+    struct token *token = token_create(NUMBER_HEX, "%m2", 3);
+    cr_assert(ne(ptr, token, NULL));
+    int n = atoi_token(token);
+    cr_expect(eq(int, n, 2));
+
+    token_destroy(token, 1);
+}
+
+Test(Other, AtoiTokenPort)
+{
+    struct token *token = token_create(NUMBER_HEX, "%p0", 3);
+    cr_assert(ne(ptr, token, NULL));
+    int n = atoi_token(token);
+    cr_expect(eq(int, n, 0));
+
+    token_destroy(token, 1);
+}
+
+Test(Other, AtoiTokenWrong)
 {
     struct token *token = token_create(EOL, "", 0);
     cr_assert(ne(ptr, token, NULL));
-    int n = atoi_base(0, token);
+    int n = atoi_token(token);
     cr_expect(eq(int, n, -1));
 
     token_destroy(token, 1);

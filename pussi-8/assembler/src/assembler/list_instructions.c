@@ -1,10 +1,13 @@
 #include "list_instructions.h"
 
+#include <stdio.h>
+
 #include "aliases/aliases_alu.h"
 #include "aliases/aliases_jmp.h"
 #include "aliases/aliases_mem.h"
 #include "err.h"
 #include "logger.h"
+#include "numstr.h"
 #include "opcodes.h"
 #include "to_machine.h"
 
@@ -18,6 +21,7 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     if (opcode == UNKNOWN_OPCODE)
     {
         logerror(NO_LINE, "Unknown opcode: '%s'", instruction->opcode->data);
+        instruction_destroy(instruction);
         return INSTRUCTION_ERROR;
     }
 
@@ -124,9 +128,41 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     return res;
 }
 
-int to_machine_code(struct state *state, struct queue *queue,
-                    struct queue *content)
+void print_instruction(struct instruction *instruction, short *binary_encoded,
+                       int addr)
 {
+    if (binary_encoded == NULL)
+        printf("%08X | [didn't assemble] | %s ", addr,
+               instruction->opcode->data);
+    else
+    {
+        char opcode_b[9];
+        char args_b[9];
+        fill_buf_with_bin(*binary_encoded >> 8, opcode_b, 8);
+        fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
+        printf("%08X | %s %s | %s ", addr, opcode_b, args_b,
+               instruction->opcode->data);
+    }
+
+    int first = 1;
+    for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
+         arg = queue_iter_next(instruction->args_queue))
+    {
+        if (!first)
+            putchar(',');
+        first = 0;
+        printf("%s", arg->data);
+    }
+
+    putchar('\n');
+}
+
+int to_machine_code(struct cli_args *args, struct state *state,
+                    struct queue *queue, struct queue *content)
+{
+    if (!args->run)
+        puts("\naddr     | opcode   args     | description");
+
     while (state->instructions->length)
     {
         int res = gen_next_instruction(state, queue);
@@ -143,10 +179,17 @@ int to_machine_code(struct state *state, struct queue *queue,
             res |= to_machine_i_calc(instruction, opcode, content);
             res |= to_machine_i_misc(instruction, opcode, content);
 
-            if (res)
-                return res;
+            if (!res && !args->run)
+            {
+                short *data =
+                    content->tail == NULL ? NULL : content->tail->data;
+                print_instruction(instruction, data, content->length - 1);
+            }
 
             instruction_destroy(instruction);
+
+            if (res)
+                return res;
         }
     }
 

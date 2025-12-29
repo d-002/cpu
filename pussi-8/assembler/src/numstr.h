@@ -4,7 +4,7 @@
 #include "lexer/token.h"
 
 char *itoa(int n);
-int atoi_base(int line, struct token *token);
+int atoi_token(struct token *token);
 void fill_buf_with_bin(int n, char buf[], int bits);
 
 #endif /* ! NUMSTR_H */
