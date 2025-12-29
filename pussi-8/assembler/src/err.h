@@ -11,5 +11,6 @@
 #define PARSING_ERROR 6
 #define VARS_ERROR 7
 #define INSTRUCTION_ERROR 8
+#define OTHER_ERROR -1
 
 #endif /* ! ERR_H */

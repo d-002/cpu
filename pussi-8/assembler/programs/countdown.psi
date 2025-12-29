@@ -7,7 +7,7 @@
     movei %r0,%r1
 
     jne loop
-    hlt
+    halt
 
 start = 10
 decrement_by = 1

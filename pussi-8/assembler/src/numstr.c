@@ -58,3 +58,11 @@ int atoi_base(int line, struct token *token)
         return -1;
     }
 }
+
+void fill_buf_with_bin(int n, char buf[], int bits)
+{
+    for (int i = 0; i < bits; i++)
+        buf[i] = n & (1 << (bits - i - 1)) ? '1' : '0';
+
+    buf[bits] = '\0';
+}
