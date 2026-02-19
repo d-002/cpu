@@ -1,12 +1,15 @@
 #ifndef CLI_H
 #define CLI_H
 
+#include <stdbool.h>
+
 #include "queue/queue.h"
 
 struct cli_args
 {
-    int run;
-    int verbose;
+    bool run;
+    bool verbose;
+    bool help;
     struct queue *files_queue;
 };
 

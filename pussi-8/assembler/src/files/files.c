@@ -13,7 +13,7 @@ int process_files(struct cli_args *args)
     if ((args->run == 0 && args->verbose == 0)
         || args->files_queue->length == 0)
     {
-        verbose(args, -1, "No action to take.");
+        verbose(args, -1, "Nothing to do.");
         return SUCCESS;
     }
 
@@ -34,7 +34,7 @@ int process_files(struct cli_args *args)
         free(path);
         state_destroy(state);
 
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 

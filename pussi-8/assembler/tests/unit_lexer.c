@@ -14,7 +14,7 @@ Test(Lexer, Empty, .init = cr_redirect_stderr)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, EOL));
     cr_expect(eq(ptr, token->data, NULL));
     cr_expect(eq(int, token->length, 0));
@@ -26,7 +26,7 @@ Test(Lexer, Space)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, SPACE));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
@@ -40,7 +40,7 @@ Test(Lexer, Opcode)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 1, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, true, &token), SUCCESS));
     cr_expect(eq(int, token->type, OPCODE));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "abcde"), 0));
@@ -54,7 +54,7 @@ Test(Lexer, Identifier)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, IDENTIFIER));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "abcde0_"), 0));
@@ -68,7 +68,7 @@ Test(Lexer, Number)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_BIN));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "0b101"), 0));
@@ -76,7 +76,7 @@ Test(Lexer, Number)
 
     line.stream = "0x12abg";
     line.length = strlen(line.stream);
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_HEX));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "0x12AB"), 0));
@@ -84,7 +84,7 @@ Test(Lexer, Number)
 
     line.stream = "123aa";
     line.length = strlen(line.stream);
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, NUMBER_DEC));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "123"), 0));
@@ -97,7 +97,7 @@ Test(Lexer, Data)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, REGISTER));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
@@ -105,7 +105,7 @@ Test(Lexer, Data)
 
     line.stream = "%m1234a";
     line.length = strlen(line.stream);
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, MEMORY));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "%m1234"), 0));
@@ -113,7 +113,7 @@ Test(Lexer, Data)
 
     line.stream = "%p00_ ";
     line.length = strlen(line.stream);
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, PORT));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "%p00"), 0));
@@ -126,7 +126,7 @@ Test(Lexer, Comment)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, COMMENT));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(line.stream, token->data), 0));
@@ -140,7 +140,7 @@ Test(Lexer, Simple)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, DOT));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "."), 0));
@@ -148,7 +148,7 @@ Test(Lexer, Simple)
 
     line.stream++;
     line.length--;
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, COMMA));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, ","), 0));
@@ -156,7 +156,7 @@ Test(Lexer, Simple)
 
     line.stream++;
     line.length--;
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, COLON));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, ":"), 0));
@@ -164,7 +164,7 @@ Test(Lexer, Simple)
 
     line.stream++;
     line.length--;
-    cr_assert(eq(int, next_token(&line, -1, 0, &token), SUCCESS));
+    cr_assert(eq(int, next_token(&line, -1, false, &token), SUCCESS));
     cr_expect(eq(int, token->type, EQUAL_SIGN));
     cr_assert(ne(ptr, token->data, NULL));
     cr_expect(eq(int, strcmp(token->data, "="), 0));
@@ -177,7 +177,7 @@ Test(Lexer, Unknown, .init = cr_redirect_stderr)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), LEXING_ERROR));
+    cr_expect(eq(int, next_token(&line, -1, false, &token), LEXING_ERROR));
 }
 
 Test(Lexer, Errors, .init = cr_redirect_stderr)
@@ -186,17 +186,17 @@ Test(Lexer, Errors, .init = cr_redirect_stderr)
     line.length = strlen(line.stream);
     struct token *token;
 
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), LEXING_ERROR));
+    cr_expect(eq(int, next_token(&line, -1, false, &token), LEXING_ERROR));
 
     line.stream = "%";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), LEXING_ERROR));
+    cr_expect(eq(int, next_token(&line, -1, false, &token), LEXING_ERROR));
 
     line.stream = "%r";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), LEXING_ERROR));
+    cr_expect(eq(int, next_token(&line, -1, false, &token), LEXING_ERROR));
 
     line.stream = "%s0";
     line.length = strlen(line.stream);
-    cr_expect(eq(int, next_token(&line, -1, 0, &token), LEXING_ERROR));
+    cr_expect(eq(int, next_token(&line, -1, false, &token), LEXING_ERROR));
 }

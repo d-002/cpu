@@ -53,7 +53,7 @@ int resolve_labels(struct state *state)
                 .value = encoded_line,
             };
             int res = hash_map_update(state->labels, pair);
-            if (res)
+            if (res != SUCCESS)
                 return res;
 
             if (next_label(state, &label_name, &label_line, 0))
@@ -99,7 +99,7 @@ int apply_labels(struct state *state)
 int expand_labels(struct state *state)
 {
     int res = resolve_labels(state);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     return apply_labels(state);

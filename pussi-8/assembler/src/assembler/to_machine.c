@@ -75,7 +75,7 @@ int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
     case COND:
     case JUMPI:
         res = expect_n_args(instruction, 1, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case JUMP:
@@ -114,7 +114,7 @@ int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
     case LDI:
         types[0] = NUMBER_PSEUDOTYPE;
         res = expect_n_args(instruction, 1, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case MOVEI:
@@ -123,7 +123,7 @@ int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
     case CTR:
     case TIMER:
         res = expect_n_args(instruction, 2, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     default:
@@ -166,7 +166,7 @@ int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
     case ROR:
     case ROL:
         res = expect_n_args(instruction, 1, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case MUL:
@@ -181,7 +181,7 @@ int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
     case AND:
     case NAND:
         res = expect_n_args(instruction, 2, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     default:
@@ -205,14 +205,14 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
         types[0] = PORT;
         types[1] = REGISTER;
         res = expect_n_args(instruction, 2, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case OUT:
         types[0] = REGISTER;
         types[1] = PORT;
         res = expect_n_args(instruction, 2, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case PUSH:
@@ -220,7 +220,7 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
     case HALT:
     case NOP:
         res = expect_n_args(instruction, 0, args, types);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     default:

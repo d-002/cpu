@@ -36,21 +36,22 @@ int is_argument_type(enum token_type type)
 }
 
 int get_current_token(struct state *state, struct string *string,
-                      int expecting_opcode)
+                      bool expecting_opcode)
 {
     if (state->current_token == NULL)
     {
         int res = next_token(string, state->line, expecting_opcode,
                              &(state->current_token));
 
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 
     return SUCCESS;
 }
 
-int skip_token(struct state *state, struct string *string, int expecting_opcode)
+int skip_token(struct state *state, struct string *string,
+               bool expecting_opcode)
 {
     size_t len = state->current_token->length;
     string->length -= len;
@@ -62,7 +63,7 @@ int skip_token(struct state *state, struct string *string, int expecting_opcode)
 }
 
 int eat_current_token(struct state *state, struct string *string,
-                      int expecting_opcode, int empty_data)
+                      bool expecting_opcode, int empty_data)
 {
     struct token *current = state->current_token;
     int res = skip_token(state, string, expecting_opcode);
@@ -72,12 +73,12 @@ int eat_current_token(struct state *state, struct string *string,
 }
 
 int is_surrounded_type(struct state *state, struct string *string,
-                       enum token_type central, int expecting_opcode)
+                       enum token_type central, bool expecting_opcode)
 {
     for (int step = 0; step < 3;)
     {
         int res = get_current_token(state, string, 0);
-        if (res)
+        if (res != SUCCESS)
             return -res;
 
         if (step != 1 && state->current_token->type == SPACE)

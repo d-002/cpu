@@ -40,7 +40,7 @@ int state_label(struct state *state, struct string *string)
         .value = value,
     };
     int res = hash_map_insert(state->labels, pair);
-    if (res)
+    if (res != SUCCESS)
     {
         int err;
         if (res == HASH_MAP_DUPE_ERROR)
@@ -59,13 +59,13 @@ int state_label(struct state *state, struct string *string)
     }
 
     res = eat_current_token(state, string, 0, 1);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     if (state->current_token->type == COLON)
     {
         res = eat_current_token(state, string, 0, 1);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 
@@ -116,19 +116,19 @@ int state_instruction(struct state *state, struct string *string)
     }
 
     int res = skip_token(state, string, 0);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     // space after opcode if there are any arguments
     res = get_current_token(state, string, 0);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     if (state->current_token->type != SPACE)
         return SUCCESS;
 
     res = eat_current_token(state, string, 0, 1);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     // arguments
@@ -143,10 +143,10 @@ int state_potential_instruction(struct state *state, struct string *string)
     if (state->current_token->type == DOT)
     {
         int res = eat_current_token(state, string, 0, 1);
-        if (res)
+        if (res != SUCCESS)
             return res;
         res = state_label(state, string);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 
@@ -154,7 +154,7 @@ int state_potential_instruction(struct state *state, struct string *string)
     if (state->current_token->type == SPACE)
     {
         int res = eat_current_token(state, string, 1, 1);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
     else
@@ -167,7 +167,7 @@ int state_potential_instruction(struct state *state, struct string *string)
     if (state->current_token->type == OPCODE)
     {
         int res = state_instruction(state, string);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 

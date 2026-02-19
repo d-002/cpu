@@ -1,6 +1,7 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 enum token_type
@@ -34,6 +35,6 @@ struct token
 
 struct token *token_create(enum token_type type, char *stream, size_t len);
 char *type2name(enum token_type type);
-void token_destroy(struct token *token, int empty_data);
+void token_destroy(struct token *token, bool empty_data);
 
 #endif /* ! TOKEN_H */

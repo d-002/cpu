@@ -15,6 +15,7 @@
 #define FLAG_VERBOSE 'v'
 #define FLAG_PRINT 'p'
 #define FLAG_FILE 'f'
+#define FLAG_HELP 'h'
 
 int parse_arg(char c, struct cli_args *out)
 {
@@ -23,11 +24,15 @@ int parse_arg(char c, struct cli_args *out)
     switch (c)
     {
     case FLAG_VERBOSE:
-        out->verbose = 1;
+        out->verbose = true;
         break;
     case FLAG_PRINT:
-        out->verbose = 1;
-        out->run = 0;
+        out->verbose = true;
+        out->run = false;
+        break;
+    case FLAG_HELP:
+        out->run = false;
+        out->help = true;
         break;
     case FLAG_FILE:
         alloc_ed_optarg = malloc((strlen(optarg) + 1) * sizeof(char));
@@ -62,11 +67,13 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
         { "verbose", 0, NULL, FLAG_VERBOSE },
         { "print", 0, NULL, FLAG_PRINT },
         { "file", required_argument, NULL, FLAG_FILE },
+        { "help", 0, NULL, FLAG_HELP },
         { NULL, 0, NULL, 0 },
     };
 
-    out->run = 1;
-    out->verbose = 0;
+    out->run = true;
+    out->verbose = false;
+    out->help = false;
 
     char c;
     while (1)
@@ -76,7 +83,7 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
             break;
 
         int res = parse_arg(c, out);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 

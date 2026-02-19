@@ -100,7 +100,7 @@ int apply_vars(struct state *state)
 int expand_vars(struct state *state)
 {
     int res = resolve_vars(state);
-    if (res)
+    if (res != SUCCESS)
         return res;
     return apply_vars(state);
 }

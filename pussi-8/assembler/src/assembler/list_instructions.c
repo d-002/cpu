@@ -128,7 +128,7 @@ int gen_next_instruction(struct state *state, struct queue *queue)
         res = queue_enqueue(queue, instruction);
     }
 
-    if (res)
+    if (res != SUCCESS)
         instruction_destroy(instruction);
 
     return res;
@@ -172,7 +172,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
     while (state->instructions->length)
     {
         int res = gen_next_instruction(state, queue);
-        if (res)
+        if (res != SUCCESS)
             return res;
 
         while (queue->length)
@@ -194,7 +194,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
 
             instruction_destroy(instruction);
 
-            if (res)
+            if (res != SUCCESS)
                 return res;
         }
     }

@@ -6,7 +6,7 @@
 #include "token.h"
 #include "utils/mystring.h"
 
-int next_token(struct string *string, int line, int expecting_opcode,
+int next_token(struct string *string, int line, bool expecting_opcode,
                struct token **out);
 
 #endif /* ! LEXER_H */

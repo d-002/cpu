@@ -47,7 +47,7 @@ struct token *token_create(enum token_type type, char *stream, size_t len)
     return token;
 }
 
-void token_destroy(struct token *token, int empty_data)
+void token_destroy(struct token *token, bool empty_data)
 {
     if (token == NULL)
         return;

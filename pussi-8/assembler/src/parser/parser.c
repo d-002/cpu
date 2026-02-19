@@ -18,20 +18,20 @@
 int state_start(struct state *state, struct string *string)
 {
     int res = get_current_token(state, string, 0);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     switch (state->current_token->type)
     {
     case IDENTIFIER:
         res = state_assignation(state, string);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case SPACE:
     case DOT:
         res = state_potential_instruction(state, string);
-        if (res)
+        if (res != SUCCESS)
             return res;
         break;
     case COMMENT:
@@ -44,14 +44,14 @@ int state_start(struct state *state, struct string *string)
     if (state->current_token->type == SPACE)
     {
         res = eat_current_token(state, string, 0, 1);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 
     if (state->current_token->type == COMMENT)
     {
         res = eat_current_token(state, string, 0, 1);
-        if (res)
+        if (res != SUCCESS)
             return res;
     }
 
@@ -86,7 +86,7 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
             .length = len,
         };
         int res = state_start(state, &string);
-        if (res)
+        if (res != SUCCESS)
             return res;
 
         token_destroy(state->current_token, 1);

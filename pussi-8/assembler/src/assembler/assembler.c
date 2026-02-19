@@ -14,12 +14,12 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
 {
     verbose(args, NO_LINE, "Expanding variables");
     int res = expand_vars(state);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     verbose(args, NO_LINE, "Expanding labels");
     res = expand_labels(state);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     verbose(args, NO_LINE, "Assembling");

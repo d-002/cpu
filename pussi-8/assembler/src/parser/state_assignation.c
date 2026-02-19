@@ -10,7 +10,7 @@ int state_assignation(struct state *state, struct string *string)
 {
     char *key = state->current_token->data;
     int res = eat_current_token(state, string, 0, 0);
-    if (res)
+    if (res != SUCCESS)
     {
         free(key);
         return res;
@@ -50,7 +50,7 @@ int state_assignation(struct state *state, struct string *string)
         .value = value,
     };
     res = hash_map_insert(state->vars, pair);
-    if (res)
+    if (res != SUCCESS)
     {
         int err;
         if (res == HASH_MAP_DUPE_ERROR)
@@ -68,7 +68,7 @@ int state_assignation(struct state *state, struct string *string)
     }
 
     res = skip_token(state, string, 0);
-    if (res)
+    if (res != SUCCESS)
         return res;
 
     return SUCCESS;
