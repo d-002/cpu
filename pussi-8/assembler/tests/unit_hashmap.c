@@ -2,8 +2,8 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "err.h"
-#include "hash_map.h"
+#include "hash_map/hash_map.h"
+#include "utils/errors.h"
 
 TestSuite(HashMap);
 

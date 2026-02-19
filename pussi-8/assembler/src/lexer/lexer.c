@@ -2,8 +2,7 @@
 
 #include <ctype.h>
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
 #include "t_comment.h"
 #include "t_data.h"
 #include "t_eol.h"
@@ -12,6 +11,7 @@
 #include "t_opcode.h"
 #include "t_simple.h"
 #include "t_space.h"
+#include "utils/errors.h"
 
 int next_token(struct string *string, int line, int expecting_opcode,
                struct token **out)

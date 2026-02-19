@@ -1,7 +1,7 @@
 #ifndef FILES_H
 #define FILES_H
 
-#include "cli.h"
+#include "cli/cli.h"
 
 int process_files(struct cli_args *args);
 

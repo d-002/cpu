@@ -7,7 +7,7 @@
     if (COMP(value))                                                           \
         return value;
 #define TEST_ALU_3(value)                                                      \
-    if (COMP(value) && arg3)                                                   \
+    if (COMP(value) && arg3 != EOL)                                            \
         return value##_3;
 
 enum opcodes get_opcode(struct instruction *instruction)
@@ -39,7 +39,9 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_ALU_3(DIV);
     TEST_ALU_3(MOD);
 
+    TEST_SIMPLE(JZ);
     TEST_SIMPLE(JEQ);
+    TEST_SIMPLE(JNZ);
     TEST_SIMPLE(JNE);
     TEST_SIMPLE(JCS);
     TEST_SIMPLE(JCC);
@@ -51,7 +53,7 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_SIMPLE(JOC);
     TEST_SIMPLE(JUS);
     TEST_SIMPLE(JUC);
-    TEST_SIMPLE(JMP);
+    TEST_SIMPLE(J);
 
     TEST_SIMPLE(NOP);
     TEST_SIMPLE(COND);

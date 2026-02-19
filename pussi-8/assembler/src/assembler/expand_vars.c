@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int resolve_vars(struct state *state)
 {

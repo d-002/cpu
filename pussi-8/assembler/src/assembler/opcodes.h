@@ -60,13 +60,15 @@ enum opcodes
     DIV_3,
     MOD_3,
 
-    // jump optimizations
+    // jump optimizations, used internally
     JUMP_2I,
     JUMP_2R,
     JUMP_2,
 
     // jump aliases
+    JZ,
     JEQ,
+    JNZ,
     JNE,
     JCS,
     JCC,
@@ -78,7 +80,7 @@ enum opcodes
     JOC,
     JUS,
     JUC,
-    JAL,
+    J,
 
     // other
     UNKNOWN_OPCODE,

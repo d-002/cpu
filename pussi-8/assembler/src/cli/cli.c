@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "err.h"
-#include "logger.h"
-#include "queue.h"
+#include "logger/logger.h"
+#include "queue/queue.h"
+#include "utils/errors.h"
 
 #define FLAG_VERBOSE 'v'
 #define FLAG_PRINT 'p'

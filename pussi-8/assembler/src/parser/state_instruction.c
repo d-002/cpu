@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "err.h"
-#include "logger.h"
-#include "numstr.h"
+#include "logger/logger.h"
 #include "parser_utils.h"
+#include "utils/errors.h"
+#include "utils/numstr.h"
 
 int state_label(struct state *state, struct string *string)
 {

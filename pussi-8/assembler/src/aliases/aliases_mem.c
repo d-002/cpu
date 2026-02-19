@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "aliases_utils.h"
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int handle_ldi_2(struct instruction *instruction, struct queue *out)
 {

@@ -1,8 +1,8 @@
 #ifndef PARSER_UTILS_H
 #define PARSER_UTILS_H
 
-#include "mystring.h"
 #include "state.h"
+#include "utils/mystring.h"
 
 void expected(int line, enum token_type expected);
 void unexpected(int line, int expected, enum token_type got);

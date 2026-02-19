@@ -35,83 +35,95 @@ case the argument is not a pair of registers but rather one register or an
 immediate value:
 - JUMPI if the address is less than 256
 - JUMPR if the relative address is between 0 and 256
-- JUMP with %r0 and %r1 filled with the top and bottom bits repsectively
+- JUMP with %r0 and %r1 filled with the top and bottom bits respectively
 
 Additionally, there are some qol jump instructions to hide cond instructions:
 
-- `jeq target`
+- `jz target` (jump if zero)
     ```
     cond 128
     jump target
     ```
 
-- `jne target`
+- `jeq target` (jump if equal)
+    ```
+    cond 128
+    jump target
+    ```
+
+- `jnz target` (jump if nonzero)
     ```
     cond 129
     jump target
     ```
 
-- `jca target`
+- `jne target` (jump if not equal)
+    ```
+    cond 129
+    jump target
+    ```
+
+- `jcs target` (jump on unsigned carry set)
     ```
     cond 64
     jump target
     ```
 
-- `jnc target`
+- `jcc target` (jump on unsigned carry clear)
     ```
     cond 65
     jump target
     ```
 
-- `jpl target`
+- `jpl target` (jump if "plus" (positive))
     ```
     cond 33
     jump target
     ```
 
-- `jmi target`
+- `jmi target` (jump if "minus" (negative))
     ```
     cond 32
     jump target
     ```
 
-- `jvs target`
+- `jvs target` (jump on signed overflow set)
     ```
     cond 17
     jump target
     ```
 
-- `jvc target`
+- `jvc target` (jump on signed overflow unset)
     ```
     cond 16
     jump target
     ```
 
-- `jos target`
+- `jos target` (jump on stack overflow set)
     ```
     cond 9
     jump target
     ```
 
-- `joc target`
+- `joc target` (jump on stack overflow clear)
     ```
     cond 8
     jump target
     ```
 
-- `jus target`
+- `jus target` (jump on stack underflow set)
     ```
     cond 5
     jump target
     ```
 
-- `juc target`
+- `juc target` (jump on stack underflow set)
     ```
     cond 4
     jump target
     ```
 
-- `jal target`
+- `j target` (unconditional jump)
     ```
     cond 2
     jump target

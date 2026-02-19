@@ -1,7 +1,7 @@
 #include "t_comment.h"
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int token_comment(struct string *string, int line, struct token **out)
 {

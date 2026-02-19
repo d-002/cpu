@@ -2,13 +2,13 @@
 
 #include <stdio.h>
 
-#include "err.h"
 #include "expand_labels.h"
 #include "expand_vars.h"
 #include "export/binary.h"
 #include "export/schematic.h"
 #include "list_instructions.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int assemble_file(struct cli_args *args, char *path, struct state *state)
 {

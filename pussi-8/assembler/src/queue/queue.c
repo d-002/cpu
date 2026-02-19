@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "err.h"
+#include "utils/errors.h"
 
 struct queue *queue_create(void)
 {

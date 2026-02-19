@@ -1,8 +1,8 @@
 #ifndef STATE_ASSIGNATION_H
 #define STATE_ASSIGNATION_H
 
-#include "mystring.h"
 #include "state.h"
+#include "utils/mystring.h"
 
 int state_assignation(struct state *state, struct string *string);
 

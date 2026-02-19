@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#include "cli.h"
+#include "cli/cli.h"
 #include "state.h"
 
 /**

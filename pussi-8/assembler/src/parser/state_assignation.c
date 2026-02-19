@@ -2,9 +2,9 @@
 
 #include <stdlib.h>
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
 #include "parser_utils.h"
+#include "utils/errors.h"
 
 int state_assignation(struct state *state, struct string *string)
 {

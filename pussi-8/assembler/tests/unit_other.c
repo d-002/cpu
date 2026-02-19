@@ -2,7 +2,7 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "numstr.h"
+#include "utils/numstr.h"
 
 TestSuite(Other);
 

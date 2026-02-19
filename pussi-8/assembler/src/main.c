@@ -1,6 +1,6 @@
-#include "checks.h"
-#include "cli.h"
-#include "files.h"
+#include "cli/cli.h"
+#include "files/files.h"
+#include "utils/checks.h"
 
 void cleanup(struct cli_args *args)
 {

@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
 #include "parser_utils.h"
 #include "state_assignation.h"
 #include "state_instruction.h"
+#include "utils/errors.h"
 
 int state_start(struct state *state, struct string *string)
 {

@@ -2,9 +2,9 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "err.h"
 #include "parser/parser.h"
 #include "unit_parser_utils.h"
+#include "utils/errors.h"
 
 TestSuite(Parser);
 

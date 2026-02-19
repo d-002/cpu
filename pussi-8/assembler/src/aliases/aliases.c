@@ -21,7 +21,9 @@ int length_from_opcode(enum opcodes opcode)
     case MUL_3:
     case DIV_3:
     case MOD_3:
+    case JZ:
     case JEQ:
+    case JNZ:
     case JNE:
     case JCS:
     case JCC:
@@ -33,7 +35,7 @@ int length_from_opcode(enum opcodes opcode)
     case JOC:
     case JUS:
     case JUC:
-    case JMP:
+    case J:
         return 2;
     default:
         return 1;

@@ -3,8 +3,8 @@
 
 #include <stddef.h>
 
-#include "mystring.h"
 #include "token.h"
+#include "utils/mystring.h"
 
 int next_token(struct string *string, int line, int expecting_opcode,
                struct token **out);

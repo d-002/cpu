@@ -2,9 +2,9 @@
 
 #include <stdlib.h>
 
-#include "err.h"
 #include "export_utils.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int to_schematic(struct cli_args *args, char *path, struct queue *content)
 {

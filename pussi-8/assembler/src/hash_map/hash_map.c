@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "err.h"
+#include "utils/errors.h"
 
 size_t hash(const char *key)
 {

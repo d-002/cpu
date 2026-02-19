@@ -5,11 +5,11 @@
 #include "aliases/aliases_alu.h"
 #include "aliases/aliases_jmp.h"
 #include "aliases/aliases_mem.h"
-#include "err.h"
-#include "logger.h"
-#include "numstr.h"
+#include "logger/logger.h"
 #include "opcodes.h"
 #include "to_machine.h"
+#include "utils/errors.h"
+#include "utils/numstr.h"
 
 int gen_next_instruction(struct state *state, struct queue *queue)
 {
@@ -79,8 +79,14 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     case MOD_3:
         res = handle_custom_calc(instruction, queue, "MOD");
         break;
+    case JZ:
+        res = handle_custom_jump(instruction, queue, "128");
+        break;
     case JEQ:
         res = handle_custom_jump(instruction, queue, "128");
+        break;
+    case JNZ:
+        res = handle_custom_jump(instruction, queue, "129");
         break;
     case JNE:
         res = handle_custom_jump(instruction, queue, "129");
@@ -115,7 +121,7 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     case JUC:
         res = handle_custom_jump(instruction, queue, "4");
         break;
-    case JMP:
+    case J:
         res = handle_custom_jump(instruction, queue, "2");
         break;
     default:

@@ -1,5 +1,5 @@
-#ifndef ERR_H
-#define ERR_H
+#ifndef ERRORS_H
+#define ERRORS_H
 
 #define SUCCESS 0
 #define ALLOC_ERROR -1
@@ -13,4 +13,4 @@
 #define VARS_ERROR 7
 #define INSTRUCTION_ERROR 8
 
-#endif /* ! ERR_H */
+#endif /* ! ERRORS_H */

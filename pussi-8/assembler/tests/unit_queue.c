@@ -2,8 +2,8 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "err.h"
-#include "queue.h"
+#include "queue/queue.h"
+#include "utils/errors.h"
 
 TestSuite(Queue);
 

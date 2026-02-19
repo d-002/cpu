@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "logger.h"
+#include "logger/logger.h"
 
 char *change_extension(char *path, char *ext)
 {

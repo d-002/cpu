@@ -1,7 +1,7 @@
 #include "t_data.h"
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int token_data(struct string *string, int line, struct token **out)
 {

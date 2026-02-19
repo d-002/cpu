@@ -1,7 +1,7 @@
 #include "checks.h"
 
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 int checks(void)
 {

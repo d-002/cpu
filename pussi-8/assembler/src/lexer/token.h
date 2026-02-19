@@ -5,7 +5,7 @@
 
 enum token_type
 {
-    EOL,
+    EOL = 0,
     SPACE,
     IDENTIFIER,
     NUMBER_BIN,

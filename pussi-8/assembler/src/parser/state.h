@@ -1,9 +1,8 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "hash_map.h"
+#include "hash_map/hash_map.h"
 #include "lexer/token.h"
-#include "queue.h"
 
 struct instruction
 {

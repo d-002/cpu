@@ -2,7 +2,7 @@
 #define ALIASES_ALU_H
 
 #include "parser/state.h"
-#include "queue.h"
+#include "queue/queue.h"
 
 int handle_custom_calc(struct instruction *instruction, struct queue *out,
                        char *opcode);

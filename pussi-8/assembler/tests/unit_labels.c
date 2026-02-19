@@ -3,9 +3,9 @@
 #include <criterion/redirect.h>
 
 #include "assembler/expand_labels.h"
-#include "err.h"
 #include "parser/parser.h"
 #include "unit_parser_utils.h"
+#include "utils/errors.h"
 
 TestSuite(Labels);
 

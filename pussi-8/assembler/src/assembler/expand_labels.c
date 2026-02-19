@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "err.h"
-#include "logger.h"
-#include "numstr.h"
+#include "aliases/aliases.h"
+#include "logger/logger.h"
 #include "opcodes.h"
+#include "utils/errors.h"
+#include "utils/numstr.h"
 
 int next_label(struct state *state, char **label_name, int *label_line,
                int first)

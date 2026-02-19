@@ -1,7 +1,7 @@
 #ifndef HASH_MAP_H
 #define HASH_MAP_H
 
-#include "queue.h"
+#include "queue/queue.h"
 
 #define HASH_MAP_SIZE 32
 

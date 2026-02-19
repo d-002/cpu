@@ -2,8 +2,8 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "cli.h"
-#include "err.h"
+#include "cli/cli.h"
+#include "utils/errors.h"
 
 TestSuite(Cli);
 

@@ -2,9 +2,9 @@
 
 #include <stdlib.h>
 
-#include "err.h"
-#include "logger.h"
-#include "numstr.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
+#include "utils/numstr.h"
 
 int expect_n_args(struct instruction *instruction, size_t count, int values[],
                   enum token_type types[])

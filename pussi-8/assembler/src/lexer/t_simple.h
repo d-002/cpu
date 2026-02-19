@@ -1,8 +1,8 @@
 #ifndef T_SIMPLE_H
 #define T_SIMPLE_H
 
-#include "mystring.h"
 #include "token.h"
+#include "utils/mystring.h"
 
 int token_simple(struct string *string, int line, struct token **out);
 

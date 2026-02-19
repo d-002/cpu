@@ -2,9 +2,9 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#include "err.h"
 #include "lexer/lexer.h"
-#include "mystring.h"
+#include "utils/errors.h"
+#include "utils/mystring.h"
 
 TestSuite(Lexer);
 

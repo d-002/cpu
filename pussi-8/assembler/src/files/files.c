@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 #include "assembler/assembler.h"
-#include "err.h"
-#include "logger.h"
+#include "logger/logger.h"
 #include "parser/parser.h"
-#include "queue.h"
+#include "queue/queue.h"
+#include "utils/errors.h"
 
 int process_files(struct cli_args *args)
 {

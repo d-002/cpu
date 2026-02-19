@@ -1,7 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "cli.h"
+#include "cli/cli.h"
 
 #define NO_LINE -1
 

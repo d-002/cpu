@@ -1,8 +1,8 @@
 #include "parser_utils.h"
 
-#include "err.h"
 #include "lexer/lexer.h"
-#include "logger.h"
+#include "logger/logger.h"
+#include "utils/errors.h"
 
 void expected(int line, enum token_type expected)
 {
