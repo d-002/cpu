@@ -4,8 +4,7 @@ LDLIBS=-lm
 
 TARGET=assembli
 OBJ_MAIN=src/main.o
-OBJ=src/main.o \
-	src/aliases/aliases.o src/aliases/aliases_alu.o src/aliases/aliases_jmp.o src/aliases/aliases_mem.o src/aliases/aliases_utils.o \
+OBJ=src/aliases/aliases.o src/aliases/aliases_alu.o src/aliases/aliases_jmp.o src/aliases/aliases_mem.o src/aliases/aliases_utils.o \
 	src/assembler/assembler.o src/assembler/expand_vars.o src/assembler/list_instructions.o src/assembler/opcodes.o src/assembler/expand_labels.o src/assembler/to_machine.o \
 	src/cli/cli.o \
 	src/export/binary.o src/export/schematic.o src/export/export_utils.o \
