@@ -17,9 +17,7 @@ int next_token(struct string *string, int line, int expecting_opcode,
                struct token **out)
 {
     if (!string->length)
-    {
         return token_eol(line, out);
-    }
 
     char c = string->stream[0];
 

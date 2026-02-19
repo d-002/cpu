@@ -14,7 +14,8 @@ Syntax: `assembli [--verbose] [--print] [--help] { --file file }`
 - help message
 - assemble to file
 - ctr / rtc aliases
-- handle jump that actually work differently (expand aliases to whichever works
+- handle jumps that actually work differently (expand aliases to whichever works
   best)
 - assemble to schematic
 - display multiple errors if possible
+- handle negative numbers

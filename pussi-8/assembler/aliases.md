@@ -8,15 +8,15 @@
     movei %r0, destination
     ```
 
-- `rtc r,m`
+- `rtc r,v`
     ```
-    movei m,%r0
+    movei v,%r0
     rtc r,%r0
     ```
 
-- `ctr r,m`
+- `ctr r,v`
     ```
-    movei m,%r0
+    movei v,%r0
     ctr %r0,r
     ```
 
@@ -29,6 +29,15 @@
     ```
 
 ## Jumps
+
+JUMPI and JUMPR stay unchanged, but JUMP can be substituted by something else in
+case the argument is not a pair of registers but rather one register or an
+immediate value:
+- JUMPI if the address is less than 256
+- JUMPR if the relative address is between 0 and 256
+- JUMP with %r0 and %r1 filled with the top and bottom bits repsectively
+
+Additionally, there are some qol jump instructions to hide cond instructions:
 
 - `jeq target`
     ```
@@ -102,7 +111,7 @@
     jump target
     ```
 
-- `jmp target`
+- `jal target`
     ```
     cond 2
     jump target

@@ -41,6 +41,8 @@ enum opcodes
 
     // qol aliases
     LDI_2,
+    RTC_2,
+    CTR_2,
     OR_3,
     NOR_3,
     ADD_3,
@@ -58,6 +60,11 @@ enum opcodes
     DIV_3,
     MOD_3,
 
+    // jump optimizations
+    JUMP_2I,
+    JUMP_2R,
+    JUMP_2,
+
     // jump aliases
     JEQ,
     JNE,
@@ -71,7 +78,7 @@ enum opcodes
     JOC,
     JUS,
     JUC,
-    JMP,
+    JAL,
 
     // other
     UNKNOWN_OPCODE,
