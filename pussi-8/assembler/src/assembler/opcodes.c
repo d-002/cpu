@@ -57,9 +57,9 @@ enum opcodes get_opcode(struct instruction *instruction)
 
     TEST_SIMPLE(NOP);
     TEST_SIMPLE(COND);
+    TEST_SIMPLE(JUMPI);
     TEST_SIMPLE(JUMP);
-    TEST_SIMPLE(JUMP);
-    TEST_SIMPLE(JUMP);
+    TEST_SIMPLE(JUMPR);
     TEST_SIMPLE(LDI);
     TEST_SIMPLE(MOVEI);
     TEST_SIMPLE(MOVEA);

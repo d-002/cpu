@@ -3,8 +3,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-struct instruction *instruction_helper(int line, char *opcode, int args_num,
-                                       ...)
+struct instruction *instruction_helper(int line, int real_line, char *opcode,
+                                       int args_num, ...)
 {
     struct token *out_opcode = token_create(OPCODE, opcode, strlen(opcode));
 
@@ -14,7 +14,8 @@ struct instruction *instruction_helper(int line, char *opcode, int args_num,
         return NULL;
     }
 
-    struct instruction *instruction = instruction_create(line, out_opcode);
+    struct instruction *instruction =
+        instruction_create(line, real_line, out_opcode);
     if (instruction == NULL)
     {
         token_destroy(out_opcode, 1);

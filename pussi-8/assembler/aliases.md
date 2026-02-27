@@ -31,13 +31,16 @@
 ## Jumps
 
 JUMPI and JUMPR stay unchanged, but JUMP can be substituted by something else in
-case the argument is not a pair of registers but rather one register or an
-immediate value:
-- JUMPI if the address is less than 256
-- JUMPR if the relative address is between 0 and 256
-- JUMP with %r0 and %r1 filled with the top and bottom bits respectively
+case the argument is not a pair of registers but rather an immediate value
+(preferably through a label) or a single register:
+- If the argument is a register: %r0 is set to 0, then `JUMP [reg] %r0`
+- If the argument is a literal value:
+    - JUMPI if the target address is less than 256
+    - JUMPR if the relative jump address is between 0 and 256 (excluded)
+    - JUMP with %r0 and %r1 filled with the top and bottom bits respectively
 
-Additionally, there are some qol jump instructions to hide cond instructions:
+Additionally, there are some qol jump instructions to hide cond instructions.
+The jumps in them are also subject to be substituted as described above.
 
 - `jz target` (jump if zero)
     ```

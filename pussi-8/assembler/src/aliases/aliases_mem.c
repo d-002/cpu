@@ -18,8 +18,8 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
 
     struct token *data = queue_dequeue(instruction->args_queue);
 
-    struct instruction *i1 =
-        instruction_helper(instruction->line, "LDI", 1, data);
+    struct instruction *i1 = instruction_helper(
+        instruction->line, instruction->real_line, "LDI", 1, data);
     if (i1 == NULL)
     {
         token_destroy(data, 1);
@@ -36,8 +36,8 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     }
     struct token *destination = queue_dequeue(instruction->args_queue);
 
-    struct instruction *i2 =
-        instruction_helper(instruction->line, "MOVEI", 2, r0, destination);
+    struct instruction *i2 = instruction_helper(
+        instruction->line, instruction->real_line, "MOVEI", 2, r0, destination);
 
     if (i2 == NULL)
     {

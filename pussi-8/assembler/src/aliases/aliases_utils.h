@@ -3,7 +3,7 @@
 
 #include "parser/state.h"
 
-struct instruction *instruction_helper(int line, char *opcode, int args_num,
-                                       ...);
+struct instruction *instruction_helper(int line, int real_line, char *opcode,
+                                       int args_num, ...);
 
 #endif /* ! ALIASES_UTILS_H */

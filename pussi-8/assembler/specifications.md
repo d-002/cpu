@@ -19,3 +19,4 @@ Syntax: `assembli [--verbose] [--print] [--help] { --file file }`
 - assemble to schematic
 - display multiple errors if possible
 - handle negative numbers
+- todo in code

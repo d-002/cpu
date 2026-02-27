@@ -19,8 +19,8 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     struct token *a = queue_dequeue(instruction->args_queue);
     struct token *b = queue_dequeue(instruction->args_queue);
 
-    struct instruction *i1 =
-        instruction_helper(instruction->line, opcode, 2, a, b);
+    struct instruction *i1 = instruction_helper(
+        instruction->line, instruction->real_line, opcode, 2, a, b);
     if (i1 == NULL)
     {
         token_destroy(a, 1);
@@ -38,8 +38,8 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     }
     struct token *y = queue_dequeue(instruction->args_queue);
 
-    struct instruction *i2 =
-        instruction_helper(instruction->line, "MOVEI", 2, r0, y);
+    struct instruction *i2 = instruction_helper(
+        instruction->line, instruction->real_line, "MOVEI", 2, r0, y);
     if (i2 == NULL)
     {
         instruction_destroy(i1);

@@ -107,7 +107,7 @@ int state_arguments(struct state *state, struct string *string,
 int state_instruction(struct state *state, struct string *string)
 {
     struct instruction *instruction =
-        instruction_create(state->line, state->current_token);
+        instruction_create(state->line, NO_REAL_LINE, state->current_token);
     if (instruction == NULL || queue_enqueue(state->instructions, instruction))
     {
         free(instruction);

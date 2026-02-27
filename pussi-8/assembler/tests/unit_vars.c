@@ -121,7 +121,7 @@ Test(Vars, ApplySimple)
 
 Test(Vars, UnknownButLabel)
 {
-    init_current_string(".a: jmp a");
+    init_current_string(".a: j a");
     struct state *state = state_create();
     char *buf = NULL;
 

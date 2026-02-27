@@ -23,8 +23,8 @@ int handle_custom_jump(struct instruction *instruction, struct queue *out,
         return ALLOC_ERROR;
     }
 
-    struct instruction *i1 =
-        instruction_helper(instruction->line, "COND", 1, cond);
+    struct instruction *i1 = instruction_helper(
+        instruction->line, instruction->real_line, "COND", 1, cond);
     if (i1 == NULL)
     {
         token_destroy(cond, 1);
@@ -33,8 +33,8 @@ int handle_custom_jump(struct instruction *instruction, struct queue *out,
     }
 
     struct token *addr = queue_dequeue(instruction->args_queue);
-    struct instruction *i2 =
-        instruction_helper(instruction->line, "JUMP", 1, addr);
+    struct instruction *i2 = instruction_helper(
+        instruction->line, instruction->real_line + 1, "JUMP", 1, addr);
 
     if (i2 == NULL)
     {

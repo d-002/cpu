@@ -3,7 +3,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-struct instruction *instruction_create(int line, struct token *opcode)
+struct instruction *instruction_create(int line, int real_line,
+                                       struct token *opcode)
 {
     struct instruction *instruction = malloc(sizeof(struct instruction));
     if (instruction == NULL)
@@ -12,6 +13,7 @@ struct instruction *instruction_create(int line, struct token *opcode)
     instruction->opcode = opcode;
     instruction->args_queue = queue_create();
     instruction->line = line;
+    instruction->real_line = real_line;
 
     if (instruction->args_queue == NULL)
     {
@@ -49,13 +51,13 @@ void token_free(void *ptr)
 
 struct state *state_create(void)
 {
-    struct state *state = malloc(sizeof(struct state));
+    struct state *state = calloc(1, sizeof(struct state));
     if (state == NULL)
         return NULL;
 
-    state->labels = hash_map_create(free);
     state->instructions = queue_create();
     state->vars = hash_map_create(token_free);
+    state->labels = hash_map_create(free);
 
     state->current_token = NULL;
 

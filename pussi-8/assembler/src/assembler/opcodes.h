@@ -83,7 +83,7 @@ enum opcodes
     J,
 
     // other
-    UNKNOWN_OPCODE,
+    UNKNOWN_OPCODE = -1,
 };
 
 enum opcodes get_opcode(struct instruction *instruction);

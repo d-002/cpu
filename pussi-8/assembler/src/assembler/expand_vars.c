@@ -16,44 +16,46 @@ int resolve_vars(struct state *state)
              key = hash_map_iter_next(state->vars))
         {
             struct token *value = hash_map_get(state->vars, key);
-            if (value->type == IDENTIFIER)
+            if (value->type != IDENTIFIER)
+                continue;
+
+            struct token *other = hash_map_get(state->vars, value->data);
+
+            // value is not a variable, check if it is a label
+            if (other == NULL)
             {
-                struct token *other = hash_map_get(state->vars, value->data);
-                if (other == NULL)
-                {
-                    if (hash_map_get(state->labels, value->data))
-                        continue;
+                if (hash_map_get(state->labels, value->data))
+                    continue;
 
-                    logerror(NO_LINE, "Unknown macro name: '%s'", value->data);
-                    return VARS_ERROR;
-                }
-
-                if (strcmp(value->data, other->data) == 0)
-                {
-                    logerror(NO_LINE,
-                             "Recursive macros are not supported: '%s'",
-                             value->data);
-                    return VARS_ERROR;
-                }
-
-                struct token *other_copy =
-                    token_create(other->type, other->data, other->length);
-                if (other_copy == NULL)
-                {
-                    log_alloc_error(NO_LINE);
-                    return ALLOC_ERROR;
-                }
-
-                struct pair pair = {
-                    .key = key,
-                    .value = other_copy,
-                };
-
-                // should not throw an error
-                hash_map_update(state->vars, pair);
-
-                changes = 1;
+                logerror(NO_LINE, "Unknown macro name: '%s'", value->data);
+                return VARS_ERROR;
             }
+
+            if (strcmp(value->data, other->data) == 0)
+            {
+                logerror(NO_LINE, "Recursive macros are not supported: '%s'",
+                         value->data);
+                return VARS_ERROR;
+            }
+
+            // replace with the value of the variable
+            struct token *other_copy =
+                token_create(other->type, other->data, other->length);
+            if (other_copy == NULL)
+            {
+                log_alloc_error(NO_LINE);
+                return ALLOC_ERROR;
+            }
+
+            struct pair pair = {
+                .key = key,
+                .value = other_copy,
+            };
+
+            // should not throw an error
+            hash_map_update(state->vars, pair);
+
+            changes = 1;
         }
     } while (changes);
 
@@ -72,6 +74,8 @@ int apply_vars(struct state *state)
                 continue;
 
             struct token *value = hash_map_get(state->vars, token->data);
+
+            // var was referring to a label
             if (value == NULL)
             {
                 if (hash_map_get(state->labels, token->data))

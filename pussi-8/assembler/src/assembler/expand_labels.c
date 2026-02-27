@@ -8,19 +8,27 @@
 #include "opcodes.h"
 #include "utils/errors.h"
 #include "utils/numstr.h"
-
-int next_label(struct state *state, char **label_name, int *label_line,
-               int first)
+void next_label(struct state *state, char **label_name, int *label_line,
+                int start_line)
 {
-    *label_name = first ? hash_map_iter_start(state->labels)
-                        : hash_map_iter_next(state->labels);
-    if (*label_name == NULL)
-        return 1;
+    // since the hash map is unordered, need to manually search for the first
+    // label that is after the start line
+    *label_name = NULL;
 
-    char *label_value = hash_map_get(state->labels, *label_name);
-    *label_line = atoi(label_value);
+    for (char *name = hash_map_iter_start(state->labels); name;
+         name = hash_map_iter_next(state->labels))
+    {
+        char *label_value = hash_map_get(state->labels, name);
+        int line = atoi(label_value);
+        if (line < start_line)
+            continue;
 
-    return 0;
+        if (line < *label_line || *label_name == NULL)
+        {
+            *label_name = name;
+            *label_line = line;
+        }
+    }
 }
 
 int resolve_labels(struct state *state)
@@ -30,8 +38,7 @@ int resolve_labels(struct state *state)
 
     char *label_name;
     int label_line;
-    if (next_label(state, &label_name, &label_line, 1))
-        return SUCCESS;
+    next_label(state, &label_name, &label_line, line);
 
     for (struct instruction *instruction =
              queue_iter_start(state->instructions);
@@ -39,7 +46,7 @@ int resolve_labels(struct state *state)
     {
         enum opcodes opcode = get_opcode(instruction);
 
-        if (line == label_line)
+        if (label_name != NULL && line == label_line)
         {
             char *encoded_line = itoa(real_line);
             if (encoded_line == NULL)
@@ -56,9 +63,11 @@ int resolve_labels(struct state *state)
             if (res != SUCCESS)
                 return res;
 
-            if (next_label(state, &label_name, &label_line, 0))
-                return SUCCESS;
+            // don't stop at the last label, still need to update the real_lines
+            next_label(state, &label_name, &label_line, line + 1);
         }
+
+        instruction->real_line = real_line;
 
         int add = length_from_opcode(opcode);
         line++;

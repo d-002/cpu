@@ -71,6 +71,19 @@ Test(Parser, InstructionWithLabel)
     free_current_string();
 }
 
+Test(Parser, LabelNoInstruction, .init = cr_redirect_stderr)
+{
+    init_current_string(".a");
+    struct state *state = state_create();
+    char *buf = NULL;
+
+    cr_assert(
+        eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
+    free(buf);
+    state_destroy(state);
+    free_current_string();
+}
+
 Test(Parser, InstructionWithIdentifier)
 {
     init_current_string(".a sub %p0,variable;this is also a comment");

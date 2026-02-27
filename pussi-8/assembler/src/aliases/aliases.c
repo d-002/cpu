@@ -21,6 +21,7 @@ int length_from_opcode(enum opcodes opcode)
     case MUL_3:
     case DIV_3:
     case MOD_3:
+        return 2;
     case JZ:
     case JEQ:
     case JNZ:
@@ -36,7 +37,14 @@ int length_from_opcode(enum opcodes opcode)
     case JUS:
     case JUC:
     case J:
-        return 2;
+        // worst-case scenario, might take less time in practice
+        // TODO: optimize this: once all instructions are build, remove
+        // generated NOP instructions and shift jump values. Add to the readme
+        // that this will solve most problems, but in some edge cases a
+        // suboptimal choice is used.
+        return 4;
+    case JUMP:
+        return 3;
     default:
         return 1;
     }

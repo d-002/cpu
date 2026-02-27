@@ -26,7 +26,7 @@ Test(Labels, Empty)
 
 Test(Labels, Single)
 {
-    init_current_string(".a\n jmp a");
+    init_current_string(".a\n j a");
     struct state *state = state_create();
     char *buf = NULL;
 
@@ -51,7 +51,7 @@ Test(Labels, Single)
 
 Test(Labels, DoubleWithDifferingFakeLine)
 {
-    init_current_string(" add %r0,%r1\n.a\n jmp a\n.b jmp b");
+    init_current_string(" add %r0,%r1\n.a\n j a\n.b j b");
     struct state *state = state_create();
     char *buf = NULL;
 
@@ -64,7 +64,7 @@ Test(Labels, DoubleWithDifferingFakeLine)
     cr_expect(eq(int, strcmp(value, "1"), 0));
     value = hash_map_get(state->labels, "b");
     cr_assert(ne(ptr, value, NULL));
-    cr_expect(eq(int, strcmp(value, "3"), 0));
+    cr_expect(eq(int, strcmp(value, "5"), 0));
 
     struct instruction *instruction = queue_iter_start(state->instructions);
     instruction = queue_iter_next(state->instructions);
@@ -76,7 +76,7 @@ Test(Labels, DoubleWithDifferingFakeLine)
     cr_assert(ne(ptr, instruction, NULL));
     arg = queue_iter_start(instruction->args_queue);
     cr_assert(ne(ptr, arg, NULL));
-    cr_expect(eq(int, strcmp(arg->data, "3"), 0));
+    cr_expect(eq(int, strcmp(arg->data, "5"), 0));
 
     free(buf);
     state_destroy(state);

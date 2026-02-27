@@ -134,11 +134,10 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     return res;
 }
 
-void print_instruction(struct instruction *instruction, short *binary_encoded,
-                       int addr)
+void print_instruction(struct instruction *instruction, short *binary_encoded)
 {
     if (binary_encoded == NULL)
-        printf("%08X | [didn't assemble] | %s ", addr,
+        printf("0x%08X | [didn't assemble] | %s ", instruction->real_line,
                instruction->opcode->data);
     else
     {
@@ -146,7 +145,7 @@ void print_instruction(struct instruction *instruction, short *binary_encoded,
         char args_b[9];
         fill_buf_with_bin(*binary_encoded >> 8, opcode_b, 8);
         fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
-        printf("%08X | %s %s | %s ", addr, opcode_b, args_b,
+        printf("0x%08X | %s %s | %s ", instruction->real_line, opcode_b, args_b,
                instruction->opcode->data);
     }
 
@@ -167,7 +166,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
                     struct queue *queue, struct queue *content)
 {
     if (!args->run)
-        puts("\naddr     | opcode   args     | description");
+        puts("\naddr       | opcode   args     | description");
 
     while (state->instructions->length)
     {
@@ -189,7 +188,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
             {
                 short *data =
                     content->tail == NULL ? NULL : content->tail->data;
-                print_instruction(instruction, data, content->length - 1);
+                print_instruction(instruction, data);
             }
 
             instruction_destroy(instruction);
