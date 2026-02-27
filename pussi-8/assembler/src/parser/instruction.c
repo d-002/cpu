@@ -14,7 +14,7 @@ struct instruction *instruction_create(int line, int real_line,
 
     instruction->opcode = opcode;
     instruction->args_queue = queue_create();
-    instruction->line = line;
+    instruction->file_line = line;
     instruction->real_line = real_line;
 
     if (instruction->args_queue == NULL)

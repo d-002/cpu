@@ -4,17 +4,18 @@
 #include "logger/logger.h"
 #include "utils/errors.h"
 
-void expected(int line, enum token_type expected)
+void expected(int file_line, enum token_type expected)
 {
-    logerror(line, "Expected %s but could not find it", type2name(expected));
+    logerror(file_line, "Expected %s but could not find it",
+             type2name(expected));
 }
 
-void unexpected(int line, int expected, enum token_type got)
+void unexpected(int file_line, int expected, enum token_type got)
 {
     if (expected < 0)
-        logerror(line, "Unexpected %s", type2name(got));
+        logerror(file_line, "Unexpected %s", type2name(got));
     else
-        logerror(line, "Expected %s, got %s", type2name(expected),
+        logerror(file_line, "Expected %s, got %s", type2name(expected),
                  type2name(got));
 }
 
@@ -40,7 +41,7 @@ int get_current_token(struct state *state, struct string *string,
 {
     if (state->current_token == NULL)
     {
-        int res = next_token(string, state->line, expecting_opcode,
+        int res = next_token(string, state->file_line, expecting_opcode,
                              &(state->current_token));
 
         if (res != SUCCESS)

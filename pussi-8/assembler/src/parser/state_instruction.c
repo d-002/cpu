@@ -12,25 +12,25 @@ int state_label(struct state *state, struct string *string)
 {
     if (state->current_token->type != IDENTIFIER)
     {
-        unexpected(state->line, IDENTIFIER, state->current_token->type);
+        unexpected(state->file_line, IDENTIFIER, state->current_token->type);
         return PARSING_ERROR;
     }
 
     if (hash_map_get(state->vars, state->current_token->data))
     {
-        logerror(state->line,
+        logerror(state->file_line,
                  "Cannot have a label and a macro with the same name");
         return VARS_ERROR;
     }
 
     // start with the labels having the line they appeared at as value
     char *key = malloc((state->current_token->length + 1) * sizeof(char));
-    char *value = itoa(state->line_instr);
+    char *value = itoa(state->instr_index);
     if (key == NULL || value == NULL)
     {
         free(key);
         free(value);
-        log_alloc_error(state->line);
+        log_alloc_error(state->file_line);
         return ALLOC_ERROR;
     }
     memcpy(key, state->current_token->data, state->current_token->length + 1);
@@ -45,12 +45,12 @@ int state_label(struct state *state, struct string *string)
         int err;
         if (res == HASH_MAP_DUPE_ERROR)
         {
-            logerror(state->line, "Duplicate label name: '%s'", key);
+            logerror(state->file_line, "Duplicate label name: '%s'", key);
             err = VARS_ERROR;
         }
         else
         {
-            log_alloc_error(state->line);
+            log_alloc_error(state->file_line);
             err = ALLOC_ERROR;
         }
         free(key);
@@ -92,7 +92,7 @@ int state_arguments(struct state *state, struct string *string,
         {
             if (queue_enqueue(instruction->args_queue, state->current_token))
             {
-                log_alloc_error(state->line);
+                log_alloc_error(state->file_line);
                 return ALLOC_ERROR;
             }
             skip_token(state, string, 0);
@@ -106,12 +106,12 @@ int state_arguments(struct state *state, struct string *string,
 
 int state_instruction(struct state *state, struct string *string)
 {
-    struct instruction *instruction =
-        instruction_create(state->line, NO_REAL_LINE, state->current_token);
+    struct instruction *instruction = instruction_create(
+        state->file_line, NO_REAL_LINE, state->current_token);
     if (instruction == NULL || queue_enqueue(state->instructions, instruction))
     {
         free(instruction);
-        log_alloc_error(state->line);
+        log_alloc_error(state->file_line);
         return ALLOC_ERROR;
     }
 
@@ -133,7 +133,7 @@ int state_instruction(struct state *state, struct string *string)
 
     // arguments
     res = state_arguments(state, string, instruction);
-    state->line_instr++;
+    state->instr_index++;
     return res;
 }
 
@@ -159,7 +159,7 @@ int state_potential_instruction(struct state *state, struct string *string)
     }
     else
     {
-        unexpected(state->line, SPACE, state->current_token->type);
+        unexpected(state->file_line, SPACE, state->current_token->type);
         return PARSING_ERROR;
     }
 

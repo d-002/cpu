@@ -18,7 +18,7 @@ int state_assignation(struct state *state, struct string *string)
 
     if (hash_map_get(state->labels, key))
     {
-        logerror(state->line,
+        logerror(state->file_line,
                  "Cannot have a label and a macro with the same name");
         return VARS_ERROR;
     }
@@ -31,14 +31,14 @@ int state_assignation(struct state *state, struct string *string)
     }
     if (!equal_sign)
     {
-        expected(state->line, EQUAL_SIGN);
+        expected(state->file_line, EQUAL_SIGN);
         free(key);
         return PARSING_ERROR;
     }
 
     if (!is_argument_type(state->current_token->type))
     {
-        unexpected(state->line, -1, state->current_token->type);
+        unexpected(state->file_line, -1, state->current_token->type);
         free(key);
         return PARSING_ERROR;
     }
@@ -55,12 +55,12 @@ int state_assignation(struct state *state, struct string *string)
         int err;
         if (res == HASH_MAP_DUPE_ERROR)
         {
-            logerror(state->line, "Duplicate macro name: '%s'", key);
+            logerror(state->file_line, "Duplicate macro name: '%s'", key);
             err = VARS_ERROR;
         }
         else
         {
-            log_alloc_error(state->line);
+            log_alloc_error(state->file_line);
             err = ALLOC_ERROR;
         }
         free(key);

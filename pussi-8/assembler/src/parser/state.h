@@ -12,10 +12,8 @@ struct state
 
     struct token *current_token;
 
-    // line in the program
-    int line;
-    // instruction index from the start of the program
-    int line_instr;
+    int file_line;
+    int instr_index;
 };
 
 struct state *state_create(void);

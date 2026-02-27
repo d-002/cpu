@@ -10,8 +10,8 @@ struct instruction
     struct token *opcode;
     struct queue *args_queue;
 
-    // line in the program
-    int line;
+    int file_line;
+
     // effective line in the machine code
     int real_line;
 };

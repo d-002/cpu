@@ -50,7 +50,7 @@ int resolve_labels(struct state *state)
             char *encoded_line = itoa(real_line);
             if (encoded_line == NULL)
             {
-                log_alloc_error(instruction->line);
+                log_alloc_error(instruction->file_line);
                 return ALLOC_ERROR;
             }
 

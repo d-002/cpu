@@ -11,7 +11,7 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
 {
     if (instruction->args_queue->length != 3)
     {
-        logerror(instruction->line, "Expected 3 arguments, got %ld",
+        logerror(instruction->file_line, "Expected 3 arguments, got %ld",
                  instruction->args_queue->length);
         return INSTRUCTION_ERROR;
     }
@@ -20,12 +20,12 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     struct token *b = queue_dequeue(instruction->args_queue);
 
     struct instruction *i1 = instruction_helper(
-        instruction->line, instruction->real_line, opcode, 2, a, b);
+        instruction->file_line, instruction->real_line, opcode, 2, a, b);
     if (i1 == NULL)
     {
         token_destroy(a, 1);
         token_destroy(b, 1);
-        log_alloc_error(instruction->line);
+        log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }
 
@@ -33,19 +33,19 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     struct token *r0 = token_create(REGISTER, r0_s, strlen(r0_s));
     if (r0 == NULL)
     {
-        log_alloc_error(instruction->line);
+        log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }
     struct token *y = queue_dequeue(instruction->args_queue);
 
     struct instruction *i2 = instruction_helper(
-        instruction->line, instruction->real_line, "MOVEI", 2, r0, y);
+        instruction->file_line, instruction->real_line, "MOVEI", 2, r0, y);
     if (i2 == NULL)
     {
         instruction_destroy(i1);
         token_destroy(r0, 1);
         token_destroy(y, 1);
-        log_alloc_error(instruction->line);
+        log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }
 
@@ -53,7 +53,7 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     {
         instruction_destroy(i1);
         instruction_destroy(i2);
-        log_alloc_error(instruction->line);
+        log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }
 

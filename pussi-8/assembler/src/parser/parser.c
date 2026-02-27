@@ -37,7 +37,7 @@ int state_start(struct state *state, struct string *string)
     case COMMENT:
         break;
     default:
-        unexpected(state->line, -1, state->current_token->type);
+        unexpected(state->file_line, -1, state->current_token->type);
         return PARSING_ERROR;
     }
 
@@ -58,7 +58,7 @@ int state_start(struct state *state, struct string *string)
     if (state->current_token->type == EOL)
         return eat_current_token(state, string, 0, 1);
 
-    unexpected(state->line, EOL, state->current_token->type);
+    unexpected(state->file_line, EOL, state->current_token->type);
     return PARSING_ERROR;
 }
 
@@ -66,8 +66,8 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
                 char **buf_ptr)
 {
     size_t n = 0;
-    state->line = 1;
-    state->line_instr = 0;
+    state->file_line = 1;
+    state->instr_index = 0;
 
     while (1)
     {
@@ -76,7 +76,7 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
             break;
         if (len < 0)
         {
-            logerror(state->line, "Could not read line from file: %s.",
+            logerror(state->file_line, "Could not read line from file: %s.",
                      strerror(errno));
             return IO_ERROR;
         }
@@ -91,7 +91,7 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
 
         token_destroy(state->current_token, 1);
         state->current_token = NULL;
-        state->line++;
+        state->file_line++;
     }
 
     return SUCCESS;
