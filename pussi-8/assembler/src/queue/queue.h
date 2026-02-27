@@ -25,6 +25,8 @@ struct queue
 };
 
 struct queue *queue_create(void);
+void *queue_head(struct queue *queue);
+void *queue_tail(struct queue *queue);
 int queue_enqueue(struct queue *queue, void *data);
 void *queue_dequeue(struct queue *queue);
 void *queue_iter_start(struct queue *queue);

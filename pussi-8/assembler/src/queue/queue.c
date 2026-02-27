@@ -19,6 +19,16 @@ struct queue *queue_create(void)
     return queue;
 }
 
+void *queue_head(struct queue *queue)
+{
+    return queue->head == NULL ? NULL : queue->head->data;
+}
+
+void *queue_tail(struct queue *queue)
+{
+    return queue->tail == NULL ? NULL : queue->tail->data;
+}
+
 int queue_enqueue(struct queue *queue, void *data)
 {
     struct queue_node *node = malloc(sizeof(struct queue_node));

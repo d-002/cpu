@@ -26,16 +26,18 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
     verbose(args, NO_LINE, "Assembling");
 
     struct queue *queue = queue_create();
+    struct queue *temp_content = queue_create();
     struct queue *content = queue_create();
-    if (queue == NULL || content == NULL)
+    if (queue == NULL || temp_content == NULL || content == NULL)
     {
         queue_destroy(queue);
+        queue_destroy(temp_content);
         queue_destroy(content);
         log_alloc_error(NO_LINE);
         return ALLOC_ERROR;
     }
 
-    res = to_machine_code(args, state, queue, content);
+    res = to_machine_code(args, state, queue, temp_content, content);
     if (args->run)
     {
         if (!res)
@@ -47,6 +49,7 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
     while (queue->length)
         instruction_destroy(queue_dequeue(queue));
     queue_destroy(queue);
+    queue_destroy(temp_content);
     queue_destroy(content);
     return res;
 }

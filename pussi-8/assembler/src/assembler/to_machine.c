@@ -1,6 +1,7 @@
 #include "to_machine.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "logger/logger.h"
 #include "opcodes/aliases_alu.h"
@@ -134,65 +135,109 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     return res;
 }
 
-void print_instruction(struct instruction *instruction, short *binary_encoded)
+char *make_description(struct instruction *instruction)
 {
-    if (binary_encoded == NULL)
-        printf("0x%08X | [didn't assemble] | %s ", instruction->real_line,
-               instruction->opcode->data);
-    else
-    {
-        char opcode_b[9];
-        char args_b[9];
-        fill_buf_with_bin(*binary_encoded >> 8, opcode_b, 8);
-        fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
-        printf("0x%08X | %s %s | %s ", instruction->real_line, opcode_b, args_b,
-               instruction->opcode->data);
-    }
+    size_t size = instruction->opcode->length + 1;
+    for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
+         arg = queue_iter_next(instruction->args_queue))
+        size += arg->length + 1;
+
+    char *copy = calloc(size, sizeof(char));
+    size_t index = 0;
+    sprintf(copy + index, "%s", instruction->opcode->data);
+    index += instruction->opcode->length;
 
     int first = 1;
     for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
          arg = queue_iter_next(instruction->args_queue))
     {
-        if (!first)
-            putchar(',');
+        copy[index++] = first ? ' ' : ',';
         first = 0;
-        printf("%s", arg->data);
+        sprintf(copy + index, "%s", arg->data);
+        index += arg->length;
     }
 
-    putchar('\n');
+    return copy;
+}
+
+void print_instruction(int line, char *description, struct queue *group)
+{
+    int several = group->length > 1 ? group->length : 0;
+    int index = 0;
+    for (short *binary_encoded = queue_iter_start(group); binary_encoded;
+         binary_encoded = queue_iter_next(group), index++)
+    {
+        int opcode = *binary_encoded >> 8;
+        char opcode_b[9];
+        char args_b[9];
+        fill_buf_with_bin(opcode, opcode_b, 8);
+        fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
+
+        printf(" 0x%08X | %s %s |", line + index, opcode_b, args_b);
+        if (several)
+            printf(" (%d/%d) |", index + 1, several);
+        else
+            printf("       |");
+        printf(" %s\n", description ? description : "[no description]");
+    }
 }
 
 int to_machine_code(struct cli_args *args, struct state *state,
-                    struct queue *queue, struct queue *content)
+                    struct queue *queue, struct queue *temp_content,
+                    struct queue *content)
 {
     if (!args->run)
-        puts("\naddr       | opcode   args     | description");
+        puts(" addr       | opcode   args     | multi | description");
 
+    int prev_file_line = -1;
     while (state->instructions->length)
     {
+        // make a copy of the raw data for prettyprinting
+        struct instruction *raw = queue_head(state->instructions);
+        int file_line = raw->file_line;
+        int real_line = raw->real_line;
+        char *description = NULL;
+        if (!args->run && file_line != prev_file_line)
+        {
+            description = make_description(raw);
+            prev_file_line = file_line;
+        }
+
         int res = gen_next_instruction(state, queue);
         if (res != SUCCESS)
+        {
+            free(description);
             return res;
+        }
 
         while (queue->length)
         {
             struct instruction *instruction = queue_dequeue(queue);
 
             enum opcodes opcode = get_opcode(instruction);
-            res = to_machine_i_jumps(instruction, opcode, content);
-            res |= to_machine_i_data(instruction, opcode, content);
-            res |= to_machine_i_calc(instruction, opcode, content);
-            res |= to_machine_i_misc(instruction, opcode, content);
-
-            if (!res && !args->run)
-            {
-                short *data =
-                    content->tail == NULL ? NULL : content->tail->data;
-                print_instruction(instruction, data);
-            }
+            res = to_machine_i_jumps(instruction, opcode, temp_content);
+            res |= to_machine_i_data(instruction, opcode, temp_content);
+            res |= to_machine_i_calc(instruction, opcode, temp_content);
+            res |= to_machine_i_misc(instruction, opcode, temp_content);
 
             instruction_destroy(instruction);
 
+            if (res != SUCCESS)
+            {
+                free(description);
+                return res;
+            }
+        }
+
+        if (!args->run)
+        {
+            print_instruction(real_line, description, temp_content);
+            free(description);
+        }
+
+        while (temp_content->length)
+        {
+            res = queue_enqueue(content, queue_dequeue(temp_content));
             if (res != SUCCESS)
                 return res;
         }

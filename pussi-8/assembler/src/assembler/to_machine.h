@@ -6,6 +6,7 @@
 #include "queue/queue.h"
 
 int to_machine_code(struct cli_args *args, struct state *state,
-                    struct queue *queue, struct queue *content);
+                    struct queue *queue, struct queue *temp_content,
+                    struct queue *content);
 
 #endif /* ! TO_MACHINE_H */
