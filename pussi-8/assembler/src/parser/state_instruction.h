@@ -1,6 +1,7 @@
 #ifndef STATE_INSTRUCTION_H
 #define STATE_INSTRUCTION_H
 
+#include "instruction.h"
 #include "state.h"
 #include "utils/mystring.h"
 

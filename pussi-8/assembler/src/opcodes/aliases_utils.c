@@ -3,6 +3,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "queue/queue.h"
+
 struct instruction *instruction_helper(int line, int real_line, char *opcode,
                                        int args_num, ...)
 {

@@ -6,8 +6,9 @@
 #include "expand_vars.h"
 #include "export/binary.h"
 #include "export/schematic.h"
-#include "list_instructions.h"
 #include "logger/logger.h"
+#include "parser/instruction.h"
+#include "to_machine.h"
 #include "utils/errors.h"
 
 int assemble_file(struct cli_args *args, char *path, struct state *state)

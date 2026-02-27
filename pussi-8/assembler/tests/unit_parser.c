@@ -2,6 +2,7 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
+#include "parser/instruction.h"
 #include "parser/parser.h"
 #include "unit_parser_utils.h"
 #include "utils/errors.h"

@@ -1,7 +1,7 @@
 #ifndef ALIASES_MEM_H
 #define ALIASES_MEM_H
 
-#include "parser/state.h"
+#include "parser/instruction.h"
 
 int handle_ldi_2(struct instruction *instruction, struct queue *out);
 int handle_rtc_2(struct instruction *instruction, struct queue *out);

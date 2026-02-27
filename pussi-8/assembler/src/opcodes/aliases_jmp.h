@@ -1,7 +1,7 @@
 #ifndef ALIASES_JMP_H
 #define ALIASES_JMP_H
 
-#include "parser/state.h"
+#include "parser/instruction.h"
 
 int handle_custom_jump(struct instruction *instruction, struct queue *out,
                        char *cond_code);

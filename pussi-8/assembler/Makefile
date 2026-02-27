@@ -4,15 +4,15 @@ LDLIBS=-lm
 
 TARGET=assembli
 OBJ_MAIN=src/main.o
-OBJ=src/aliases/aliases.o src/aliases/aliases_alu.o src/aliases/aliases_jmp.o src/aliases/aliases_mem.o src/aliases/aliases_utils.o \
-	src/assembler/assembler.o src/assembler/expand_vars.o src/assembler/list_instructions.o src/assembler/opcodes.o src/assembler/expand_labels.o src/assembler/to_machine.o \
+OBJ=src/opcodes/opcodes.o src/opcodes/aliases_alu.o src/opcodes/aliases_jmp.o src/opcodes/aliases_mem.o src/opcodes/aliases_utils.o \
+	src/assembler/assembler.o src/assembler/expand_vars.o src/assembler/expand_labels.o src/assembler/to_machine.o src/assembler/to_machine_utils.o \
 	src/cli/cli.o \
 	src/export/binary.o src/export/schematic.o src/export/export_utils.o \
 	src/files/files.o \
 	src/hash_map/hash_map.o \
 	src/lexer/lexer.o src/lexer/t_space.o src/lexer/t_identifier.o src/lexer/t_number.o src/lexer/t_data.o src/lexer/t_comment.o src/lexer/t_opcode.o src/lexer/t_simple.o src/lexer/t_eol.o src/lexer/token.o \
 	src/logger/logger.o \
-	src/parser/parser.o src/parser/state.o src/parser/parser_utils.o src/parser/state_instruction.o src/parser/state_assignation.o \
+	src/parser/parser.o src/parser/state.o src/parser/instruction.o src/parser/parser_utils.o src/parser/state_instruction.o src/parser/state_assignation.o \
 	src/queue/queue.o \
 	src/utils/numstr.o src/utils/checks.o
 

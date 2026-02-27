@@ -1,339 +1,201 @@
 #include "to_machine.h"
 
-#include <stdlib.h>
+#include <stdio.h>
 
 #include "logger/logger.h"
+#include "opcodes/aliases_alu.h"
+#include "opcodes/aliases_jmp.h"
+#include "opcodes/aliases_mem.h"
+#include "opcodes/opcodes.h"
+#include "to_machine_utils.h"
 #include "utils/errors.h"
 #include "utils/numstr.h"
 
-#define JUMP_NO_SPECIAL 255
-
-int expect_n_args(struct instruction *instruction, size_t count, int values[],
-                  enum token_type types[], int silent)
+int gen_next_instruction(struct state *state, struct queue *queue)
 {
-    if (instruction->args_queue->length != count)
+    struct instruction *instruction = queue_dequeue(state->instructions);
+    if (instruction == NULL)
+        return SUCCESS;
+
+    enum opcodes opcode = get_opcode(instruction);
+    if (opcode == UNKNOWN_OPCODE)
     {
-        if (!silent)
-            logerror(instruction->line,
-                     "Expected %ld arguments for %s, got %ld", count,
-                     instruction->opcode->data,
-                     instruction->args_queue->length);
+        logerror(NO_LINE, "Unknown opcode: '%s'", instruction->opcode->data);
+        instruction_destroy(instruction);
         return INSTRUCTION_ERROR;
     }
 
-    size_t i = 0;
-    for (struct token *token = queue_iter_start(instruction->args_queue); token;
-         token = queue_iter_next(instruction->args_queue))
-    {
-        int ok = token->type == types[i];
-        if (!ok && types[i] == NUMBER_PSEUDOTYPE)
-            ok = token->type == NUMBER_DEC || token->type == NUMBER_BIN
-                || token->type == NUMBER_HEX;
-
-        if (!ok)
-        {
-            if (!silent)
-                logerror(instruction->line,
-                         "Expected %s but got %s as argument number %d for %s",
-                         type2name(types[i]), type2name(token->type), i + 1,
-                         instruction->opcode->data);
-            return INSTRUCTION_ERROR;
-        }
-
-        int n = atoi_token(token);
-        values[i++] = n;
-    }
-
-    return SUCCESS;
-}
-
-int add_to_content(int line, struct queue *content, short n)
-{
-    short *data = malloc(sizeof(short));
-    if (data == NULL)
-    {
-        log_alloc_error(line);
-        return ALLOC_ERROR;
-    }
-
-    *data = n;
-
-    if (queue_enqueue(content, data))
-    {
-        free(data);
-        log_alloc_error(line);
-        return ALLOC_ERROR;
-    }
-
-    return SUCCESS;
-}
-
-int add_nop(int line, struct queue *content, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        int res = add_to_content(line, content, (NOP << 8));
-        if (res != SUCCESS)
-            return res;
-    }
-
-    return SUCCESS;
-}
-
-int handle_jump_special(int line, struct queue *content, int arg,
-                        enum token_type type)
-{
-    // if the JUMP address is a single register, write a 0 to %r0 and use it as
-    // high address
-    if (type == REGISTER)
-    {
-        int res = add_to_content(line, content, (LDI << 8));
-        if (res != SUCCESS)
-            return res;
-        res = add_to_content(line + 1, content, (JUMP << 8) + (arg & 255));
-        if (res != SUCCESS)
-            return res;
-        return add_nop(line + 2, content, 1);
-    }
-
-    // if the target address is small enough, use a JUMPI instruction
-    if (arg < 256)
-    {
-        int res = add_to_content(line, content, (JUMPI << 8) + arg);
-        if (res != SUCCESS)
-            return res;
-        return add_nop(line + 1, content, 2);
-    }
-
-    // if the relative target address is small enough, use a JUMPR instruction
-    int relative = arg - line;
-    if (relative >= 0 && relative < 256)
-    {
-        int res = add_to_content(line, content, (JUMPR << 8) + relative);
-        if (res != SUCCESS)
-            return res;
-        return add_nop(line + 1, content, 2);
-    }
-
-    // normal instruction
-    return JUMP_NO_SPECIAL;
-}
-
-int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
-                       struct queue *content)
-{
-    int res = SUCCESS;
-    int args[2];
-    enum token_type types[2] = { REGISTER, REGISTER };
-
+    int res;
     switch (opcode)
     {
-    case COND:
-    case JUMPI:
-        types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
-        if (res != SUCCESS)
-            return res;
+    case LDI_2:
+        res = handle_ldi_2(instruction, queue);
         break;
-    case JUMPR:
-        types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
-        if (res == SUCCESS)
-            break;
+    case OR_3:
+        res = handle_custom_calc(instruction, queue, "OR");
         break;
-    case JUMP:
-        // try a "normal" jump with two register arguments
-        res = expect_n_args(instruction, 2, args, types, 1);
-        if (res == SUCCESS)
-            break;
-
-        // if that fails, try the single argument one with a register
-        res = expect_n_args(instruction, 1, args, types, 1);
-        if (res == SUCCESS)
-        {
-            res = handle_jump_special(instruction->line, content, args[0],
-                                      types[0]);
-            if (res == JUMP_NO_SPECIAL)
-                break;
-            return res;
-        }
-
-        // if that also fails, try the single argument one with a number
-        types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        res =
-            handle_jump_special(instruction->line, content, args[0], types[0]);
-        if (res == JUMP_NO_SPECIAL)
-            break;
-        return res;
+    case NOR_3:
+        res = handle_custom_calc(instruction, queue, "NOR");
+        break;
+    case ADD_3:
+        res = handle_custom_calc(instruction, queue, "ADD");
+        break;
+    case SUB_3:
+        res = handle_custom_calc(instruction, queue, "SUB");
+        break;
+    case XOR_3:
+        res = handle_custom_calc(instruction, queue, "XOR");
+        break;
+    case XNOR_3:
+        res = handle_custom_calc(instruction, queue, "XNOR");
+        break;
+    case AND_3:
+        res = handle_custom_calc(instruction, queue, "AND");
+        break;
+    case NAND_3:
+        res = handle_custom_calc(instruction, queue, "NAND");
+        break;
+    case NOT_3:
+        res = handle_custom_calc(instruction, queue, "NOT");
+        break;
+    case LSH_3:
+        res = handle_custom_calc(instruction, queue, "LSH");
+        break;
+    case RSH_3:
+        res = handle_custom_calc(instruction, queue, "RSH");
+        break;
+    case ROR_3:
+        res = handle_custom_calc(instruction, queue, "OOR");
+        break;
+    case ROL_3:
+        res = handle_custom_calc(instruction, queue, "ROL");
+        break;
+    case MUL_3:
+        res = handle_custom_calc(instruction, queue, "MUL");
+        break;
+    case DIV_3:
+        res = handle_custom_calc(instruction, queue, "DIV");
+        break;
+    case MOD_3:
+        res = handle_custom_calc(instruction, queue, "MOD");
+        break;
+    case JZ:
+        res = handle_custom_jump(instruction, queue, "128");
+        break;
+    case JEQ:
+        res = handle_custom_jump(instruction, queue, "128");
+        break;
+    case JNZ:
+        res = handle_custom_jump(instruction, queue, "129");
+        break;
+    case JNE:
+        res = handle_custom_jump(instruction, queue, "129");
+        break;
+    case JCS:
+        res = handle_custom_jump(instruction, queue, "65");
+        break;
+    case JCC:
+        res = handle_custom_jump(instruction, queue, "64");
+        break;
+    case JPL:
+        res = handle_custom_jump(instruction, queue, "33");
+        break;
+    case JMI:
+        res = handle_custom_jump(instruction, queue, "32");
+        break;
+    case JVS:
+        res = handle_custom_jump(instruction, queue, "17");
+        break;
+    case JVC:
+        res = handle_custom_jump(instruction, queue, "16");
+        break;
+    case JOS:
+        res = handle_custom_jump(instruction, queue, "9");
+        break;
+    case JOC:
+        res = handle_custom_jump(instruction, queue, "8");
+        break;
+    case JUS:
+        res = handle_custom_jump(instruction, queue, "5");
+        break;
+    case JUC:
+        res = handle_custom_jump(instruction, queue, "4");
+        break;
+    case J:
+        res = handle_custom_jump(instruction, queue, "2");
+        break;
     default:
-        return res;
+        res = queue_enqueue(queue, instruction);
     }
 
-    switch (opcode)
-    {
-    case COND:
-        return add_to_content(instruction->line, content,
-                              (COND << 8) + (args[0] & 255));
-    case JUMPI:
-        return add_to_content(instruction->line, content,
-                              (JUMPI << 8) + (args[0] & 255));
-    case JUMPR:
-        return add_to_content(instruction->line, content,
-                              (JUMPR << 8) + (args[0] & 255));
-    case JUMP:
-        res =
-            add_to_content(instruction->line, content,
-                           (JUMP << 8) + (args[0] & 15 << 4) + (args[1] & 15));
-        if (res != SUCCESS)
-            return res;
-        return add_nop(instruction->line + 1, content, 2);
-    default:
-        break;
-    }
+    if (res != SUCCESS)
+        instruction_destroy(instruction);
 
     return res;
 }
 
-int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
-                      struct queue *content)
+void print_instruction(struct instruction *instruction, short *binary_encoded)
 {
-    int res = SUCCESS;
-    int args[2];
-    enum token_type types[2] = { REGISTER, REGISTER };
-
-    switch (opcode)
+    if (binary_encoded == NULL)
+        printf("0x%08X | [didn't assemble] | %s ", instruction->real_line,
+               instruction->opcode->data);
+    else
     {
-    case LDI:
-        types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    case MOVEI:
-    case MOVEA:
-    case RTC:
-    case CTR:
-    case TIMER:
-        res = expect_n_args(instruction, 2, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    default:
-        return res;
+        char opcode_b[9];
+        char args_b[9];
+        fill_buf_with_bin(*binary_encoded >> 8, opcode_b, 8);
+        fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
+        printf("0x%08X | %s %s | %s ", instruction->real_line, opcode_b, args_b,
+               instruction->opcode->data);
     }
 
-    switch (opcode)
+    int first = 1;
+    for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
+         arg = queue_iter_next(instruction->args_queue))
     {
-    case LDI:
-        return add_to_content(instruction->line, content,
-                              (LDI << 8) + (args[0] & 255));
-    case MOVEI:
-    case MOVEA:
-    case RTC:
-    case TIMER:
-        return add_to_content(instruction->line, content,
-                              (opcode << 8) + (args[1] << 4 & 15)
-                                  + (args[0] & 15));
-    default: // case CTR
-        return add_to_content(instruction->line, content,
-                              (CTR << 8) + (args[0] << 4 & 15)
-                                  + (args[1] & 15));
+        if (!first)
+            putchar(',');
+        first = 0;
+        printf("%s", arg->data);
     }
 
-    return res;
+    putchar('\n');
 }
 
-int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
-                      struct queue *content)
+int to_machine_code(struct cli_args *args, struct state *state,
+                    struct queue *queue, struct queue *content)
 {
-    int res = SUCCESS;
-    int args[2];
-    enum token_type types[2] = { REGISTER, REGISTER };
+    if (!args->run)
+        puts("\naddr       | opcode   args     | description");
 
-    switch (opcode)
+    while (state->instructions->length)
     {
-    case NOT:
-    case LSH:
-    case RSH:
-    case ROR:
-    case ROL:
-        res = expect_n_args(instruction, 1, args, types, 0);
+        int res = gen_next_instruction(state, queue);
         if (res != SUCCESS)
             return res;
-        break;
-    case MUL:
-    case DIV:
-    case MOD:
-    case OR:
-    case NOR:
-    case ADD:
-    case SUB:
-    case XOR:
-    case XNOR:
-    case AND:
-    case NAND:
-        res = expect_n_args(instruction, 2, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    default:
-        return res;
-    }
 
-    return add_to_content(instruction->line, content,
-                          (opcode << 8) + (args[0] << 4 & 15) + (args[1] & 15));
-}
+        while (queue->length)
+        {
+            struct instruction *instruction = queue_dequeue(queue);
 
-int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
-                      struct queue *content)
-{
-    int res = SUCCESS;
-    int args[2];
-    enum token_type types[2];
+            enum opcodes opcode = get_opcode(instruction);
+            res = to_machine_i_jumps(instruction, opcode, content);
+            res |= to_machine_i_data(instruction, opcode, content);
+            res |= to_machine_i_calc(instruction, opcode, content);
+            res |= to_machine_i_misc(instruction, opcode, content);
 
-    switch (opcode)
-    {
-    case IN:
-        types[0] = PORT;
-        types[1] = REGISTER;
-        res = expect_n_args(instruction, 2, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    case OUT:
-        types[0] = REGISTER;
-        types[1] = PORT;
-        res = expect_n_args(instruction, 2, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    case PUSH:
-    case POP:
-    case HALT:
-    case NOP:
-        res = expect_n_args(instruction, 0, args, types, 0);
-        if (res != SUCCESS)
-            return res;
-        break;
-    default:
-        return res;
-    }
+            if (!res && !args->run)
+            {
+                short *data =
+                    content->tail == NULL ? NULL : content->tail->data;
+                print_instruction(instruction, data);
+            }
 
-    switch (opcode)
-    {
-    case IN:
-        return add_to_content(instruction->line, content,
-                              (args[0] << 4 & 15) + (args[1] & 15));
-        break;
-    case OUT:
-        return add_to_content(instruction->line, content,
-                              (args[1] << 4 & 15) + (args[0] & 15));
-        break;
-    default:
-        return add_to_content(instruction->line, content, 0);
+            instruction_destroy(instruction);
+
+            if (res != SUCCESS)
+                return res;
+        }
     }
 
     return SUCCESS;

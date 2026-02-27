@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "aliases/aliases.h"
 #include "logger/logger.h"
-#include "opcodes.h"
+#include "opcodes/opcodes.h"
 #include "utils/errors.h"
 #include "utils/numstr.h"
 void next_label(struct state *state, char **label_name, int *label_line,

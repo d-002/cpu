@@ -1,7 +1,7 @@
 #ifndef OPCODES_H
 #define OPCODES_H
 
-#include "parser/state.h"
+#include "parser/instruction.h"
 
 enum opcodes
 {
@@ -87,5 +87,6 @@ enum opcodes
 };
 
 enum opcodes get_opcode(struct instruction *instruction);
+int length_from_opcode(enum opcodes opcode);
 
 #endif /* ! OPCODES_H */

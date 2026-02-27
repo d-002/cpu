@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "logger/logger.h"
+#include "parser/instruction.h"
 #include "utils/errors.h"
 
 int resolve_vars(struct state *state)
