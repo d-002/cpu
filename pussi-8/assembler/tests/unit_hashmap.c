@@ -68,7 +68,7 @@ Test(HashMap, HashMapInsertGet)
     cr_expect(eq(int, hash_map_insert(hash_map, pair), SUCCESS));
     char *get = hash_map_get(hash_map, pair.key);
     cr_assert(ne(ptr, get, NULL));
-    cr_expect(eq(int, strcmp(get, pair.value), 0));
+    cr_expect(eq(str, get, pair.value));
     hash_map_destroy(hash_map);
 }
 
@@ -99,9 +99,9 @@ Test(HashMap, HashMapIter)
          key = hash_map_iter_next(hash_map))
     {
         if (i == 0)
-            cr_expect(eq(int, strcmp(key, key1), 0));
+            cr_expect(eq(str, key, key1));
         if (i == 1)
-            cr_expect(eq(int, strcmp(key, key2), 0));
+            cr_expect(eq(str, key, key2));
         i++;
     }
 

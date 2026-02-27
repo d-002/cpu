@@ -57,10 +57,10 @@ Test(Parser, InstructionWithLabel)
     cr_expect(ne(ptr, hash_map_get(state->labels, "a"), NULL));
 
     struct instruction *instruction = queue_dequeue(state->instructions);
-    cr_expect(eq(int, strcmp(instruction->opcode->data, "ADD"), 0));
+    cr_expect(eq(str, instruction->opcode->data, "ADD"));
     cr_expect(eq(int, instruction->args_queue->length, 2));
     struct token *token = queue_dequeue(instruction->args_queue);
-    cr_expect(eq(int, strcmp(token->data, "%r1"), 0));
+    cr_expect(eq(str, token->data, "%r1"));
     cr_expect(eq(int, token->type, REGISTER));
     token_destroy(token, 1);
 
@@ -206,7 +206,7 @@ Test(Parser, Assignation)
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     struct token *value = hash_map_get(state->vars, "a");
     cr_assert(ne(ptr, value, NULL));
-    cr_expect(eq(int, strcmp(value->data, "1"), 0));
+    cr_expect(eq(str, value->data, "1"));
     free(buf);
     state_destroy(state);
     free_current_string();

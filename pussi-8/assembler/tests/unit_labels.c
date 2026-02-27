@@ -36,13 +36,13 @@ Test(Labels, Single)
 
     char *value = hash_map_get(state->labels, "a");
     cr_assert(ne(ptr, value, NULL));
-    cr_expect(eq(int, strcmp(value, "0"), 0));
+    cr_expect(eq(str, value, "0"));
 
     struct instruction *instruction = queue_iter_start(state->instructions);
     cr_assert(ne(ptr, instruction, NULL));
     struct token *arg = queue_iter_start(instruction->args_queue);
     cr_assert(ne(ptr, arg, NULL));
-    cr_expect(eq(int, strcmp(arg->data, "0"), 0));
+    cr_expect(eq(str, arg->data, "0"));
 
     free(buf);
     state_destroy(state);
@@ -61,22 +61,22 @@ Test(Labels, DoubleWithDifferingFakeLine)
 
     char *value = hash_map_get(state->labels, "a");
     cr_assert(ne(ptr, value, NULL));
-    cr_expect(eq(int, strcmp(value, "1"), 0));
+    cr_expect(eq(str, value, "1"));
     value = hash_map_get(state->labels, "b");
     cr_assert(ne(ptr, value, NULL));
-    cr_expect(eq(int, strcmp(value, "5"), 0));
+    cr_expect(eq(str, value, "5"));
 
     struct instruction *instruction = queue_iter_start(state->instructions);
     instruction = queue_iter_next(state->instructions);
     cr_assert(ne(ptr, instruction, NULL));
     struct token *arg = queue_iter_start(instruction->args_queue);
     cr_assert(ne(ptr, arg, NULL));
-    cr_expect(eq(int, strcmp(arg->data, "1"), 0));
+    cr_expect(eq(str, arg->data, "1"));
     instruction = queue_iter_next(state->instructions);
     cr_assert(ne(ptr, instruction, NULL));
     arg = queue_iter_start(instruction->args_queue);
     cr_assert(ne(ptr, arg, NULL));
-    cr_expect(eq(int, strcmp(arg->data, "5"), 0));
+    cr_expect(eq(str, arg->data, "5"));
 
     free(buf);
     state_destroy(state);
