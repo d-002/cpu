@@ -188,7 +188,7 @@ function execute(opcode, immediate, argsHi, argsLo) {
         case "COND":
             // cond value = SR & immediate
             cond = state.stateRegister.get() & immediate;
-            state.conditionBuffer.set((immediate & 1) ? !cond : cond);
+            state.conditionBuffer.set((immediate & 1) ? !cond : !!cond);
             break;
         case "JUMPI":
             if (state.stateRegister.get() != 0) {

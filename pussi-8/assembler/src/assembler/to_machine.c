@@ -137,15 +137,16 @@ int gen_next_instruction(struct state *state, struct queue *queue)
 
 char *make_description(struct instruction *instruction)
 {
-    size_t size = instruction->opcode->length + 1;
+    // WARNING: this is not portable, mind the constant padding size
+    size_t size = 5 + 1;
     for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
          arg = queue_iter_next(instruction->args_queue))
         size += arg->length + 1;
 
     char *copy = calloc(size, sizeof(char));
     size_t index = 0;
-    sprintf(copy + index, "%s", instruction->opcode->data);
-    index += instruction->opcode->length;
+    sprintf(copy + index, "%-5s", instruction->opcode->data);
+    index += 5;
 
     int first = 1;
     for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
@@ -175,9 +176,14 @@ void print_instruction(int line, char *description, struct queue *group)
 
         printf(" 0x%08X | %s %s |", line + index, opcode_b, args_b);
         if (several)
-            printf(" (%d/%d) |", index + 1, several);
+        {
+            if (index == several - 1)
+                printf(" %d/%d  |", several, several);
+            else
+                printf(" %d    |", index + 1);
+        }
         else
-            printf("       |");
+            printf(" -    |");
         printf(" %s\n", description ? description : "[no description]");
     }
 }
@@ -187,7 +193,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
                     struct queue *content)
 {
     if (!args->run)
-        puts(" addr       | opcode   args     | multi | description");
+        puts(" addr       | opcode   args     | part | description");
 
     int prev_file_line = -1;
     while (state->instructions->length)
