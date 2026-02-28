@@ -8,6 +8,7 @@
 struct cli_args
 {
     bool run;
+    bool print;
     bool verbose;
     bool help;
     struct queue *files_queue;

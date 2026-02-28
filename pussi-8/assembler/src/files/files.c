@@ -10,8 +10,7 @@
 
 int process_files(struct cli_args *args)
 {
-    if ((args->run == 0 && args->verbose == 0)
-        || args->files_queue->length == 0)
+    if ((!args->run && !args->print) || args->files_queue->length == 0)
     {
         verbose(args, -1, "Nothing to do.");
         return SUCCESS;

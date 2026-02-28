@@ -192,7 +192,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
                     struct queue *queue, struct queue *temp_content,
                     struct queue *content)
 {
-    if (!args->run)
+    if (args->print)
         puts(" addr       | opcode   args     | part | description");
 
     int prev_file_line = -1;
@@ -203,7 +203,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
         int file_line = raw->file_line;
         int real_line = raw->real_line;
         char *description = NULL;
-        if (!args->run && file_line != prev_file_line)
+        if (args->print && file_line != prev_file_line)
         {
             description = make_description(raw);
             prev_file_line = file_line;
@@ -235,7 +235,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
             }
         }
 
-        if (!args->run)
+        if (args->print)
         {
             print_instruction(real_line, description, temp_content);
             free(description);

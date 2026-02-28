@@ -3,10 +3,10 @@
 Parse and assemble `.psi` (text) files into the corresponding binary code and
 schematic.
 
-Syntax: `assembli [--verbose] [--print] [--help] { --file file }`
+Syntax: `assembli [--verbose] [--print] [--norun] [--help] { file }`
 - `--verbose`: verbose
-- `--print`: only print, parse and run checks, don't assemble
-- `--file`: assemble file, can specify multiple files to assemble in this order
+- `--print`: prettyprint the compiled files
+- `--norun`: don't assemble; useful in conjunction with `--print`
 - `--help`: print an error message to stdout
 
 ## Todo
