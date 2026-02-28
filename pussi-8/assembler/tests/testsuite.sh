@@ -2,4 +2,4 @@
 
 echo "Temporary functional testsuite hello world"
 
-./assembli --print --norun programs/countdown.psi
+./assembli --print programs/countdown.psi

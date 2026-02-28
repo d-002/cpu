@@ -193,7 +193,10 @@ int to_machine_code(struct cli_args *args, struct state *state,
                     struct queue *content)
 {
     if (args->print)
+    {
+        printf(" %s:\n", state->file_name);
         puts(" addr       | opcode   args     | part | description");
+    }
 
     int prev_file_line = -1;
     while (state->instructions->length)

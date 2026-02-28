@@ -18,14 +18,15 @@ int process_files(struct cli_args *args)
 
     while (args->files_queue->length)
     {
-        struct state *state = state_create();
+        char *path = queue_dequeue(args->files_queue);
+        struct state *state = state_create(path);
         if (state == NULL)
         {
+            free(path);
             log_alloc_error(-1);
             return ALLOC_ERROR;
         }
 
-        char *path = queue_dequeue(args->files_queue);
         int res = parse_file(args, path, state);
         if (!res)
             res = assemble_file(args, path, state);

@@ -12,7 +12,7 @@ TestSuite(Parser);
 Test(Parser, Empty)
 {
     init_current_string("");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -26,7 +26,7 @@ Test(Parser, Empty)
 Test(Parser, OnlyComment)
 {
     init_current_string(";");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     free(buf);
@@ -37,7 +37,7 @@ Test(Parser, OnlyComment)
 Test(Parser, IncorrectStart, .init = cr_redirect_stderr)
 {
     init_current_string("=");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_assert(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -49,7 +49,7 @@ Test(Parser, IncorrectStart, .init = cr_redirect_stderr)
 Test(Parser, InstructionWithLabel)
 {
     init_current_string(".a: add %r1,%m2 ; this is a comment");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -75,7 +75,7 @@ Test(Parser, InstructionWithLabel)
 Test(Parser, LabelNoInstruction, .init = cr_redirect_stderr)
 {
     init_current_string(".a");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(
@@ -88,7 +88,7 @@ Test(Parser, LabelNoInstruction, .init = cr_redirect_stderr)
 Test(Parser, InstructionWithIdentifier)
 {
     init_current_string(".a sub %p0,variable;this is also a comment");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -102,7 +102,7 @@ Test(Parser, InstructionWithIdentifier)
 Test(Parser, InstructionNoArgs)
 {
     init_current_string("\tnop");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     free(buf);
@@ -113,7 +113,7 @@ Test(Parser, InstructionNoArgs)
 Test(Parser, InstructionEmptyLabel)
 {
     init_current_string("\rnop");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     free(buf);
@@ -124,7 +124,7 @@ Test(Parser, InstructionEmptyLabel)
 Test(Parser, InstructionOneArg)
 {
     init_current_string("  dummy 1");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     free(buf);
@@ -135,7 +135,7 @@ Test(Parser, InstructionOneArg)
 Test(Parser, LabelNotAnIdentifier, .init = cr_redirect_stderr)
 {
     init_current_string(".=:");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -147,7 +147,7 @@ Test(Parser, LabelNotAnIdentifier, .init = cr_redirect_stderr)
 Test(Parser, InstructionErrorAfterArg, .init = cr_redirect_stderr)
 {
     init_current_string("  dummy 1,=");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -159,7 +159,7 @@ Test(Parser, InstructionErrorAfterArg, .init = cr_redirect_stderr)
 Test(Parser, InstructionMissingSpace, .init = cr_redirect_stderr)
 {
     init_current_string(".a=nop");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -167,7 +167,7 @@ Test(Parser, InstructionMissingSpace, .init = cr_redirect_stderr)
     free_current_string();
 
     init_current_string(".a nop=1");
-    state = state_create();
+    state = state_create(NULL);
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
     free(buf);
@@ -178,7 +178,7 @@ Test(Parser, InstructionMissingSpace, .init = cr_redirect_stderr)
 Test(Parser, InstructionDupe, .init = cr_redirect_stderr)
 {
     init_current_string(".a nop\n.a nop\n");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
@@ -190,7 +190,7 @@ Test(Parser, InstructionDupe, .init = cr_redirect_stderr)
 Test(Parser, TrailingData, .init = cr_redirect_stderr)
 {
     init_current_string(" nop 0 0");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -202,7 +202,7 @@ Test(Parser, TrailingData, .init = cr_redirect_stderr)
 Test(Parser, Assignation)
 {
     init_current_string("a = 1 ; ");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
     struct token *value = hash_map_get(state->vars, "a");
@@ -216,7 +216,7 @@ Test(Parser, Assignation)
 Test(Parser, AssignationDupe, .init = cr_redirect_stderr)
 {
     init_current_string("a = 1\na = 2\n");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
@@ -228,7 +228,7 @@ Test(Parser, AssignationDupe, .init = cr_redirect_stderr)
 Test(Parser, AssignationNoEqual, .init = cr_redirect_stderr)
 {
     init_current_string("a : 1");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -240,7 +240,7 @@ Test(Parser, AssignationNoEqual, .init = cr_redirect_stderr)
 Test(Parser, AssignationIncorrectArgument, .init = cr_redirect_stderr)
 {
     init_current_string("a = :");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), PARSING_ERROR));
@@ -252,7 +252,7 @@ Test(Parser, AssignationIncorrectArgument, .init = cr_redirect_stderr)
 Test(Vars, DupeVarLabel, .init = cr_redirect_stderr)
 {
     init_current_string("a=0\n.a:");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));
@@ -264,7 +264,7 @@ Test(Vars, DupeVarLabel, .init = cr_redirect_stderr)
 Test(Vars, DupeLabelVar, .init = cr_redirect_stderr)
 {
     init_current_string(".a:\na=0");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
     cr_expect(
         eq(int, parse_lines(get_fake_line, NULL, state, &buf), VARS_ERROR));

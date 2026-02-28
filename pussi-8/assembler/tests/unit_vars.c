@@ -13,7 +13,7 @@ TestSuite(Vars);
 Test(Vars, Empty)
 {
     init_current_string("");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -28,7 +28,7 @@ Test(Vars, Empty)
 Test(Vars, Simple)
 {
     init_current_string("a = 1");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -48,7 +48,7 @@ Test(Vars, Simple)
 Test(Vars, DoubleRecursive)
 {
     init_current_string("a = b\nc = b\nb = d\nd = 1\n");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -68,7 +68,7 @@ Test(Vars, DoubleRecursive)
 Test(Vars, InfiniteRecursion, .init = cr_redirect_stderr)
 {
     init_current_string("a = b\nb = a");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -83,7 +83,7 @@ Test(Vars, InfiniteRecursion, .init = cr_redirect_stderr)
 Test(Vars, UnknownMacro, .init = cr_redirect_stderr)
 {
     init_current_string("a = b");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -98,7 +98,7 @@ Test(Vars, UnknownMacro, .init = cr_redirect_stderr)
 Test(Vars, ApplySimple)
 {
     init_current_string(" add a,b\na=%r0\nb = %m1\nB = %p2");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -123,7 +123,7 @@ Test(Vars, ApplySimple)
 Test(Vars, UnknownButLabel)
 {
     init_current_string(".a: j a");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -137,7 +137,7 @@ Test(Vars, UnknownButLabel)
 Test(Vars, UnknownVar, .init = cr_redirect_stderr)
 {
     init_current_string(" add %r0,a");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));

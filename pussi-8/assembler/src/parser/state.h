@@ -6,6 +6,9 @@
 
 struct state
 {
+    // WARNING: not freed in this structure
+    char *file_name;
+
     struct queue *instructions;
     struct hash_map *vars;
     struct hash_map *labels;
@@ -16,7 +19,7 @@ struct state
     int instr_index;
 };
 
-struct state *state_create(void);
+struct state *state_create(char *file_name);
 void state_destroy(struct state *state);
 
 #endif /* ! STATE_H */

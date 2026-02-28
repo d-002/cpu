@@ -13,7 +13,7 @@ TestSuite(Labels);
 Test(Labels, Empty)
 {
     init_current_string("");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -28,7 +28,7 @@ Test(Labels, Empty)
 Test(Labels, Single)
 {
     init_current_string(".a\n j a");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));
@@ -53,7 +53,7 @@ Test(Labels, Single)
 Test(Labels, DoubleWithDifferingFakeLine)
 {
     init_current_string(" add %r0,%r1\n.a\n j a\n.b j b");
-    struct state *state = state_create();
+    struct state *state = state_create(NULL);
     char *buf = NULL;
 
     cr_assert(eq(int, parse_lines(get_fake_line, NULL, state, &buf), SUCCESS));

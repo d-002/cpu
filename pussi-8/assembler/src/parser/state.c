@@ -14,12 +14,13 @@ void token_free(void *ptr)
     free(token);
 }
 
-struct state *state_create(void)
+struct state *state_create(char *file_name)
 {
     struct state *state = calloc(1, sizeof(struct state));
     if (state == NULL)
         return NULL;
 
+    state->file_name = file_name;
     state->instructions = queue_create();
     state->vars = hash_map_create(token_free);
     state->labels = hash_map_create(free);
