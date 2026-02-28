@@ -14,7 +14,8 @@ OBJ=src/opcodes/opcodes.o src/opcodes/aliases_alu.o src/opcodes/aliases_jmp.o sr
 	src/logger/logger.o \
 	src/parser/parser.o src/parser/state.o src/parser/instruction.o src/parser/parser_utils.o src/parser/state_instruction.o src/parser/state_assignation.o \
 	src/queue/queue.o \
-	src/utils/numstr.o src/utils/checks.o
+	src/utils/numstr.o src/utils/checks.o \
+	src/nbt/nbt.o src/nbt/miniz.o
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
