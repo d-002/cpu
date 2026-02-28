@@ -1,17 +1,28 @@
+# vim
 *.swp
 *~
 
+# Python
 __pycache__
 
+# Minecraft
 *Bad Apple*.mp4
 options.txt
 
+# c
 *.o
 *.a
 *.i
+
+# gcov
 *.gcno
 *.gcda
 report.*css
 report.*html
+
+# binaries
 assembli
 unit
+
+# compiled assembli programs
+*.bin

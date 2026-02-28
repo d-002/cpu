@@ -24,7 +24,7 @@ Test(Cli, AllCorrect)
     cr_expect(eq(int,
                  parse_cli_args(sizeof(argv) / sizeof(argv[0]), argv, &args),
                  SUCCESS));
-    cr_expect(eq(int, args.run, 0));
+    cr_expect(eq(int, args.run, 1));
     cr_expect(eq(int, args.print, 1));
     cr_expect(eq(int, args.verbose, 1));
     cr_expect(eq(int, args.files_queue->length, 2));

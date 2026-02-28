@@ -25,12 +25,9 @@ int parse_arg(char c, struct cli_args *out)
         out->verbose = true;
         break;
     case FLAG_PRINT:
-        out->verbose = true;
         out->print = true;
-        out->run = false;
         break;
     case FLAG_HELP:
-        out->run = false;
         out->help = true;
         break;
     case FLAG_NORUN:

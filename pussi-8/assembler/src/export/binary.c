@@ -34,7 +34,7 @@ int to_binary_file(struct cli_args *args, char *path, struct queue *content)
         int wres = fwrite(buf, sizeof(char), 2, f);
         free(instruction);
 
-        if (wres)
+        if (wres <= 0)
         {
             logerror(NO_LINE, "Failed to write to file.");
             err = IO_ERROR;
