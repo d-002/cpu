@@ -11,7 +11,7 @@ int handle_custom_jump(struct instruction *instruction, struct queue *out,
 {
     if (instruction->args_queue->length != 1)
     {
-        logerror(instruction->file_line, "Expected 1 argument, got %ld",
+        logerror(instruction->file_line, "Expected 1 argument, got %ld.",
                  instruction->args_queue->length);
         return INSTRUCTION_ERROR;
     }

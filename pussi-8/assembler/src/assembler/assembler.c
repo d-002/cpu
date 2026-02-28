@@ -13,17 +13,17 @@
 
 int assemble_file(struct cli_args *args, char *path, struct state *state)
 {
-    verbose(args, NO_LINE, "Expanding variables");
+    verbose(args, NO_LINE, "Expanding variables.");
     int res = expand_vars(state);
     if (res != SUCCESS)
         return res;
 
-    verbose(args, NO_LINE, "Expanding labels");
+    verbose(args, NO_LINE, "Expanding labels.");
     res = expand_labels(state);
     if (res != SUCCESS)
         return res;
 
-    verbose(args, NO_LINE, "Assembling");
+    verbose(args, NO_LINE, "Assembling.");
 
     struct queue *queue = queue_create();
     struct queue *temp_content = queue_create();

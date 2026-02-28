@@ -21,7 +21,7 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     enum opcodes opcode = get_opcode(instruction);
     if (opcode == UNKNOWN_OPCODE)
     {
-        logerror(NO_LINE, "Unknown opcode: '%s'", instruction->opcode->data);
+        logerror(NO_LINE, "Unknown opcode: '%s'.", instruction->opcode->data);
         instruction_destroy(instruction);
         return INSTRUCTION_ERROR;
     }

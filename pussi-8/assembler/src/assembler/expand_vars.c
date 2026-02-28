@@ -28,13 +28,13 @@ int resolve_vars(struct state *state)
                 if (hash_map_get(state->labels, value->data))
                     continue;
 
-                logerror(NO_LINE, "Unknown macro name: '%s'", value->data);
+                logerror(NO_LINE, "Unknown macro name: '%s'.", value->data);
                 return VARS_ERROR;
             }
 
             if (strcmp(value->data, other->data) == 0)
             {
-                logerror(NO_LINE, "Recursive macros are not supported: '%s'",
+                logerror(NO_LINE, "Recursive macros are not supported: '%s'.",
                          value->data);
                 return VARS_ERROR;
             }
@@ -82,7 +82,7 @@ int apply_vars(struct state *state)
                 if (hash_map_get(state->labels, token->data))
                     continue;
 
-                logerror(NO_LINE, "Unknown macro or label name: '%s'",
+                logerror(NO_LINE, "Unknown macro or label name: '%s'.",
                          token->data);
                 return VARS_ERROR;
             }

@@ -25,7 +25,7 @@ int token_number(struct string *string, int line, struct token **out)
 
         if (string->length <= i)
         {
-            logerror(line, "Syntax error in number");
+            logerror(line, "Syntax error in number.");
             return LEXING_ERROR;
         }
     }

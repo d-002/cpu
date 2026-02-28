@@ -19,7 +19,7 @@ int state_label(struct state *state, struct string *string)
     if (hash_map_get(state->vars, state->current_token->data))
     {
         logerror(state->file_line,
-                 "Cannot have a label and a macro with the same name");
+                 "Cannot have a label and a macro with the same name.");
         return VARS_ERROR;
     }
 
@@ -45,7 +45,7 @@ int state_label(struct state *state, struct string *string)
         int err;
         if (res == HASH_MAP_DUPE_ERROR)
         {
-            logerror(state->file_line, "Duplicate label name: '%s'", key);
+            logerror(state->file_line, "Duplicate label name: '%s'.", key);
             err = VARS_ERROR;
         }
         else

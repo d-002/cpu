@@ -12,7 +12,7 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     if (export_path == NULL)
         return ALLOC_ERROR;
 
-    verbose(args, NO_LINE, "Exporting schematic to '%s'", export_path);
+    verbose(args, NO_LINE, "Exporting schematic to '%s'.", export_path);
     content++;
 
     free(export_path);

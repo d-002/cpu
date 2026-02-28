@@ -1,5 +1,6 @@
 #include "binary.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "export_utils.h"
@@ -12,9 +13,15 @@ int to_binary_file(struct cli_args *args, char *path, struct queue *content)
     if (export_path == NULL)
         return ALLOC_ERROR;
 
-    verbose(args, NO_LINE, "Exporting binary encoded program to '%s'",
+    verbose(args, NO_LINE, "Exporting binary encoded program to '%s'.",
             export_path);
-    content++;
+
+    FILE *f = fopen(export_path, "w");
+    if (f == NULL)
+    {
+        logerror(NO_LINE, "Failed to write to file.");
+        return ALLOC_ERROR;
+    }
 
     free(export_path);
     return SUCCESS;

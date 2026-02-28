@@ -6,16 +6,16 @@
 
 void expected(int file_line, enum token_type expected)
 {
-    logerror(file_line, "Expected %s but could not find it",
+    logerror(file_line, "Expected %s but could not find it.",
              type2name(expected));
 }
 
 void unexpected(int file_line, int expected, enum token_type got)
 {
     if (expected < 0)
-        logerror(file_line, "Unexpected %s", type2name(got));
+        logerror(file_line, "Unexpected %s.", type2name(got));
     else
-        logerror(file_line, "Expected %s, got %s", type2name(expected),
+        logerror(file_line, "Expected %s, got %s.", type2name(expected),
                  type2name(got));
 }
 

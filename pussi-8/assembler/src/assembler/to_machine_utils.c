@@ -15,7 +15,7 @@ int expect_n_args(struct instruction *instruction, size_t count, int values[],
     {
         if (!silent)
             logerror(instruction->file_line,
-                     "Expected %ld arguments for %s, got %ld", count,
+                     "Expected %ld arguments for %s, got %ld.", count,
                      instruction->opcode->data,
                      instruction->args_queue->length);
         return INSTRUCTION_ERROR;
@@ -34,7 +34,7 @@ int expect_n_args(struct instruction *instruction, size_t count, int values[],
         {
             if (!silent)
                 logerror(instruction->file_line,
-                         "Expected %s but got %s as argument number %d for %s",
+                         "Expected %s but got %s as argument number %d for %s.",
                          type2name(types[i]), type2name(token->type), i + 1,
                          instruction->opcode->data);
             return INSTRUCTION_ERROR;
