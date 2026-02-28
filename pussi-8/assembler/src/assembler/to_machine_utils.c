@@ -326,14 +326,15 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
     {
     case IN:
         return add_to_content(instruction->file_line, content,
-                              (args[0] << 4 & 15) + (args[1] & 15));
+                              (IN << 8) + (args[0] << 4 & 15) + (args[1] & 15));
         break;
     case OUT:
         return add_to_content(instruction->file_line, content,
-                              (args[1] << 4 & 15) + (args[0] & 15));
+                              (OUT << 8) + (args[1] << 4 & 15)
+                                  + (args[0] & 15));
         break;
     default:
-        return add_to_content(instruction->file_line, content, 0);
+        return add_to_content(instruction->file_line, content, opcode << 8);
     }
 
     return SUCCESS;
