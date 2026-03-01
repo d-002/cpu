@@ -2,6 +2,8 @@
 
 README for the PUSSI-8 Minecraft computer.
 
+The assembler uses libnbt by Celisium.
+
 > [!WARNING]
 > This project is still under development.
 
