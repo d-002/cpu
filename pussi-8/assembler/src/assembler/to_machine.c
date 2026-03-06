@@ -138,15 +138,15 @@ int gen_next_instruction(struct state *state, struct queue *queue)
 char *make_description(struct instruction *instruction)
 {
     // WARNING: this is not portable, mind the constant padding size
-    size_t size = 5 + 1;
+    size_t size = 6 + 1;
     for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
          arg = queue_iter_next(instruction->args_queue))
         size += arg->length + 1;
 
     char *copy = calloc(size, sizeof(char));
     size_t index = 0;
-    sprintf(copy + index, "%-5s", instruction->opcode->data);
-    index += 5;
+    sprintf(copy + index, "%6s", instruction->opcode->data);
+    index += 6;
 
     int first = 1;
     for (struct token *arg = queue_iter_start(instruction->args_queue); arg;
@@ -161,7 +161,8 @@ char *make_description(struct instruction *instruction)
     return copy;
 }
 
-void print_instruction(int line, char *description, struct queue *group)
+void print_instruction(int file_line, int real_line, char *description,
+                       struct queue *group)
 {
     int several = group->length > 1 ? group->length : 0;
     int index = 0;
@@ -174,7 +175,7 @@ void print_instruction(int line, char *description, struct queue *group)
         fill_buf_with_bin(opcode, opcode_b, 8);
         fill_buf_with_bin(*binary_encoded & 255, args_b, 8);
 
-        printf(" 0x%08X | %s %s |", line + index, opcode_b, args_b);
+        printf(" 0x%08X | %s %s |", real_line + index, opcode_b, args_b);
         if (several)
         {
             if (index == several - 1)
@@ -184,7 +185,11 @@ void print_instruction(int line, char *description, struct queue *group)
         }
         else
             printf(" -    |");
-        printf(" %s\n", description ? description : "[no description]");
+
+        if (index == 0)
+            printf(" %-4d | %s\n", file_line, description ? description : "?");
+        else
+            puts("      |");
     }
 }
 
@@ -195,7 +200,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
     if (args->print)
     {
         printf(" %s:\n", state->file_name);
-        puts(" addr       | opcode   args     | part | description");
+        puts(" addr       | opcode   args     | part | line | opcode args");
     }
 
     int prev_file_line = -1;
@@ -240,7 +245,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
 
         if (args->print)
         {
-            print_instruction(real_line, description, temp_content);
+            print_instruction(file_line, real_line, description, temp_content);
             free(description);
         }
 
