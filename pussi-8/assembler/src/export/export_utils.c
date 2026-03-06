@@ -5,22 +5,28 @@
 
 #include "logger/logger.h"
 
-char *change_extension(char *path, char *ext)
+size_t get_extension_dot_index(char *path, bool *found)
 {
     size_t index = 0;
     size_t i = 0;
-    int found = 0;
+    *found = false;
     while (path[i])
     {
         if (path[i] == '.')
         {
             index = i;
-            found = 1;
+            *found = true;
         }
         i++;
     }
 
-    size_t len = found ? index : i;
+    return *found ? index : i;
+}
+
+char *change_extension(char *path, char *ext)
+{
+    bool found;
+    size_t len = get_extension_dot_index(path, &found);
     size_t ext_len = strlen(ext);
 
     char *res = malloc((len + ext_len + 2) * sizeof(char));
