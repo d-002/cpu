@@ -10,6 +10,30 @@
 
 #define STR_LEN(s) s, strlen(s)
 
+#define ID_AIR 0
+#define ID_STONE 1
+#define ID_BARREL 2
+
+struct pos
+{
+    short x;
+    short y;
+    short z;
+    short i;
+};
+
+struct pos make_pos(short x, short y, short z, short w, short l)
+{
+    struct pos pos = {
+        .x = x,
+        .y = y,
+        .z = z,
+        .i = (y * l + z) * w + x,
+    };
+
+    return pos;
+}
+
 static size_t writer_write(void *userdata, uint8_t *data, size_t size)
 {
     return fwrite(data, 1, size, userdata);
@@ -27,6 +51,63 @@ void write_nbt_file(const char *name, nbt_tag_t *tag, int flags)
     nbt_write(writer, tag, flags);
 
     fclose(file);
+}
+
+static nbt_tag_t *fill_shovels(int n_shovels)
+{
+    nbt_tag_t *items = nbt_new_tag_list(NBT_TYPE_COMPOUND);
+    nbt_set_tag_name(items, STR_LEN("Items"));
+
+    for (int i = 0; i < n_shovels; i++)
+    {
+        nbt_tag_t *shovel = nbt_new_tag_compound();
+        nbt_tag_list_append(items, shovel);
+
+        nbt_tag_t *count = nbt_new_tag_int(1);
+        nbt_tag_compound_append(shovel, count);
+        nbt_set_tag_name(count, STR_LEN("Count"));
+
+        nbt_tag_t *slot = nbt_new_tag_int(i);
+        nbt_tag_compound_append(shovel, slot);
+        nbt_set_tag_name(slot, STR_LEN("Slot"));
+
+        nbt_tag_t *id = nbt_new_tag_string(STR_LEN("minecraft:wooden_shovel"));
+        nbt_tag_compound_append(shovel, id);
+        nbt_set_tag_name(id, STR_LEN("Id"));
+    }
+
+    return items;
+}
+
+static int set_data(short data, struct pos pos, int8_t *data_arr,
+                    nbt_tag_t *block_entities)
+{
+    data_arr[pos.i] = data == 0 ? ID_STONE : ID_BARREL;
+
+    nbt_tag_t *barrel = nbt_new_tag_compound();
+    nbt_tag_list_append(block_entities, barrel);
+
+    int pos_arr[3] = { pos.x, pos.y, pos.z };
+    nbt_tag_t *pos_tag = nbt_new_tag_int_array(pos_arr, 3);
+    nbt_set_tag_name(pos_tag, STR_LEN("Pos"));
+    nbt_tag_compound_append(barrel, pos_tag);
+
+    nbt_tag_t *id = nbt_new_tag_string(STR_LEN("minecraft:barrel"));
+    nbt_set_tag_name(id, STR_LEN("Id"));
+    nbt_tag_compound_append(barrel, id);
+
+    nbt_tag_t *data_tag = nbt_new_tag_compound();
+    nbt_set_tag_name(data_tag, STR_LEN("Data"));
+    nbt_tag_compound_append(barrel, data_tag);
+
+    nbt_tag_t *id_inner = nbt_new_tag_string(STR_LEN("minecraft:barrel"));
+    nbt_set_tag_name(id_inner, STR_LEN("Id"));
+    nbt_tag_compound_append(data_tag, id_inner);
+
+    nbt_tag_t *items = fill_shovels(2 * data + 1);
+    nbt_tag_compound_append(data_tag, items);
+
+    return SUCCESS;
 }
 
 // ok like I'm not checking memory here sorry
@@ -95,28 +176,35 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_set_tag_name(palette, STR_LEN("Palette"));
     nbt_tag_compound_append(blocks, palette);
 
-    nbt_tag_t *palette_air = nbt_new_tag_int(0);
+    nbt_tag_t *palette_air = nbt_new_tag_int(ID_AIR);
     nbt_set_tag_name(palette_air, STR_LEN("minecraft:air"));
     nbt_tag_compound_append(palette, palette_air);
-    nbt_tag_t *palette_stone = nbt_new_tag_int(1);
+    nbt_tag_t *palette_stone = nbt_new_tag_int(ID_STONE);
     nbt_set_tag_name(palette_stone, STR_LEN("minecraft:stone"));
     nbt_tag_compound_append(palette, palette_stone);
+    nbt_tag_t *palette_barrel = nbt_new_tag_int(ID_BARREL);
+    nbt_set_tag_name(palette_barrel, STR_LEN("minecraft:barrel"));
+    nbt_tag_compound_append(palette, palette_barrel);
+
+    nbt_tag_t *block_entities = nbt_new_tag_list(NBT_TYPE_COMPOUND);
+    nbt_set_tag_name(block_entities, STR_LEN("BlockEntities"));
+    nbt_tag_compound_append(blocks, block_entities);
 
     size_t data_size = (size_t)w * h * l;
-    int8_t *data_arr = calloc(data_size, sizeof(int8_t));
+    int8_t *data_arr = malloc(data_size * sizeof(int8_t));
+    memset(data_arr, ID_AIR, data_size * sizeof(int8_t));
 
     // encode data in the ROM barrels pattern, meaning a 16-bits instruction is
     // split into 4 barrels
     if (content->length > ROM_SIZE)
         logwarn(NO_LINE, "Program size is too large for the ROM: %ld > %ld",
                 content->length, ROM_SIZE);
-    short nop = 0;
+
     for (size_t i = 0; i < ROM_SIZE; i++)
     {
-        short *instruction = i >= content->length ? &nop
-            : i == 0                              ? queue_iter_start(content)
-                                                  : queue_iter_next(content);
-        instruction++; /////
+        short instruction = i >= content->length ? 0
+            : i == 0 ? *(short *)queue_iter_start(content)
+                     : *(short *)queue_iter_next(content);
 
         short layer = i / 32;
         short x = layer * 4;
@@ -125,23 +213,22 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
         short z1 = i / 4 % 8 * 4 + layer % 2;
         short z2 = z1 + 2;
 
-        size_t i = (y1 * l + z1) * w + x;
-        data_arr[i] = 1;
-        i = (y2 * l + z1) * w + x;
-        data_arr[i] = 1;
-        i = (y1 * l + z2) * w + x;
-        data_arr[i] = 1;
-        i = (y2 * l + z2) * w + x;
-        data_arr[i] = 1;
+        // depending on the value of the instruction, use a block entity or a
+        // normal block
+        // TODO: check opcode etc inversion
+        set_data(instruction & 0x000f, make_pos(x, y1, z1, w, l), data_arr,
+                 block_entities);
+        set_data(instruction & 0x00f0, make_pos(x, y2, z1, w, l), data_arr,
+                 block_entities);
+        set_data(instruction & 0x0f00, make_pos(x, y1, z2, w, l), data_arr,
+                 block_entities);
+        set_data(instruction & 0xf000, make_pos(x, y2, z2, w, l), data_arr,
+                 block_entities);
     }
 
     nbt_tag_t *data = nbt_new_tag_byte_array(data_arr, data_size);
     nbt_set_tag_name(data, STR_LEN("Data"));
     nbt_tag_compound_append(blocks, data);
-
-    nbt_tag_t *block_entities = nbt_new_tag_list(NBT_TYPE_COMPOUND);
-    nbt_set_tag_name(block_entities, STR_LEN("BlockEntities"));
-    nbt_tag_compound_append(blocks, block_entities);
 
     write_nbt_file(export_path, root, NBT_WRITE_FLAG_USE_GZIP);
     free(data_arr);
