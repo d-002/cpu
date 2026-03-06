@@ -167,7 +167,7 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_tag_compound_append(schematic, height);
     nbt_tag_compound_append(schematic, length);
 
-    int offset_arr[3] = { 2, 0, 0 };
+    int offset_arr[3] = { 2, -16, -1 };
     nbt_tag_t *offset = nbt_new_tag_int_array(offset_arr, 3);
     nbt_set_tag_name(offset, STR_LEN("Offset"));
     nbt_tag_compound_append(schematic, offset);
@@ -184,7 +184,7 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_set_tag_name(palette_air, STR_LEN("minecraft:air"));
     nbt_tag_compound_append(palette, palette_air);
     nbt_tag_t *palette_stone = nbt_new_tag_int(ID_WOOL);
-    nbt_set_tag_name(palette_stone, STR_LEN("minecraft:lime_wool"));
+    nbt_set_tag_name(palette_stone, STR_LEN("minecraft:white_wool"));
     nbt_tag_compound_append(palette, palette_stone);
     nbt_tag_t *palette_barrel = nbt_new_tag_int(ID_BARREL);
     nbt_set_tag_name(palette_barrel, STR_LEN("minecraft:barrel"));
@@ -210,23 +210,22 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
             : i == 0 ? *(short *)queue_iter_start(content)
                      : *(short *)queue_iter_next(content);
 
-        short layer = i / 32;
-        short x = layer / 2 * 7 + (layer % 2 ? 4 : 0);
-        short y1 = i % 4 * 2 + 1;
+        short layer = i / 8 % 16;
+        short x = layer / 2 * 7 + layer % 2 * 4;
+        short y1 = i / 8 / 16 * 2;
         short y2 = y1 + 8;
-        short z1 = i / 4 % 8 * 4 + 1 - layer / 2 % 2;
+        short z1 = i % 8 * 4 + 1 - layer / 2 % 2;
         short z2 = z1 + 2;
 
         // depending on the value of the instruction, use a block entity or a
         // normal block
-        // TODO: check opcode etc inversion
-        set_data(instruction & 0x000f, make_pos(x, y1 - 1, z1, w, l), data_arr,
+        set_data(instruction & 0x000f, make_pos(x, y1, z1, w, l), data_arr,
                  block_entities);
-        set_data((instruction & 0x00f0) >> 4, make_pos(x, y2 - 1, z1, w, l),
+        set_data((instruction & 0x00f0) >> 4, make_pos(x, y2, z1, w, l),
                  data_arr, block_entities);
-        set_data((instruction & 0x0f00) >> 8, make_pos(x, y1, z2, w, l),
+        set_data((instruction & 0x0f00) >> 8, make_pos(x, y1 + 1, z2, w, l),
                  data_arr, block_entities);
-        set_data((instruction & 0xf000) >> 12, make_pos(x, y2, z2, w, l),
+        set_data((instruction & 0xf000) >> 12, make_pos(x, y2 + 1, z2, w, l),
                  data_arr, block_entities);
     }
 
