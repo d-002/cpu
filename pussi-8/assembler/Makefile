@@ -1,6 +1,6 @@
 CFLAGS=-Wall -Wextra -Werror -Wvla -std=c99 -pedantic
 CPPFLAGS=-Isrc
-LDLIBS=-lm
+LDLIBS=-lm -lz
 
 TARGET=assembli
 OBJ_MAIN=src/main.o
@@ -15,7 +15,7 @@ OBJ=src/opcodes/opcodes.o src/opcodes/aliases_alu.o src/opcodes/aliases_jmp.o sr
 	src/parser/parser.o src/parser/state.o src/parser/instruction.o src/parser/parser_utils.o src/parser/state_instruction.o src/parser/state_assignation.o \
 	src/queue/queue.o \
 	src/utils/numstr.o src/utils/checks.o \
-	src/nbt/nbt.o src/nbt/miniz.o
+	src/nbt/nbt.o
 
 TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh

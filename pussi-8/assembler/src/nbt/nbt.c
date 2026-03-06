@@ -553,7 +553,7 @@ void nbt_write(nbt_writer_t writer, nbt_tag_t *tag, int write_flags)
     {
     case 1: { // gzip
         compressed = 1;
-        window_bits = -15;
+        window_bits = 31;
         break;
     }
     case 2: { // zlib

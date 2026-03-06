@@ -1,5 +1,7 @@
 #include "schematic.h"
 
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "export_utils.h"
@@ -63,17 +65,17 @@ static nbt_tag_t *fill_shovels(int n_shovels)
         nbt_tag_t *shovel = nbt_new_tag_compound();
         nbt_tag_list_append(items, shovel);
 
-        nbt_tag_t *count = nbt_new_tag_int(1);
+        nbt_tag_t *count = nbt_new_tag_byte(1);
         nbt_tag_compound_append(shovel, count);
         nbt_set_tag_name(count, STR_LEN("Count"));
 
-        nbt_tag_t *slot = nbt_new_tag_int(i);
+        nbt_tag_t *slot = nbt_new_tag_byte(i);
         nbt_tag_compound_append(shovel, slot);
         nbt_set_tag_name(slot, STR_LEN("Slot"));
 
         nbt_tag_t *id = nbt_new_tag_string(STR_LEN("minecraft:wooden_shovel"));
         nbt_tag_compound_append(shovel, id);
-        nbt_set_tag_name(id, STR_LEN("Id"));
+        nbt_set_tag_name(id, STR_LEN("id"));
     }
 
     return items;
@@ -104,7 +106,9 @@ static int set_data(short data, struct pos pos, int8_t *data_arr,
     nbt_set_tag_name(id_inner, STR_LEN("Id"));
     nbt_tag_compound_append(data_tag, id_inner);
 
-    nbt_tag_t *items = fill_shovels(2 * data + 1);
+    int n_shovels = ceil((27 * 64 / 14.) * (data - 1));
+    n_shovels = n_shovels > data ? n_shovels : data;
+    nbt_tag_t *items = fill_shovels(n_shovels);
     nbt_tag_compound_append(data_tag, items);
 
     return SUCCESS;
@@ -218,12 +222,12 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
         // TODO: check opcode etc inversion
         set_data(instruction & 0x000f, make_pos(x, y1, z1, w, l), data_arr,
                  block_entities);
-        set_data(instruction & 0x00f0, make_pos(x, y2, z1, w, l), data_arr,
-                 block_entities);
-        set_data(instruction & 0x0f00, make_pos(x, y1, z2, w, l), data_arr,
-                 block_entities);
-        set_data(instruction & 0xf000, make_pos(x, y2, z2, w, l), data_arr,
-                 block_entities);
+        set_data((instruction & 0x00f0) >> 4, make_pos(x, y2, z1, w, l),
+                 data_arr, block_entities);
+        set_data((instruction & 0x0f00) >> 8, make_pos(x, y1, z2, w, l),
+                 data_arr, block_entities);
+        set_data((instruction & 0xf000) >> 12, make_pos(x, y2, z2, w, l),
+                 data_arr, block_entities);
     }
 
     nbt_tag_t *data = nbt_new_tag_byte_array(data_arr, data_size);
