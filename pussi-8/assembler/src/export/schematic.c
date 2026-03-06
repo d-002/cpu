@@ -1,6 +1,5 @@
 #include "schematic.h"
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,7 +12,7 @@
 #define STR_LEN(s) s, strlen(s)
 
 #define ID_AIR 0
-#define ID_STONE 1
+#define ID_WOOL 1
 #define ID_BARREL 2
 
 struct pos
@@ -84,7 +83,7 @@ static nbt_tag_t *fill_shovels(int n_shovels)
 static int set_data(short data, struct pos pos, int8_t *data_arr,
                     nbt_tag_t *block_entities)
 {
-    data_arr[pos.i] = data == 0 ? ID_STONE : ID_BARREL;
+    data_arr[pos.i] = data == 0 ? ID_WOOL : ID_BARREL;
 
     nbt_tag_t *barrel = nbt_new_tag_compound();
     nbt_tag_list_append(block_entities, barrel);
@@ -106,8 +105,9 @@ static int set_data(short data, struct pos pos, int8_t *data_arr,
     nbt_set_tag_name(id_inner, STR_LEN("Id"));
     nbt_tag_compound_append(data_tag, id_inner);
 
-    int n_shovels = ceil((27 * 64 / 14.) * (data - 1));
+    int n_shovels = 2 * data - 1;
     n_shovels = n_shovels > data ? n_shovels : data;
+    n_shovels = n_shovels > 27 ? 27 : n_shovels;
     nbt_tag_t *items = fill_shovels(n_shovels);
     nbt_tag_compound_append(data_tag, items);
 
@@ -154,7 +154,7 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
 
     // TODO: rest of metadata
 
-    short w = 4 * 16 - 3;
+    short w = 7 * 8 - 2;
     short h = 16;
     short l = 4 * 8;
     nbt_tag_t *width = nbt_new_tag_short(w);
@@ -167,7 +167,7 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_tag_compound_append(schematic, height);
     nbt_tag_compound_append(schematic, length);
 
-    int offset_arr[3] = { 0, 0, 0 };
+    int offset_arr[3] = { 2, 0, 0 };
     nbt_tag_t *offset = nbt_new_tag_int_array(offset_arr, 3);
     nbt_set_tag_name(offset, STR_LEN("Offset"));
     nbt_tag_compound_append(schematic, offset);
@@ -183,8 +183,8 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_tag_t *palette_air = nbt_new_tag_int(ID_AIR);
     nbt_set_tag_name(palette_air, STR_LEN("minecraft:air"));
     nbt_tag_compound_append(palette, palette_air);
-    nbt_tag_t *palette_stone = nbt_new_tag_int(ID_STONE);
-    nbt_set_tag_name(palette_stone, STR_LEN("minecraft:stone"));
+    nbt_tag_t *palette_stone = nbt_new_tag_int(ID_WOOL);
+    nbt_set_tag_name(palette_stone, STR_LEN("minecraft:lime_wool"));
     nbt_tag_compound_append(palette, palette_stone);
     nbt_tag_t *palette_barrel = nbt_new_tag_int(ID_BARREL);
     nbt_set_tag_name(palette_barrel, STR_LEN("minecraft:barrel"));
@@ -211,18 +211,18 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
                      : *(short *)queue_iter_next(content);
 
         short layer = i / 32;
-        short x = layer * 4;
-        short y1 = i % 4 * 2 + i / 4 % 2;
+        short x = layer / 2 * 7 + (layer % 2 ? 4 : 0);
+        short y1 = i % 4 * 2 + 1;
         short y2 = y1 + 8;
-        short z1 = i / 4 % 8 * 4 + layer % 2;
+        short z1 = i / 4 % 8 * 4 + 1 - layer / 2 % 2;
         short z2 = z1 + 2;
 
         // depending on the value of the instruction, use a block entity or a
         // normal block
         // TODO: check opcode etc inversion
-        set_data(instruction & 0x000f, make_pos(x, y1, z1, w, l), data_arr,
+        set_data(instruction & 0x000f, make_pos(x, y1 - 1, z1, w, l), data_arr,
                  block_entities);
-        set_data((instruction & 0x00f0) >> 4, make_pos(x, y2, z1, w, l),
+        set_data((instruction & 0x00f0) >> 4, make_pos(x, y2 - 1, z1, w, l),
                  data_arr, block_entities);
         set_data((instruction & 0x0f00) >> 8, make_pos(x, y1, z2, w, l),
                  data_arr, block_entities);
