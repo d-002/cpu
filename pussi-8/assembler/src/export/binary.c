@@ -27,12 +27,12 @@ int to_binary_file(struct cli_args *args, char *path, struct queue *content)
         goto end;
     }
 
-    while (content->length)
+    // important to not dequeue here, to allow exporting to multiple formats
+    for (short *instruction = queue_iter_start(content); instruction;
+         instruction = queue_iter_next(content))
     {
-        short *instruction = queue_dequeue(content);
         char buf[2] = { *instruction >> 8, *instruction & 255 };
         int wres = fwrite(buf, sizeof(char), 2, f);
-        free(instruction);
 
         if (wres <= 0)
         {
