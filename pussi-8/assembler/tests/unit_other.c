@@ -24,6 +24,15 @@ Test(Other, ItoaSimple)
     free(s);
 }
 
+Test(Other, ItoaNegative)
+{
+    char *s = itoa(-42);
+    cr_assert(ne(ptr, s, NULL));
+    cr_expect(eq(str, s, "-42"));
+
+    free(s);
+}
+
 Test(Other, AtoiTokenDec)
 {
     struct token *token = token_create(NUMBER_DEC, "42", 2);

@@ -5,17 +5,21 @@
 
 char *itoa(int n)
 {
+    bool negative = n < 0;
+    if (negative)
+        n = -n;
     int len = n ? floor(log10(n)) + 1 : 1;
 
-    char *res = malloc((len + 1) * sizeof(char));
+    char *res = calloc(negative + len + 1, sizeof(char));
     if (res == NULL)
         return NULL;
 
-    res[len] = '\0';
+    if (negative)
+        res[0] = '-';
 
     if (n)
     {
-        int i = len - 1;
+        int i = negative + len - 1;
         while (n)
         {
             res[i--] = n % 10 + '0';
@@ -23,7 +27,7 @@ char *itoa(int n)
         }
     }
     else
-        res[0] = '0';
+        res[negative] = '0';
 
     return res;
 }
