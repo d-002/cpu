@@ -2,9 +2,9 @@
     ldi decrement_by,%r2
 
 .loop:
-    out %r1,port
     sub %r1,%r2
     movei %r0,%r1
+    out %r1,port
 
     jnz loop
     halt
