@@ -19,8 +19,8 @@ function fetch() {
         for (let i = 0; i < (1 << specs.pageCacheSize); i++) {
             const instruction = state.rom.data[(targetHighAddr << specs.pageCacheSize) + i].get();
 
-            state.rom_cache.hi.data[i].set(instruction >> specs.instructionSize / 2);
-            state.rom_cache.lo.data[i].set(instruction & ((specs.instructionSize / 2) - 1));
+            state.rom_cache.hi.data[i].set(instruction >> (specs.instructionSize >> 1));
+            state.rom_cache.lo.data[i].set(instruction & ((1 << (specs.instructionSize >> 1)) - 1));
         }
     }
 
@@ -145,8 +145,6 @@ function getAluRes(A, B, instructionName) {
 }
 
 function execute(opcode, immediate, argsHi, argsLo) {
-    state.programCounter.set(state.programCounter.get() + 1);
-
     // common actions
     // reg r1 = dual(hi, lo)
     const r1Addr = {
@@ -301,6 +299,8 @@ function execute(opcode, immediate, argsHi, argsLo) {
         default:
             console.error("Found unacceptable instruction with opcode " + opcode);
     }
+
+    state.programCounter.set(state.programCounter.get() + 1);
 }
 
 function step() {
@@ -334,6 +334,46 @@ function fullReset() {
     reset();
 }
 
+function importFile() {
+    const input = document.createElement("INPUT");
+    input.type = "file";
+    input.style = "width: 0; height: 0;"
+    document.body.appendChild(input);
+    input.click();
+    input.addEventListener("change", () => {
+        let count = 0;
+        const targetCount = input.files.length;
+
+        if (targetCount != 1)
+            return;
+
+        const file = input.files[0];
+        const read = new FileReader();
+
+        read.onloadend = () => {
+            const arr = new Uint8Array(read.result);
+
+            const length = Math.floor(arr.length / specs.instructionSize * 8);
+            if (length > specs.romLength)
+                alert("File too long, will be trimming it to " + specs.romLength
+                    + " instructions (found " + length + ")");
+
+            fullReset();
+            for (let i = 0; i < specs.romLength; i++) {
+                const opcode = 2 * i < arr.length ? arr[2 * i] : 0;
+                const args = 2 * i + 1 < arr.length ? arr[2 * i + 1] : 0;
+                state.rom.data[i].setSilent((opcode << (specs.instructionSize >> 1)) + args);
+            }
+            ui.display();
+
+            console.log("Imported file " + file.name);
+        };
+        read.readAsArrayBuffer(file);
+
+        input.remove();
+    });
+}
+
 export function setupRun(_state, _ui) {
     state = _state;
     ui = _ui;
@@ -343,6 +383,7 @@ export function setupRun(_state, _ui) {
     document.getElementById("btn-stop").onclick = stop;
     document.getElementById("btn-reset").onclick = reset;
     document.getElementById("btn-full-reset").onclick = fullReset;
+    document.getElementById("btn-import").onclick = importFile;
 
     document.addEventListener("keydown", evt => {
         if (evt.key == "r")

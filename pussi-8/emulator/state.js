@@ -110,8 +110,8 @@ class State {
 
         this.rom = new DataArray(specs.romLength, specs.instructionSize, this.timer);
         this.rom_cache = {
-            hi: new DataArray(1 << specs.pageCacheSize, specs.pageCacheSize, this.timer),
-            lo: new DataArray(1 << specs.pageCacheSize, specs.pageCacheSize, this.timer),
+            hi: new DataArray(1 << specs.pageCacheSize, specs.instructionSize >> 1, this.timer),
+            lo: new DataArray(1 << specs.pageCacheSize, specs.instructionSize >> 1, this.timer),
             addr: new Data(specs.instructionSize - specs.pageCacheSize, this.timer),
         };
 
@@ -140,6 +140,9 @@ class State {
     }
 
     reset(onlyTimes = false) {
+        // onlyTimes == true: weak reset, simulates a stop / reset in the actual
+        // hardware
+
         this.timer.reset(onlyTimes);
         this.rom.reset(onlyTimes);
         this.rom_cache.hi.reset(onlyTimes);
