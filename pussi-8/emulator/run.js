@@ -268,7 +268,19 @@ function execute(opcode, immediate, argsHi, argsLo) {
             // io write
             state.io.data[ioAddr].set(ioValue);
             break;
-        case "OR", "NOR", "ADD", "SUB", "XOR", "XNOR", "AND", "NAND", "NOT", "LSH", "RSH", "ROR", "ROL":
+        case "OR":
+        case "NOR":
+        case "ADD":
+        case "SUB":
+        case "XOR":
+        case "XNOR":
+        case "AND":
+        case "NAND":
+        case "NOT":
+        case "LSH":
+        case "RSH":
+        case "ROR":
+        case "ROL":
             // reg trigger W, allow alu into reg
             state.registers.data[regWAddr].set(getAluRes(r1.A, r1.B, instructionName));
             break;
@@ -299,8 +311,6 @@ function execute(opcode, immediate, argsHi, argsLo) {
         default:
             console.error("Found unacceptable instruction with opcode " + opcode);
     }
-
-    state.programCounter.set(state.programCounter.get() + 1);
 }
 
 function step() {
@@ -308,6 +318,9 @@ function step() {
     execute(opcode, immediate, argsHi, argsLo);
 
     ui.display();
+
+    // increment timers now to avoid messing up the display
+    state.programCounter.set(state.programCounter.get() + 1);
     state.timer.set(state.timer.get() + 1);
 }
 
@@ -396,5 +409,7 @@ export function setupRun(_state, _ui) {
             step();
         else if (evt.key == "F")
             fullReset();
+        else if (evt.key == "i")
+            importFile();
     });
 }
