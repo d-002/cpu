@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra -Werror -Wvla -std=c99 -pedantic
+CFLAGS=-Wall -Wextra -Werror -Wvla -std=c99 -pedantic -O1
 CPPFLAGS=-Isrc
 LDLIBS=-lm -lz
 
@@ -21,9 +21,16 @@ TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
 OBJ_UNIT=tests/unit_queue.o tests/unit_hashmap.o tests/unit_lexer.o tests/unit_cli.o tests/unit_parser_utils.o tests/unit_parser.o tests/unit_vars.o tests/unit_other.o tests/unit_labels.o
 
-.PHONY: all check dev coverage clean
+.PHONY: all portable check dev coverage clean
 
 all: $(TARGET)
+
+portable: CC=musl-gcc
+portable: CPPFLAGS+=-I/usr/local/musl/include
+portable: LDFLAGS+=-static -L/usr/local/musl/lib
+portable: clean $(TARGET)
+	[ -n "$$(ldd $(TARGET) 2>&1 | grep 'not a dynamic executable')" ]
+	strip $(TARGET)
 
 $(TARGET): $(OBJ_MAIN) $(OBJ)
 	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)

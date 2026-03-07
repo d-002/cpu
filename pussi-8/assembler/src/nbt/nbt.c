@@ -566,6 +566,9 @@ void nbt_write(nbt_writer_t writer, nbt_tag_t *tag, int write_flags)
         window_bits = 0;
         break;
     }
+    default:
+        logerror(NO_LINE, "Incorrect flags passed to nbt_write");
+        return;
     }
 
     nbt__write_stream_t write_stream;

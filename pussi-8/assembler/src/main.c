@@ -5,7 +5,7 @@
 #include "utils/checks.h"
 #include "utils/errors.h"
 
-int show_help()
+int show_help(void)
 {
     printf("Temporary help message, see repo readme instead.\n");
 
