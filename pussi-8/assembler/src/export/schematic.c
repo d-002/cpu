@@ -105,7 +105,7 @@ static int set_data(short data, struct pos pos, int8_t *data_arr,
     nbt_set_tag_name(id_inner, STR_LEN("Id"));
     nbt_tag_compound_append(data_tag, id_inner);
 
-    int n_shovels = 2 * data - 1;
+    int n_shovels = 2 * data - 2;
     n_shovels = n_shovels > data ? n_shovels : data;
     n_shovels = n_shovels > 27 ? 27 : n_shovels;
     nbt_tag_t *items = fill_shovels(n_shovels);
@@ -210,9 +210,9 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
             : i == 0 ? *(short *)queue_iter_start(content)
                      : *(short *)queue_iter_next(content);
 
-        short layer = i / 8 % 16;
+        short layer = i / 8 / 4 % 16;
         short x = layer / 2 * 7 + layer % 2 * 4;
-        short y1 = i / 8 / 16 * 2;
+        short y1 = i / 8 % 4 * 2;
         short y2 = y1 + 8;
         short z1 = i % 8 * 4 + 1 - layer / 2 % 2;
         short z2 = z1 + 2;
