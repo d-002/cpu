@@ -10,10 +10,7 @@ function fetch() {
     // get page cache if needed
     const targetHighAddr = state.programCounter.get() >> specs.pageCacheSize;
 
-    if (state.forceReadPage.get() != 0 ||
-        targetHighAddr != state.rom_cache.addr.get()) {
-
-        state.forceReadPage.set(0);
+    if (targetHighAddr != state.rom_cache.addr.get()) {
         state.rom_cache.addr.set(targetHighAddr);
 
         for (let i = 0; i < (1 << specs.pageCacheSize); i++) {
@@ -133,6 +130,7 @@ function getAluRes(A, B, instructionName) {
     }
 
     // edit flags
+    res = res & ((1 << specs.wordSize) - 1);
     const signA = (A >> (specs.wordSize - 1)) & 1;
     const signB = (B >> (specs.wordSize - 1)) & 1;
     const signRes = (res >> (specs.wordSize - 1)) & 1;
@@ -141,7 +139,7 @@ function getAluRes(A, B, instructionName) {
     setFlagTo("N", signRes);
     setFlagTo("V", (signA == signB) && (signA ^ signRes));
 
-    return res & (1 << specs.wordSize);
+    return res;
 }
 
 function readR1(r1Addr, a = true, b = true) {
@@ -152,6 +150,8 @@ function readR1(r1Addr, a = true, b = true) {
 }
 
 function execute(opcode, immediate, argsHi, argsLo) {
+    state.programCounter.set(state.programCounter.get() + 1);
+
     // common actions
     // reg r1 = dual(hi, lo)
     const r1Addr = {
@@ -195,20 +195,20 @@ function execute(opcode, immediate, argsHi, argsLo) {
             state.conditionBuffer.set((immediate & 1) ? !cond : !!cond);
             break;
         case "JUMPI":
-            if (state.stateRegister.get() != 0) {
+            if (state.conditionBuffer.get() != 0) {
                 // PC value = immediate, PC jump
                 state.programCounter.set(immediate);
             }
             break;
         case "JUMP":
-            if (state.stateRegister.get() != 0) {
+            if (state.conditionBuffer.get() != 0) {
                 // PC value = A/B, PC jump
                 readR1(r1Addr);
                 state.programCounter.set((r1.A << specs.wordSize) + r1.B);
             }
             break;
         case "JUMPR":
-            if (state.stateRegister.get() != 0) {
+            if (state.conditionBuffer.get() != 0) {
                 // PC value = A/B, PC relative jump
                 readR1(r1Addr);
                 state.programCounter.set(state.programCounter.get() + (r1.A << specs.wordSize) + r1.B);
@@ -333,12 +333,16 @@ function execute(opcode, immediate, argsHi, argsLo) {
 
 function step() {
     const [opcode, immediate, argsHi, argsLo] = fetch();
+
+    const prevCounter = state.programCounter.getSilent();
     execute(opcode, immediate, argsHi, argsLo);
 
+    // restore the counter to avoid messing up the display
+    const nowCounter = state.programCounter.getSilent();
+    state.programCounter.setSilent(prevCounter);
     ui.display();
+    state.programCounter.setSilent(nowCounter);
 
-    // increment timers now to avoid messing up the display
-    state.programCounter.set(state.programCounter.get() + 1);
     state.timer.set(state.timer.get() + 1);
 }
 

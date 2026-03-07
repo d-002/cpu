@@ -133,7 +133,6 @@ class State {
         this.aluBuffer = new Data(specs.wordSize, this.timer);
         this.stateRegister = new Data(specs.wordSize, this.timer);
         this.conditionBuffer = new Data(1, this.timer);
-        this.forceReadPage = new Data(1, this.timer);
         this.programCounter = new Data(specs.instructionSize, this.timer);
 
         this.reset();
@@ -161,8 +160,6 @@ class State {
         this.stateRegister.setSilent(2);
         this.stateRegister.reset(true);
         this.conditionBuffer.reset(onlyTimes);
-        this.forceReadPage.setSilent(1);
-        this.forceReadPage.reset(true);
         this.programCounter.reset(onlyTimes);
     }
 
