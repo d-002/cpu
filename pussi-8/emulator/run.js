@@ -343,4 +343,17 @@ export function setupRun(_state, _ui) {
     document.getElementById("btn-stop").onclick = stop;
     document.getElementById("btn-reset").onclick = reset;
     document.getElementById("btn-full-reset").onclick = fullReset;
+
+    document.addEventListener("keydown", evt => {
+        if (evt.key == "r")
+            run();
+        else if (evt.key == "s")
+            stop();
+        else if (evt.key == "R")
+            reset();
+        else if (evt.key == "t")
+            step();
+        else if (evt.key == "F")
+            fullReset();
+    });
 }
