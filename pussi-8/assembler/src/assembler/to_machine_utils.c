@@ -184,9 +184,9 @@ int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
         return add_to_content(instruction->file_line, content,
                               (JUMPR << 8) + (args[0] & 255));
     case JUMP:
-        res =
-            add_to_content(instruction->file_line, content,
-                           (JUMP << 8) + (args[0] & 15 << 4) + (args[1] & 15));
+        res = add_to_content(instruction->file_line, content,
+                             (JUMP << 8) + ((args[0] & 15) << 4)
+                                 + (args[1] & 15));
         if (res != SUCCESS)
             return res;
         return add_nop(instruction->file_line + 1, content, 2);
@@ -235,11 +235,11 @@ int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
     case RTC:
     case TIMER:
         return add_to_content(instruction->file_line, content,
-                              (opcode << 8) + (args[1] << 4 & 15)
+                              (opcode << 8) + ((args[1] & 15) << 4)
                                   + (args[0] & 15));
     default: // case CTR
         return add_to_content(instruction->file_line, content,
-                              (CTR << 8) + (args[0] << 4 & 15)
+                              (CTR << 8) + ((args[0] & 15) << 4)
                                   + (args[1] & 15));
     }
 
@@ -284,7 +284,8 @@ int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
     }
 
     return add_to_content(instruction->file_line, content,
-                          (opcode << 8) + (args[0] << 4 & 15) + (args[1] & 15));
+                          (opcode << 8) + ((args[0] & 15) << 4)
+                              + (args[1] & 15));
 }
 
 int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
@@ -326,11 +327,12 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
     {
     case IN:
         return add_to_content(instruction->file_line, content,
-                              (IN << 8) + (args[0] << 4 & 15) + (args[1] & 15));
+                              (IN << 8) + ((args[0] & 15) << 4)
+                                  + (args[1] & 15));
         break;
     case OUT:
         return add_to_content(instruction->file_line, content,
-                              (OUT << 8) + (args[1] << 4 & 15)
+                              (OUT << 8) + ((args[1] & 15) << 4)
                                   + (args[0] & 15));
         break;
     default:
