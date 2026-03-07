@@ -6,11 +6,11 @@ let state, ui;
 let interval;
 const tps = 10;
 
-function fetch() {
+function fetch(flush = false) {
     // get page cache if needed
     const targetHighAddr = state.programCounter.get() >> specs.pageCacheSize;
 
-    if (targetHighAddr != state.rom_cache.addr.get()) {
+    if (flush || targetHighAddr != state.rom_cache.addr.get()) {
         state.rom_cache.addr.set(targetHighAddr);
 
         for (let i = 0; i < (1 << specs.pageCacheSize); i++) {
@@ -176,9 +176,9 @@ function execute(opcode, immediate, argsHi, argsLo) {
     // MM addr = A
     const mmAddr = r1.A;
     // B to IO value
-    const ioValue = r1.B;
+    const ioValue = r1.A;
     // A to IO addr
-    const ioAddr = r1.A % specs.io;
+    const ioAddr = r1Addr.B % specs.io;
     // PC into stack value
     const stackValue = state.programCounter.get();
 
@@ -357,16 +357,16 @@ function stop() {
     interval = null;
 }
 
-function reset() {
+function reset(onlyTimes = true) {
     state.programCounter.reset();
-    state.reset(true);
+    state.reset(onlyTimes);
 
+    fetch(true);
     ui.display();
 }
 
 function fullReset() {
-    state.reset();
-    reset();
+    reset(false);
 }
 
 function importFile() {
@@ -399,6 +399,7 @@ function importFile() {
                 const args = 2 * i + 1 < arr.length ? arr[2 * i + 1] : 0;
                 state.rom.data[i].setSilent((opcode << (specs.instructionSize >> 1)) + args);
             }
+            reset();
             ui.display();
 
             console.log("Imported file " + file.name);
