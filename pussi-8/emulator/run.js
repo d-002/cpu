@@ -34,8 +34,6 @@ function fetch() {
 }
 
 function mmCacheQuery(value, addr, writeToggle) {
-    // TODO check hardware behavior for equal unused counters values
-
     const targetHighAddr = addr >> specs.mainMemoryCacheSize;
     const innerIndex = addr & ((1 << specs.mainMemoryCacheSize) - 1);
 
@@ -64,7 +62,7 @@ function mmCacheQuery(value, addr, writeToggle) {
     for (let i = 0; i < specs.mainMemoryCacheModules; i++) {
         const module = state.mainMemoryCache[i];
         const counter = module.unusedCounter.get();
-        if (i == 0 || counter > lru_counter) {
+        if (lru_index == null || counter > lru_counter) {
             lru_index = i;
             lru_counter = counter;
         }
