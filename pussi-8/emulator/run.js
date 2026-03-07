@@ -144,6 +144,13 @@ function getAluRes(A, B, instructionName) {
     return res & (1 << specs.wordSize);
 }
 
+function readR1(r1Addr, a = true, b = true) {
+    if (a)
+        state.registers.data[r1Addr.A].get();
+    if (b)
+        state.registers.data[r1Addr.B].get();
+}
+
 function execute(opcode, immediate, argsHi, argsLo) {
     // common actions
     // reg r1 = dual(hi, lo)
@@ -153,8 +160,9 @@ function execute(opcode, immediate, argsHi, argsLo) {
     };
     // trigger r1
     const r1 = {
-        'A': state.registers.data[r1Addr.A].get(),
-        'B': state.registers.data[r1Addr.B].get()
+        // don't trigger reads here
+        'A': state.registers.data[r1Addr.A].getSilent(),
+        'B': state.registers.data[r1Addr.B].getSilent()
     };
     // reg r2 = dual(-, B)
     const r2Addr = {
@@ -195,12 +203,14 @@ function execute(opcode, immediate, argsHi, argsLo) {
         case "JUMP":
             if (state.stateRegister.get() != 0) {
                 // PC value = A/B, PC jump
+                readR1(r1Addr);
                 state.programCounter.set((r1.A << specs.wordSize) + r1.B);
             }
             break;
         case "JUMPR":
             if (state.stateRegister.get() != 0) {
                 // PC value = A/B, PC relative jump
+                readR1(r1Addr);
                 state.programCounter.set(state.programCounter.get() + (r1.A << specs.wordSize) + r1.B);
             }
             break;
@@ -210,10 +220,12 @@ function execute(opcode, immediate, argsHi, argsLo) {
             break;
         case "MOVEI":
             // reg trigger W, allow B into reg
+            readR1(r1Addr, false, true);
             state.registers.data[regWAddr].set(r1.B);
             break;
         case "MOVEA":
             // reg buffer A on r1
+            readR1(r1Addr, true, false);
             bufferedFromA = r1.A;
             // reg trigger r2
             r2 = {
@@ -244,19 +256,23 @@ function execute(opcode, immediate, argsHi, argsLo) {
             break;
         case "MUL":
             // reg trigger W, allow mul into reg
+            readR1(r1Addr);
             state.registers.data[regWAddr].set(r1.A * r1.B);
             break;
         case "DIV":
             // reg trigger W, allow div into reg
+            readR1(r1Addr);
             state.registers.data[regWAddr].set(r1.B == 0
                 ? (1 << specs.wordSize) - 1
                 : Math.floor(r1.A / r1.B));
             break;
         case "MOD":
             // reg trigger W, allow mod into reg
+            readR1(r1Addr);
             state.registers.data[regWAddr].set(r1.B == 0 ? 0 : r1.A % r1.B);
             break;
         case "IN":
+            readR1(r1Addr, true, false);
             // reg buffer A on r1
             bufferedFromA = r1.A;
             // reg w = A (from buffer)
@@ -282,6 +298,7 @@ function execute(opcode, immediate, argsHi, argsLo) {
         case "ROR":
         case "ROL":
             // reg trigger W, allow alu into reg
+            readR1(r1Addr);
             state.registers.data[regWAddr].set(getAluRes(r1.A, r1.B, instructionName));
             break;
         case "PUSH":
