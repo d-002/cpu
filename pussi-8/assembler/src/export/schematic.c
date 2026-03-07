@@ -14,6 +14,7 @@
 #define ID_AIR 0
 #define ID_WOOL 1
 #define ID_BARREL 2
+#define ID_REDSTONE_BLOCK 3
 
 struct pos
 {
@@ -84,6 +85,11 @@ static int set_data(short data, struct pos pos, int8_t *data_arr,
                     nbt_tag_t *block_entities)
 {
     data_arr[pos.i] = data == 0 ? ID_WOOL : ID_BARREL;
+    data_arr[pos.i] = data == 0 ? ID_WOOL
+        : data == 15            ? ID_REDSTONE_BLOCK
+                                : ID_BARREL;
+    if (data == 0 || data == 15)
+        return SUCCESS;
 
     nbt_tag_t *barrel = nbt_new_tag_compound();
     nbt_tag_list_append(block_entities, barrel);
@@ -189,6 +195,10 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_tag_t *palette_barrel = nbt_new_tag_int(ID_BARREL);
     nbt_set_tag_name(palette_barrel, STR_LEN("minecraft:barrel"));
     nbt_tag_compound_append(palette, palette_barrel);
+    nbt_tag_t *palette_redstone_block = nbt_new_tag_int(ID_REDSTONE_BLOCK);
+    nbt_set_tag_name(palette_redstone_block,
+                     STR_LEN("minecraft:redstone_block"));
+    nbt_tag_compound_append(palette, palette_redstone_block);
 
     nbt_tag_t *block_entities = nbt_new_tag_list(NBT_TYPE_COMPOUND);
     nbt_set_tag_name(block_entities, STR_LEN("BlockEntities"));
