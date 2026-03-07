@@ -155,19 +155,19 @@ function execute(opcode, immediate, argsHi, argsLo) {
     // common actions
     // reg r1 = dual(hi, lo)
     const r1Addr = {
-        'A': argsHi % specs.registers,
-        'B': argsLo % specs.registers
+        A: argsHi % specs.registers,
+        B: argsLo % specs.registers
     };
     // trigger r1
     const r1 = {
         // don't trigger reads here
-        'A': state.registers.data[r1Addr.A].getSilent(),
-        'B': state.registers.data[r1Addr.B].getSilent()
+        A: state.registers.data[r1Addr.A].getSilent(),
+        B: state.registers.data[r1Addr.B].getSilent()
     };
     // reg r2 = dual(-, B)
     const r2Addr = {
-        'A': 0, // unused
-        'B': r1.B % specs.registers
+        A: 0, // unused
+        B: r1.B % specs.registers
     };
     // reg w = 0 (default value)
     let regWAddr = 0;
@@ -221,21 +221,23 @@ function execute(opcode, immediate, argsHi, argsLo) {
         case "MOVEI":
             // reg trigger W, allow B into reg
             readR1(r1Addr, false, true);
-            state.registers.data[regWAddr].set(r1.B);
+            // reg W = hi
+            regWAddr = r1Addr.A;
+            state.registers.data[regWAddr % specs.registers].set(r1.B);
             break;
         case "MOVEA":
+            readR1(r1Addr);
             // reg buffer A on r1
-            readR1(r1Addr, true, false);
             bufferedFromA = r1.A;
             // reg trigger r2
             r2 = {
-                'A': state.registers.data[r2Addr.A].get(),
-                'B': state.registers.data[r2Addr.B].get()
+                A: state.registers.data[r2Addr.A].get(),
+                B: state.registers.data[r2Addr.B].get()
             };
             // reg w = A (from buffer)
             regWAddr = bufferedFromA;
             // reg trigger W, allow B into reg
-            state.registers.data[regWAddr].set(r2.B);
+            state.registers.data[regWAddr % specs.registers].set(r2.B);
             break;
         case "RTC":
             // MM cache query, MM cache write toggle
@@ -246,39 +248,38 @@ function execute(opcode, immediate, argsHi, argsLo) {
             regWAddr = argsLo % specs.registers;
             mmRes = mmCacheQuery(mmValue, mmAddr, false);
             // reg trigger W, allow MM into reg
-            state.registers.data[regWAddr].set(mmRes);
+            state.registers.data[regWAddr % specs.registers].set(mmRes);
             break;
         case "TIMER":
             // reg w = hi
             regWAddr = argsHi % specs.registers;
             // reg trigger W, allow timer into reg
-            state.registers.data[regWAddr].set(state.timer.get());
+            state.registers.data[regWAddr % specs.registers].set(state.timer.get());
             break;
         case "MUL":
             // reg trigger W, allow mul into reg
             readR1(r1Addr);
-            state.registers.data[regWAddr].set(r1.A * r1.B);
+            state.registers.data[0].set(r1.A * r1.B);
             break;
         case "DIV":
             // reg trigger W, allow div into reg
             readR1(r1Addr);
-            state.registers.data[regWAddr].set(r1.B == 0
+            state.registers.data[0].set(r1.B == 0
                 ? (1 << specs.wordSize) - 1
                 : Math.floor(r1.A / r1.B));
             break;
         case "MOD":
             // reg trigger W, allow mod into reg
             readR1(r1Addr);
-            state.registers.data[regWAddr].set(r1.B == 0 ? 0 : r1.A % r1.B);
+            state.registers.data[0].set(r1.B == 0 ? 0 : r1.A % r1.B);
             break;
         case "IN":
-            readR1(r1Addr, true, false);
             // reg buffer A on r1
             bufferedFromA = r1.A;
             // reg w = A (from buffer)
             regWAddr = bufferedFromA;
             // reg trigger W, allow io into reg
-            state.registers.data[regWAddr].set(state.io.data[ioAddr].get());
+            state.registers.data[regWAddr % specs.registers].set(state.io.data[ioAddr].get());
             break;
         case "OUT":
             // io write
@@ -299,7 +300,7 @@ function execute(opcode, immediate, argsHi, argsLo) {
         case "ROL":
             // reg trigger W, allow alu into reg
             readR1(r1Addr);
-            state.registers.data[regWAddr].set(getAluRes(r1.A, r1.B, instructionName));
+            state.registers.data[0].set(getAluRes(r1.A, r1.B, instructionName));
             break;
         case "PUSH":
             // stack push if possible
