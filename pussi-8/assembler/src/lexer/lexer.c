@@ -23,7 +23,7 @@ int next_token(struct string *string, int line, bool expecting_opcode,
 
     if (is_space(c))
         return token_space(string, line, out);
-    if (isalpha(c))
+    if (isalpha(c) || c == '_')
         return expecting_opcode ? token_opcode(string, line, out)
                                 : token_identifier(string, line, out);
     if (isdigit(c))

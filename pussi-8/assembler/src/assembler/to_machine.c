@@ -11,6 +11,7 @@
 #include "to_machine_utils.h"
 #include "utils/errors.h"
 #include "utils/numstr.h"
+#include "utils/specs.h"
 
 int gen_next_instruction(struct state *state, struct queue *queue)
 {
@@ -210,6 +211,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
     }
 
     int prev_file_line = -1;
+    int n_instructions = 0;
     while (state->instructions->length)
     {
         // make a copy of the raw data for prettyprinting
@@ -247,6 +249,7 @@ int to_machine_code(struct cli_args *args, struct state *state,
                 free(description);
                 return res;
             }
+            n_instructions++;
         }
 
         if (args->print)
@@ -262,6 +265,11 @@ int to_machine_code(struct cli_args *args, struct state *state,
                 return res;
         }
     }
+
+    if (args->print)
+        printf(" %s: end (%d/%d instructions, %d%% ROM used)\n",
+               state->file_name, n_instructions, ROM_SIZE,
+               100 * n_instructions / ROM_SIZE);
 
     return SUCCESS;
 }

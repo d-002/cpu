@@ -25,5 +25,6 @@ This installation does not work for Windows machines, please take a look at
 [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 TODO:
+- import multiple files
 - coverage, add tests, add functional tests
-- warning for useless operations (move %r0,%r0) or program too long
+- warning for useless operations (move %r0,%r0)

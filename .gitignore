@@ -25,4 +25,5 @@ assembli
 unit
 
 # compiled assembli programs
-*.bin
+**/programs/*.bin
+**/programs/*.schem
