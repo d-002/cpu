@@ -2,6 +2,11 @@
 
 ## Memory management
 
+- `mov source,destination`
+    ```
+    movei source,destination
+    ```
+
 - `ldi data,destination`
     ```
     ldi data

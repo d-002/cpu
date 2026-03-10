@@ -40,6 +40,7 @@ enum opcodes
     HALT = 31,
 
     // qol aliases
+    MOV,
     LDI_2,
     RTC_2,
     CTR_2,

@@ -100,7 +100,7 @@ int apply_labels(struct state *state)
                 return ALLOC_ERROR;
             }
 
-            token_destroy(token, 1);
+            token_destroy(token, true);
             queue_update_at_iter_last(instruction->args_queue, copy);
         }
 

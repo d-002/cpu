@@ -6,6 +6,34 @@
 #include "logger/logger.h"
 #include "utils/errors.h"
 
+int handle_mov(struct instruction *instruction, struct queue *out)
+{
+    if (instruction->args_queue->length != 2)
+    {
+        logerror(instruction->file_line, "Expected 2 arguments, got %ld.",
+                 instruction->args_queue->length);
+        return INSTRUCTION_ERROR;
+    }
+
+    struct token *opcode = token_create(OPCODE, "MOVEI", 5);
+    if (opcode == NULL)
+    {
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+    token_destroy(instruction->opcode, true);
+    instruction->opcode = opcode;
+
+    if (queue_enqueue(out, instruction))
+    {
+        token_destroy(opcode, true);
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+
+    return SUCCESS;
+}
+
 int handle_ldi_2(struct instruction *instruction, struct queue *out)
 {
     // ldi data; movei %r0,destination
@@ -22,7 +50,7 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
         instruction->file_line, instruction->real_line, "LDI", 1, data);
     if (i1 == NULL)
     {
-        token_destroy(data, 1);
+        token_destroy(data, true);
         log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }
@@ -43,8 +71,8 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     if (i2 == NULL)
     {
         instruction_destroy(i1);
-        token_destroy(r0, 1);
-        token_destroy(destination, 1);
+        token_destroy(r0, true);
+        token_destroy(destination, true);
         log_alloc_error(instruction->file_line);
         return ALLOC_ERROR;
     }

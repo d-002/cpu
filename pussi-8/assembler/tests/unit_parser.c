@@ -63,7 +63,7 @@ Test(Parser, InstructionWithLabel)
     struct token *token = queue_dequeue(instruction->args_queue);
     cr_expect(eq(str, token->data, "%r1"));
     cr_expect(eq(int, token->type, REGISTER));
-    token_destroy(token, 1);
+    token_destroy(token, true);
 
     instruction_destroy(instruction);
 

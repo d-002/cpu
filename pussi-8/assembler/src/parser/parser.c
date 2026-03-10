@@ -89,7 +89,7 @@ int parse_lines(line_query line_query, FILE *stream, struct state *state,
         if (res != SUCCESS)
             return res;
 
-        token_destroy(state->current_token, 1);
+        token_destroy(state->current_token, true);
         state->current_token = NULL;
         state->file_line++;
     }

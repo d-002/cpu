@@ -49,6 +49,6 @@ void state_destroy(struct state *state)
     hash_map_destroy(state->labels);
     queue_destroy(state->instructions);
     hash_map_destroy(state->vars);
-    token_destroy(state->current_token, 1);
+    token_destroy(state->current_token, true);
     free(state);
 }

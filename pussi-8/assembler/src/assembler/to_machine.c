@@ -29,6 +29,9 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     int res;
     switch (opcode)
     {
+    case MOV:
+        res = handle_mov(instruction, queue);
+        break;
     case LDI_2:
         res = handle_ldi_2(instruction, queue);
         break;

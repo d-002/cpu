@@ -40,7 +40,7 @@ Test(Other, AtoiTokenDec)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 42));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenBin)
@@ -50,7 +50,7 @@ Test(Other, AtoiTokenBin)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 42));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenHex)
@@ -60,7 +60,7 @@ Test(Other, AtoiTokenHex)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 782064));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenRegister)
@@ -70,7 +70,7 @@ Test(Other, AtoiTokenRegister)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 5));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenMemory)
@@ -80,7 +80,7 @@ Test(Other, AtoiTokenMemory)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 2));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenPort)
@@ -90,7 +90,7 @@ Test(Other, AtoiTokenPort)
     int n = atoi_token(token);
     cr_expect(eq(int, n, 0));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
 
 Test(Other, AtoiTokenWrong)
@@ -100,5 +100,5 @@ Test(Other, AtoiTokenWrong)
     int n = atoi_token(token);
     cr_expect(eq(int, n, -1));
 
-    token_destroy(token, 1);
+    token_destroy(token, true);
 }
