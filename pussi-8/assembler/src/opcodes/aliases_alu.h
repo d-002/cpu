@@ -6,5 +6,6 @@
 
 int handle_custom_calc(struct instruction *instruction, struct queue *out,
                        char *opcode);
+int handle_test(struct instruction *instruction, struct queue *out);
 
 #endif /* ! ALIASES_ALU_H */

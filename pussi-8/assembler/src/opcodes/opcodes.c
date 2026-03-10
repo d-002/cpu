@@ -24,6 +24,7 @@ enum opcodes get_opcode(struct instruction *instruction)
     if (COMP(LDI) && arg2)
         return LDI_2;
     TEST_SIMPLE(MOV);
+    TEST_SIMPLE(TEST);
 
     TEST_ALU_3(OR);
     TEST_ALU_3(NOR);

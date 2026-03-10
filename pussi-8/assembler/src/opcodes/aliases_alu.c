@@ -60,3 +60,44 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     instruction_destroy(instruction);
     return SUCCESS;
 }
+
+int handle_test(struct instruction *instruction, struct queue *out)
+{
+    if (instruction->args_queue->length != 1)
+    {
+        logerror(instruction->file_line, "Expected 1 argument, got %ld.",
+                 instruction->args_queue->length);
+        return INSTRUCTION_ERROR;
+    }
+
+    struct token *opcode = token_create(OPCODE, "OR", 2);
+    if (opcode == NULL)
+    {
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+    token_destroy(instruction->opcode, true);
+    instruction->opcode = opcode;
+
+    struct token *copy = token_dup(instruction->args_queue->head->data);
+    if (copy == NULL)
+    {
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+    if (queue_enqueue(instruction->args_queue, copy))
+    {
+        token_destroy(copy, true);
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+
+    if (queue_enqueue(out, instruction))
+    {
+        token_destroy(opcode, true);
+        log_alloc_error(instruction->file_line);
+        return ALLOC_ERROR;
+    }
+
+    return SUCCESS;
+}

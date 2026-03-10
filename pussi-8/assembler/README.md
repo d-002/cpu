@@ -23,3 +23,7 @@ Both installation methods will create a `./assembli` binary file.
 
 This installation does not work for Windows machines, please take a look at
 [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+TODO:
+- coverage, add tests, add functional tests
+- warning for useless operations (move %r0,%r0) or program too long

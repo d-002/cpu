@@ -33,6 +33,11 @@
     movei %r0,y
     ```
 
+- `test r`
+    ```
+    or r,r
+    ```
+
 ## Jumps
 
 JUMPI and JUMPR stay unchanged, but JUMP can be substituted by something else in

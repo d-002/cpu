@@ -34,6 +34,7 @@ struct token
 };
 
 struct token *token_create(enum token_type type, char *stream, size_t len);
+struct token *token_dup(struct token *old);
 char *type2name(enum token_type type);
 void token_destroy(struct token *token, bool empty_data);
 

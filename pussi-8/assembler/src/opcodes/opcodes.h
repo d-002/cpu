@@ -60,6 +60,7 @@ enum opcodes
     MUL_3,
     DIV_3,
     MOD_3,
+    TEST,
 
     // jump optimizations, used internally
     JUMP_2I,
