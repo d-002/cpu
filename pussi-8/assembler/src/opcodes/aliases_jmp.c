@@ -18,18 +18,14 @@ int handle_custom_jump(struct instruction *instruction, struct queue *out,
 
     struct token *cond = token_create(NUMBER_DEC, cond_code, strlen(cond_code));
     if (cond == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
 
     struct instruction *i1 = instruction_helper(
         instruction->file_line, instruction->real_line, "COND", 1, cond);
     if (i1 == NULL)
     {
-        token_destroy(cond, 1);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        token_destroy(cond, true);
+        goto err;
     }
 
     struct token *addr = queue_dequeue(instruction->args_queue);
@@ -39,19 +35,21 @@ int handle_custom_jump(struct instruction *instruction, struct queue *out,
     if (i2 == NULL)
     {
         instruction_destroy(i1);
-        token_destroy(addr, 1);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        token_destroy(addr, true);
+        goto err;
     }
 
     if (queue_enqueue(out, i1) || queue_enqueue(out, i2))
     {
         instruction_destroy(i1);
         instruction_destroy(i2);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     instruction_destroy(instruction);
     return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }

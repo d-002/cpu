@@ -32,10 +32,10 @@ struct instruction *instruction_create(int line, int real_line,
 
 void instruction_destroy(struct instruction *instruction)
 {
-    token_destroy(instruction->opcode, 1);
+    token_destroy(instruction->opcode, true);
 
     while (instruction->args_queue->length)
-        token_destroy(queue_dequeue(instruction->args_queue), 1);
+        token_destroy(queue_dequeue(instruction->args_queue), true);
     queue_destroy(instruction->args_queue);
 
     free(instruction);

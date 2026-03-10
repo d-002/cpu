@@ -38,6 +38,20 @@
     or r,r
     ```
 
+## I/O
+
+- `in port,register`
+    ```
+    ldi [port value]
+    in %r0,register
+    ```
+
+- `out register,port`
+    ```
+    ldi [port value]
+    out register,%r0
+    ```
+
 ## Jumps
 
 JUMPI and JUMPR stay unchanged, but JUMP can be substituted by something else in

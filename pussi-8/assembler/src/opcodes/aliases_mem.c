@@ -17,21 +17,21 @@ int handle_mov(struct instruction *instruction, struct queue *out)
 
     struct token *opcode = token_create(OPCODE, "MOVEI", 5);
     if (opcode == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
     token_destroy(instruction->opcode, true);
     instruction->opcode = opcode;
 
     if (queue_enqueue(out, instruction))
     {
         token_destroy(opcode, true);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }
 
 int handle_ldi_2(struct instruction *instruction, struct queue *out)
@@ -51,17 +51,13 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     if (i1 == NULL)
     {
         token_destroy(data, true);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     char r0_s[] = "%r0";
     struct token *r0 = token_create(REGISTER, r0_s, strlen(r0_s));
     if (r0 == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
     struct token *destination = queue_dequeue(instruction->args_queue);
 
     struct instruction *i2 =
@@ -73,18 +69,20 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
         instruction_destroy(i1);
         token_destroy(r0, true);
         token_destroy(destination, true);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     if (queue_enqueue(out, i1) || queue_enqueue(out, i2))
     {
         instruction_destroy(i1);
         instruction_destroy(i2);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     instruction_destroy(instruction);
     return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }

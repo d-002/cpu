@@ -23,19 +23,15 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
         instruction->file_line, instruction->real_line, opcode, 2, a, b);
     if (i1 == NULL)
     {
-        token_destroy(a, 1);
-        token_destroy(b, 1);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        token_destroy(a, true);
+        token_destroy(b, true);
+        goto err;
     }
 
     char r0_s[] = "%r0";
     struct token *r0 = token_create(REGISTER, r0_s, strlen(r0_s));
     if (r0 == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
     struct token *y = queue_dequeue(instruction->args_queue);
 
     struct instruction *i2 = instruction_helper(
@@ -43,22 +39,24 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     if (i2 == NULL)
     {
         instruction_destroy(i1);
-        token_destroy(r0, 1);
-        token_destroy(y, 1);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        token_destroy(r0, true);
+        token_destroy(y, true);
+        goto err;
     }
 
     if (queue_enqueue(out, i1) || queue_enqueue(out, i2))
     {
         instruction_destroy(i1);
         instruction_destroy(i2);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     instruction_destroy(instruction);
     return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }
 
 int handle_test(struct instruction *instruction, struct queue *out)
@@ -72,32 +70,28 @@ int handle_test(struct instruction *instruction, struct queue *out)
 
     struct token *opcode = token_create(OPCODE, "OR", 2);
     if (opcode == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
     token_destroy(instruction->opcode, true);
     instruction->opcode = opcode;
 
     struct token *copy = token_dup(instruction->args_queue->head->data);
     if (copy == NULL)
-    {
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
-    }
+        goto err;
     if (queue_enqueue(instruction->args_queue, copy))
     {
         token_destroy(copy, true);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     if (queue_enqueue(out, instruction))
     {
         token_destroy(opcode, true);
-        log_alloc_error(instruction->file_line);
-        return ALLOC_ERROR;
+        goto err;
     }
 
     return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }

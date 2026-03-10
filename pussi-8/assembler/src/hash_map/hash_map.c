@@ -137,7 +137,7 @@ char *hash_map_iter_start(struct hash_map *hash_map)
 char *hash_map_iter_next(struct hash_map *hash_map)
 {
     struct pair *pair = hash_map->iter_starting
-        ? NULL
+        ? queue_iter_start(hash_map->arr[0])
         : queue_iter_next(hash_map->arr[hash_map->iter_index]);
     hash_map->iter_starting = 0;
     if (pair)

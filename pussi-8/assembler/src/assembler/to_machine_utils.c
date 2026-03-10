@@ -9,7 +9,7 @@
 #define JUMP_NO_SPECIAL 255
 
 int expect_n_args(struct instruction *instruction, size_t count, int values[],
-                  enum token_type types[], int silent)
+                  enum token_type types[], bool silent)
 {
     if (instruction->args_queue->length != count)
     {
@@ -131,24 +131,24 @@ int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
     case COND:
     case JUMPI:
         types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
+        res = expect_n_args(instruction, 1, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
     case JUMPR:
         types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
+        res = expect_n_args(instruction, 1, args, types, false);
         if (res == SUCCESS)
             break;
         break;
     case JUMP:
         // try a "normal" jump with two register arguments
-        res = expect_n_args(instruction, 2, args, types, 1);
+        res = expect_n_args(instruction, 2, args, types, true);
         if (res == SUCCESS)
             break;
 
         // if that fails, try the single argument one with a register
-        res = expect_n_args(instruction, 1, args, types, 1);
+        res = expect_n_args(instruction, 1, args, types, true);
         if (res == SUCCESS)
         {
             res = handle_jump_special(instruction->file_line, content, args[0],
@@ -160,7 +160,7 @@ int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
 
         // if that also fails, try the single argument one with a number
         types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
+        res = expect_n_args(instruction, 1, args, types, false);
         if (res != SUCCESS)
             return res;
         res = handle_jump_special(instruction->file_line, content, args[0],
@@ -208,7 +208,7 @@ int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
     {
     case LDI:
         types[0] = NUMBER_PSEUDOTYPE;
-        res = expect_n_args(instruction, 1, args, types, 0);
+        res = expect_n_args(instruction, 1, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
@@ -217,7 +217,7 @@ int to_machine_i_data(struct instruction *instruction, enum opcodes opcode,
     case RTC:
     case CTR:
     case TIMER:
-        res = expect_n_args(instruction, 2, args, types, 0);
+        res = expect_n_args(instruction, 2, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
@@ -260,7 +260,7 @@ int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
     case RSH:
     case ROR:
     case ROL:
-        res = expect_n_args(instruction, 1, args, types, 0);
+        res = expect_n_args(instruction, 1, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
@@ -275,7 +275,7 @@ int to_machine_i_calc(struct instruction *instruction, enum opcodes opcode,
     case XNOR:
     case AND:
     case NAND:
-        res = expect_n_args(instruction, 2, args, types, 0);
+        res = expect_n_args(instruction, 2, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
@@ -293,21 +293,17 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
 {
     int res = SUCCESS;
     int args[2];
-    enum token_type types[2];
+    enum token_type types[2] = { REGISTER, REGISTER };
 
     switch (opcode)
     {
     case IN:
-        types[0] = PORT;
-        types[1] = REGISTER;
-        res = expect_n_args(instruction, 2, args, types, 0);
+        res = expect_n_args(instruction, 2, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
     case OUT:
-        types[0] = REGISTER;
-        types[1] = PORT;
-        res = expect_n_args(instruction, 2, args, types, 0);
+        res = expect_n_args(instruction, 2, args, types, false);
         if (res != SUCCESS)
             return res;
         break;
@@ -315,7 +311,7 @@ int to_machine_i_misc(struct instruction *instruction, enum opcodes opcode,
     case POP:
     case HALT:
     case NOP:
-        res = expect_n_args(instruction, 0, args, types, 0);
+        res = expect_n_args(instruction, 0, args, types, false);
         if (res != SUCCESS)
             return res;
         break;

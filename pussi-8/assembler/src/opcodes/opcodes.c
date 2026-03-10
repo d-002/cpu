@@ -15,7 +15,7 @@
 enum opcodes get_opcode(struct instruction *instruction)
 {
     struct token *arg = queue_iter_start(instruction->args_queue);
-    // enum token_type arg1 = arg ? arg->type : EOL;
+    enum token_type arg1 = arg ? arg->type : EOL;
     arg = queue_iter_next(instruction->args_queue);
     enum token_type arg2 = arg ? arg->type : EOL;
     arg = queue_iter_next(instruction->args_queue);
@@ -23,8 +23,13 @@ enum opcodes get_opcode(struct instruction *instruction)
 
     if (COMP(LDI) && arg2)
         return LDI_2;
+    if (COMP(LDI) && arg2)
+        return LDI_2;
+    if (COMP(IN) && arg1 == PORT)
+        return IN_2;
+    if (COMP(OUT) && arg2 == PORT)
+        return OUT_2;
     TEST_SIMPLE(MOV);
-    TEST_SIMPLE(TEST);
 
     TEST_ALU_3(OR);
     TEST_ALU_3(NOR);
@@ -42,6 +47,7 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_ALU_3(MUL);
     TEST_ALU_3(DIV);
     TEST_ALU_3(MOD);
+    TEST_SIMPLE(TEST);
 
     TEST_SIMPLE(JZ);
     TEST_SIMPLE(JEQ);
@@ -116,6 +122,8 @@ int length_from_opcode(enum opcodes opcode)
     case MUL_3:
     case DIV_3:
     case MOD_3:
+    case IN_2:
+    case OUT_2:
         return 2;
     case JZ:
     case JEQ:

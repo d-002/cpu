@@ -44,6 +44,7 @@ enum opcodes
     LDI_2,
     RTC_2,
     CTR_2,
+
     OR_3,
     NOR_3,
     ADD_3,
@@ -61,6 +62,9 @@ enum opcodes
     DIV_3,
     MOD_3,
     TEST,
+
+    IN_2,
+    OUT_2,
 
     // jump optimizations, used internally
     JUMP_2I,

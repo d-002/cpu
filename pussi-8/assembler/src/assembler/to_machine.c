@@ -5,6 +5,7 @@
 
 #include "logger/logger.h"
 #include "opcodes/aliases_alu.h"
+#include "opcodes/aliases_io.h"
 #include "opcodes/aliases_jmp.h"
 #include "opcodes/aliases_mem.h"
 #include "opcodes/opcodes.h"
@@ -90,11 +91,11 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     case JZ:
         res = handle_custom_jump(instruction, queue, "128");
         break;
-    case JEQ:
-        res = handle_custom_jump(instruction, queue, "128");
-        break;
     case JNZ:
         res = handle_custom_jump(instruction, queue, "129");
+        break;
+    case JEQ:
+        res = handle_custom_jump(instruction, queue, "128");
         break;
     case JNE:
         res = handle_custom_jump(instruction, queue, "129");
@@ -131,6 +132,12 @@ int gen_next_instruction(struct state *state, struct queue *queue)
         break;
     case J:
         res = handle_custom_jump(instruction, queue, "2");
+        break;
+    case IN_2:
+        res = handle_in_2(instruction, queue);
+        break;
+    case OUT_2:
+        res = handle_out_2(instruction, queue);
         break;
     default:
         res = queue_enqueue(queue, instruction);

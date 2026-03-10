@@ -12,7 +12,7 @@ struct instruction *instruction_helper(int line, int real_line, char *opcode,
 
     if (out_opcode == NULL)
     {
-        token_destroy(out_opcode, 1);
+        token_destroy(out_opcode, true);
         return NULL;
     }
 
@@ -20,7 +20,7 @@ struct instruction *instruction_helper(int line, int real_line, char *opcode,
         instruction_create(line, real_line, out_opcode);
     if (instruction == NULL)
     {
-        token_destroy(out_opcode, 1);
+        token_destroy(out_opcode, true);
         return NULL;
     }
 
