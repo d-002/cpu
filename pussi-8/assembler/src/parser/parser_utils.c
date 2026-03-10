@@ -84,17 +84,21 @@ int is_surrounded_type(struct state *state, struct string *string,
 
         if (step != 1 && state->current_token->type == SPACE)
         {
-            eat_current_token(state, string, expecting_opcode, 1);
+            res = eat_current_token(state, string, expecting_opcode, 1);
+            if (res != SUCCESS)
+                return -res;
             step++;
         }
         else if (step < 2 && state->current_token->type == central)
         {
-            eat_current_token(state, string, expecting_opcode, 1);
+            res = eat_current_token(state, string, expecting_opcode, 1);
+            if (res != SUCCESS)
+                return -res;
             step = 2;
         }
         else
             return step == 2;
     }
 
-    return 1;
+    return true;
 }
