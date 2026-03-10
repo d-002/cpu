@@ -24,7 +24,12 @@ Both installation methods will create a `./assembli` binary file.
 This installation does not work for Windows machines, please take a look at
 [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-TODO:
-- import multiple files
+## Todo
+
+- help message
+- more metadata in schematic?
 - coverage, add tests, add functional tests
+- import files in source file
+- better and faster jumps with NOP reduction
 - warning for useless operations (move %r0,%r0)
+- handle negative numbers

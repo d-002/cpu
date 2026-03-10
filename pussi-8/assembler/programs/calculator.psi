@@ -1,0 +1,109 @@
+; I/O ports
+output = %p0
+user_input = %p1
+user_confirm = %p2
+error_indicator = %p3
+
+; registers
+res = %r1
+current = %r2
+last_operation = %r3
+state = %r4 ; whether we are waiting for a number or an operation
+
+; operations, to compare with the user input
+add = 0
+sub = 1
+mul = 2
+div = 3
+clear = 255
+
+; encoded state
+state_expecting_number = 0
+state_expecting_operation = 1
+
+; init
+    xor state,state
+    xor res,res
+    out res,output
+    out res,error_indicator
+
+; main loop
+.loop:
+    ; wait for user input
+    xor %r0,%r0
+    out %r0,user_confirm
+.wait_input:
+    in user_confirm,current
+    test current
+    jz wait_input
+
+    ; store user input
+    in user_input,current
+
+    ; tell the user the input has been read
+    xor %r7,%r7
+    out %r7,user_confirm
+
+    ; process the input depending on the state
+    ldi state_expecting_number,%r0
+    xor state,%r0
+    jz number
+
+.operation:
+    mov current,last_operation
+    ldi state_expecting_number,state
+
+    ldi clear,%r0
+    xor current,%r0
+    jnz loop
+
+    ; handle clear instruction separately: don't wait for the next user input
+    ; before outputting the result
+    xor res,res
+    out res,output
+    j loop
+
+.number:
+    ldi state_expecting_operation,state
+    ldi add,%r0
+    xor current,%r0
+    jz _add
+    ldi sub,%r0
+    xor current,%r0
+    jz _sub
+    ldi mul,%r0
+    xor current,%r0
+    jz _mul
+    ldi div,%r0
+    xor current,%r0
+    jz _div
+    ldi clear,%r0
+    xor current,%r0
+    jz _number_after_clear
+
+    j error
+
+._add:
+    add res,current
+    j _output
+._sub:
+    sub res,current
+    j _output
+._mul:
+    mul res,current
+    j _output
+._div:
+    div res,current
+    j _output
+._number_after_clear:
+    mov current,res
+
+._output:
+    ; output the result and wait for next user input
+    out res,output
+    j loop
+
+.error:
+    ldi 1,%r0
+    out %r0,error_indicator
+    halt
