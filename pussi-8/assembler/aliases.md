@@ -92,37 +92,37 @@ The jumps in them are also subject to be substituted as described above.
 
 - `jvs target` (jump on signed overflow set)
     ```
-    cond 17
+    cond 16
     jump target
     ```
 
 - `jvc target` (jump on signed overflow unset)
     ```
-    cond 16
+    cond 17
     jump target
     ```
 
 - `jos target` (jump on stack overflow set)
     ```
-    cond 9
+    cond 8
     jump target
     ```
 
 - `joc target` (jump on stack overflow clear)
     ```
-    cond 8
+    cond 9
     jump target
     ```
 
 - `jus target` (jump on stack underflow set)
     ```
-    cond 5
+    cond 4
     jump target
     ```
 
 - `juc target` (jump on stack underflow set)
     ```
-    cond 4
+    cond 5
     jump target
     ```
 

@@ -1,0 +1,15 @@
+a = %r1
+b = %r2
+c = %r0
+
+    ldi 0,a
+    ldi 1,b
+
+.loop:
+    add a,b
+    movei b,a
+    movei c,b
+    out c,%p0
+
+    jvc loop
+    halt

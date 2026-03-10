@@ -37,7 +37,7 @@ const names = {
 
 const funcs = {
     NOP: (_, __, ___, ____) => "NOP -- do nothing",
-    COND: (_, v, ___, ____) => "COND -- SR & " + v + ((v & 1) ? "(invert)" : "") + " -> CB",
+    COND: (_, v, ___, ____) => "COND -- SR & " + (v - (v & 1)) + ((v & 1) ? "(invert)" : "") + " -> CB",
     JUMPI: (_, v, ___, ____) => "JUMPI -- " + v,
     JUMP: (_, __, a, b) => "JUMP -- (r" + a + " << 8) + r" + b,
     JUMPR: (_, __, a, b) => "JUMPR -- (r" + a + " << 8) + r" + b,

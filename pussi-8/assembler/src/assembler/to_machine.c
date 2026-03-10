@@ -105,22 +105,22 @@ int gen_next_instruction(struct state *state, struct queue *queue)
         res = handle_custom_jump(instruction, queue, "32");
         break;
     case JVS:
-        res = handle_custom_jump(instruction, queue, "17");
-        break;
-    case JVC:
         res = handle_custom_jump(instruction, queue, "16");
         break;
-    case JOS:
-        res = handle_custom_jump(instruction, queue, "9");
+    case JVC:
+        res = handle_custom_jump(instruction, queue, "17");
         break;
-    case JOC:
+    case JOS:
         res = handle_custom_jump(instruction, queue, "8");
         break;
+    case JOC:
+        res = handle_custom_jump(instruction, queue, "9");
+        break;
     case JUS:
-        res = handle_custom_jump(instruction, queue, "5");
+        res = handle_custom_jump(instruction, queue, "4");
         break;
     case JUC:
-        res = handle_custom_jump(instruction, queue, "4");
+        res = handle_custom_jump(instruction, queue, "5");
         break;
     case J:
         res = handle_custom_jump(instruction, queue, "2");
