@@ -1,10 +1,12 @@
 #include "aliases_mem.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "aliases_utils.h"
 #include "logger/logger.h"
 #include "utils/errors.h"
+#include "utils/numstr.h"
 
 int handle_mov(struct instruction *instruction, struct queue *out)
 {
@@ -85,4 +87,69 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
 err:
     log_alloc_error(instruction->file_line);
     return ALLOC_ERROR;
+}
+
+int helper(struct instruction *instruction, struct queue *out,
+           struct token **arg)
+{
+    if (instruction->args_queue->length != 2)
+    {
+        logerror(instruction->file_line, "Expected 2 arguments, got %ld.",
+                 instruction->args_queue->length);
+        return INSTRUCTION_ERROR;
+    }
+
+    int value = atoi_token(*arg);
+    char *index = my_itoa(value);
+    if (index == NULL)
+        goto err;
+
+    struct token *mem_as_value = token_create(NUMBER_DEC, index, 1);
+    free(index);
+    struct token *r0 = token_create(REGISTER, "%r0", 3);
+    if (mem_as_value == NULL || r0 == NULL)
+    {
+        token_destroy(mem_as_value, true);
+        token_destroy(r0, true);
+        goto err;
+    }
+
+    struct instruction *i = instruction_helper(
+        instruction->file_line, instruction->real_line, "LDI", 1, mem_as_value);
+    if (i == NULL)
+    {
+        token_destroy(mem_as_value, true);
+        token_destroy(r0, true);
+        instruction_destroy(i);
+        goto err;
+    }
+
+    token_destroy(*arg, true);
+    *arg = r0;
+    instruction->real_line++;
+
+    if (queue_enqueue(out, i) || queue_enqueue(out, instruction))
+    {
+        instruction_destroy(i);
+        instruction_destroy(instruction);
+        goto err;
+    }
+
+    return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
+}
+
+int handle_rtc_2(struct instruction *instruction, struct queue *out)
+{
+    return helper(instruction, out,
+                  (struct token **)(&instruction->args_queue->tail->data));
+}
+
+int handle_ctr_2(struct instruction *instruction, struct queue *out)
+{
+    return helper(instruction, out,
+                  (struct token **)(&instruction->args_queue->head->data));
 }

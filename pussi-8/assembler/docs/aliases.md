@@ -20,13 +20,13 @@ supports the following quality-of-life instructions:
 
 - `rtc r,v`
     ```
-    movei v,%r0
+    ldi v
     rtc r,%r0
     ```
 
 - `ctr r,v`
     ```
-    movei v,%r0
+    ldi v
     ctr %r0,r
     ```
 

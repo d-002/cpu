@@ -23,8 +23,10 @@ enum opcodes get_opcode(struct instruction *instruction)
 
     if (COMP(LDI) && arg2)
         return LDI_2;
-    if (COMP(LDI) && arg2)
-        return LDI_2;
+    if (COMP(RTC) && arg2 == MEMORY)
+        return RTC_2;
+    if (COMP(CTR) && arg1 == MEMORY)
+        return CTR_2;
     if (COMP(IN) && arg1 == PORT)
         return IN_2;
     if (COMP(OUT) && arg2 == PORT)
@@ -106,6 +108,8 @@ int length_from_opcode(enum opcodes opcode)
     switch (opcode)
     {
     case LDI_2:
+    case RTC_2:
+    case CTR_2:
     case OR_3:
     case NOR_3:
     case ADD_3:

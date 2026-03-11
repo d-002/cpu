@@ -40,6 +40,12 @@ int gen_next_instruction(struct state *state, struct queue *queue)
     case LDI_2:
         res = handle_ldi_2(instruction, queue);
         break;
+    case RTC_2:
+        res = handle_rtc_2(instruction, queue);
+        break;
+    case CTR_2:
+        res = handle_ctr_2(instruction, queue);
+        break;
     case OR_3:
         res = handle_custom_calc(instruction, queue, "OR");
         break;
