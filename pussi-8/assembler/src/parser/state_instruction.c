@@ -75,7 +75,7 @@ int state_label(struct state *state, struct string *string)
 int state_arguments(struct state *state, struct string *string,
                     struct instruction *instruction)
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         // comma separator after the first argument, to know if there are any
         // more

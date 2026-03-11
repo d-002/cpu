@@ -58,7 +58,7 @@ state_expecting_operation = 1
 
     ; handle clear instruction separately: don't wait for the next user input
     ; before outputting the result
-    xor res,res
+    xor res,res,res
     out res,output
     j loop
 
@@ -83,20 +83,16 @@ state_expecting_operation = 1
     j error
 
 ._add:
-    add res,current
-    mov %r0,res
+    add res,current,res
     j _output
 ._sub:
-    sub res,current
-    mov %r0,res
+    sub res,current,res
     j _output
 ._mul:
-    mul res,current
-    mov %r0,res
+    mul res,current,res
     j _output
 ._div:
-    div res,current
-    mov %r0,res
+    div res,current,res
     j _output
 ._number_after_clear:
     mov current,res
