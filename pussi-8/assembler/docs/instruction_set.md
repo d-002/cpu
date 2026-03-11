@@ -21,8 +21,7 @@ In this case, the other operand may be anything, but should be set to 0.
 Opcodes, operands, as well as practically everything else is clamped to the
 desired bit size.
 For example, as there are only 8 registers only 3 bits are required to address
-them.
-This means accessing register 11 is the same as accessing register 3.
+them, which means accessing register 11 is the same as accessing register 3.
 
 > [!WARNING]  
 > The operations exposed here mainly target the format for the custom assembler,
@@ -32,7 +31,7 @@ This means accessing register 11 is the same as accessing register 3.
 > assembler, while the top operand bits in the real computer are for the
 > destination register.
 >
-> A Google sheets may become available in the future for easier access to this
+> A Google Sheets may become available in the future for easier access to this
 > information.
 
 ## Registers, main memory
@@ -47,10 +46,10 @@ The RAM is made of 256 bytes, ordered in 8 byte pages.
 When accessing an element in the RAM, the associated page will be loaded into
 one of two cache modules.
 In case of cache miss, the module that was the least recently used is
-overwritten.
+overwritten (or the first one in case of equality).
 
 This means that when one wishes to update data inside the RAM, this data is not
-actually written to to the RAM until the associated page cache is stored back
+actually written into the RAM until the associated page cache is stored back
 into it.
 
 Pages contain 8 consecutive addresses.
@@ -67,15 +66,17 @@ instructions.
 
 ## Call stack and program counter
 
-PUSSI-8 includes a 10-deep call stack that stores 16-bit instruction addresses.
+PUSSI-8 includes a 12-deep call stack that stores 16-bit instruction addresses.
 
 As an additional mention, the integrated PUSSI-8 rom only allows 512 2-byte
 instructions, while one may address 16 bits of instructions.
-This limitation can be circumvented by the use of an external ROM, which can be
-easily plugged into the computer as long as it respects the input and output
-formats.
+
+This limitation can be circumvented by the use of an external ROM designed by
+the user, which can be easily plugged into the computer as long as it respects
+the input and output formats.
+
 When an external ROM is not plugged in, a lever toggle makes the computer read
-NOP instructions when out of the first 512 instructions bounds.
+NOP instructions when outside of the first 512 instructions bounds.
 
 The assembler does not currently support exporting to such an external device.
 
@@ -87,7 +88,7 @@ Right after that, the program counter is increased by one, to allow jump and pop
 operations to work without side effects.
 
 PUSSI-8 has a boolean condition buffer, updated by the COND instruction and used
-to determine whether the following jump instructions execute the jump or not.
+to determine whether the following jump instructions should execute the jump.
 
 The computer also features a state register, which is an 8-bit number whose bits
 represent the state of the last operation made to the ALU or call stack:
@@ -133,7 +134,7 @@ the bottom bit of the immediate value.
 Meaning: `condition_buffer = bool(state_register & immediate) ^ (immediate & 1)`
 
 This allows to make complex conditions like "jump when there was no stack
-overflow nor underflow, nor the last ALU operation resulted in a negative
+overflow nor underflow, nor did the last ALU operation result in a negative
 number" (in this case `cond 57`)
 
 Argument: 8-bit immediate.
@@ -142,7 +143,7 @@ Example:
 
 ```psi
     cond 128 ; set the condition buffer to true when the last ALU operation
-             ; resulted in result of zero
+             ; resulted in a zero
 ```
 
 ## JUMPI
@@ -164,7 +165,7 @@ Example:
 
 Jump to the address pointed to by two registers.
 The reason two registers are used is because they can only store 8-bit numbers,
-but there are $2^16$ possible instructions.
+but there are $2^{16}$ possible instructions.
 
 The translation is achieved by taking the value of the register whose address is
 the first operand, shifting it by 8 bits to the left and adding it to the
@@ -180,7 +181,7 @@ Example:
     ldi 42,%r1
     ldi 69,%r2
 
-    jump %r1,%r2 ; jump to (42 << 8) + 69
+    jump %r1,%r2 ; jump to (42 << 8) + 69 = 10821
 ```
 
 ## JUMPR
@@ -196,7 +197,7 @@ Example:
 
 ```psi
     ; say the address here is 42
-    jumpr 69 ; after this executes, the program counter is at 42 + 69
+    jumpr 69 ; after this executes, the program counter is at 42 + 69 = 111
 ```
 
 ## LDI
@@ -284,7 +285,7 @@ Example:
 Read an 8-bit range from the 32-bit timer into a register.
 
 The 8-bit range is chosen among the 4 available ones by using the bottom bits of
-the operand, while the top ones refer to a register
+the operand, while the top ones refer to a register.
 
 Arguments: a register address for the top bits and a number from 0 to 3
 included.
