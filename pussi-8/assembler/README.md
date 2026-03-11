@@ -7,9 +7,9 @@ Manual installation for your system:
 - Make sure your have a compiling suite as well as `zlib` installed.
 - `make`
 
-Portable installation (for Linux systems, except for NixOS because yes):
+Portable installation (for Linux systems):
 
-- Make sure you have `musl-gcc` installed.
+- Install `musl-gcc`
 - Install zlib statically:  
   ```bash
   git clone git@github.com:madler/zlib.git
@@ -19,7 +19,16 @@ Portable installation (for Linux systems, except for NixOS because yes):
   ```
 - Go back to the `assembler` directory and run `make portable`
 
-Both installation methods will create a `./assembli` binary file.
+Windows (64bit) installation
+
+- Install `mingw-w64-gcc`, `mingw-w64-zlib`; these are the AUR package names
+  because I use Arch (btw), I don't know about other distros' but they should be
+  similar.
+- Run `make windows`
+
+Building multiple targets will most likely require a `make clean` in between.
+
+All installation methods will create a `./assembli` binary file.
 
 This installation does not work for Windows machines, please take a look at
 [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).

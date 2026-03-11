@@ -53,7 +53,7 @@ int resolve_labels(struct state *state)
         // while loop in case multiple labels are defined in the same place
         while (label_name != NULL && file_line == label_line)
         {
-            char *encoded_line = itoa(real_line);
+            char *encoded_line = my_itoa(real_line);
             if (encoded_line == NULL)
             {
                 log_alloc_error(instruction->file_line);

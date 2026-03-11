@@ -158,8 +158,6 @@ int to_schematic(struct cli_args *args, char *path, struct queue *content)
     nbt_set_tag_name(name, STR_LEN("Name"));
     nbt_tag_compound_append(metadata, name);
 
-    // TODO: rest of metadata
-
     short w = 7 * 8 - 2;
     short h = 16;
     short l = 4 * 8;

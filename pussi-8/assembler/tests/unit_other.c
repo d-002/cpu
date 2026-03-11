@@ -6,27 +6,27 @@
 
 TestSuite(Other);
 
-Test(Other, Itoa0)
+Test(Other, MyItoa0)
 {
-    char *s = itoa(0);
+    char *s = my_itoa(0);
     cr_assert(ne(ptr, s, NULL));
     cr_expect(eq(str, s, "0"));
 
     free(s);
 }
 
-Test(Other, ItoaSimple)
+Test(Other, MyItoaSimple)
 {
-    char *s = itoa(42);
+    char *s = my_itoa(42);
     cr_assert(ne(ptr, s, NULL));
     cr_expect(eq(str, s, "42"));
 
     free(s);
 }
 
-Test(Other, ItoaNegative)
+Test(Other, MyItoaNegative)
 {
-    char *s = itoa(-42);
+    char *s = my_itoa(-42);
     cr_assert(ne(ptr, s, NULL));
     cr_expect(eq(str, s, "-42"));
 

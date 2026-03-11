@@ -26,7 +26,7 @@ int state_label(struct state *state, struct string *string)
     // start with the labels having the line they appeared at as value
     char *key = malloc((state->current_token->length + 1) * sizeof(char));
     // store lines as negative to distinguish between before and after solve
-    char *value = itoa(-state->instr_index);
+    char *value = my_itoa(-state->instr_index);
     if (key == NULL || value == NULL)
     {
         free(key);

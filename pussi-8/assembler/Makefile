@@ -3,6 +3,7 @@ CPPFLAGS=-Isrc
 LDLIBS=-lm -lz
 
 TARGET=assembli
+TARGET_WIN=$(TARGET).exe
 OBJ_MAIN=src/main.o
 OBJ=src/opcodes/opcodes.o src/opcodes/aliases_alu.o src/opcodes/aliases_jmp.o src/opcodes/aliases_mem.o src/opcodes/aliases_io.o src/opcodes/aliases_utils.o \
 	src/assembler/assembler.o src/assembler/expand_vars.o src/assembler/expand_labels.o src/assembler/to_machine.o src/assembler/to_machine_utils.o \
@@ -21,7 +22,7 @@ TARGET_UNIT=tests/unit
 TARGET_FUNC=tests/testsuite.sh
 OBJ_UNIT=tests/unit_queue.o tests/unit_hashmap.o tests/unit_lexer.o tests/unit_cli.o tests/unit_parser_utils.o tests/unit_parser.o tests/unit_vars.o tests/unit_other.o tests/unit_labels.o
 
-.PHONY: all portable check dev coverage clean
+.PHONY: all portable windows check dev coverage clean
 
 all: $(TARGET)
 
@@ -32,7 +33,13 @@ portable: clean $(TARGET)
 	[ -n "$$(ldd $(TARGET) 2>&1 | grep 'not a dynamic executable')" ]
 	strip $(TARGET)
 
+windows: $(TARGET_WIN)
+
 $(TARGET): $(OBJ_MAIN) $(OBJ)
+	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
+
+$(TARGET_WIN): CC=x86_64-w64-mingw32-gcc
+$(TARGET_WIN): $(OBJ_MAIN) $(OBJ)
 	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 
 $(TARGET_UNIT): CFLAGS+=-lcriterion -g

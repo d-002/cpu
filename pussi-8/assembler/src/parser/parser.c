@@ -15,6 +15,60 @@
 #include "state_instruction.h"
 #include "utils/errors.h"
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
+#    define MIN_GETLINE_BUF_SIZE 128
+#    ifdef getline
+#        undef getline
+#    endif /* getline */
+#    define getline my_getline
+
+ssize_t my_getline(char **lineptr, size_t *n, FILE *stream)
+{
+    size_t pos;
+    int c;
+
+    if (lineptr == NULL || stream == NULL || n == NULL)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (*lineptr == NULL)
+    {
+        *lineptr = malloc(MIN_GETLINE_BUF_SIZE);
+        if (*lineptr == NULL)
+            return -1;
+        *n = 128;
+    }
+
+    pos = 0;
+    while ((c = fgetc(stream)) != EOF)
+    {
+        if (pos + 1 >= *n)
+        {
+            size_t new_size = *n + (*n >> 1);
+            if (new_size < MIN_GETLINE_BUF_SIZE)
+                new_size = MIN_GETLINE_BUF_SIZE;
+            char *new_ptr = realloc(*lineptr, new_size);
+            if (new_ptr == NULL)
+                return -1;
+            *n = new_size;
+            *lineptr = new_ptr;
+        }
+
+        ((unsigned char *)(*lineptr))[pos++] = c;
+        if (c == '\n')
+            break;
+    }
+
+    if (c == EOF && pos == 0)
+        return -1;
+
+    (*lineptr)[pos] = '\0';
+    return pos;
+}
+#endif /* Windows-specific getline implementation */
+
 int state_start(struct state *state, struct string *string)
 {
     int res = get_current_token(state, string, 0);

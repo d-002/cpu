@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-char *itoa(int n)
+char *my_itoa(int n)
 {
     bool negative = n < 0;
     if (negative)
