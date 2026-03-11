@@ -33,3 +33,4 @@ This installation does not work for Windows machines, please take a look at
 - better and faster jumps with NOP reduction
 - warning for useless operations (move %r0,%r0)
 - handle negative numbers
+- warnings for operations (except xor r,r) after side-effects from aliases

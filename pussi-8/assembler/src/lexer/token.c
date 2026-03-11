@@ -48,23 +48,7 @@ struct token *token_create(enum token_type type, char *stream, size_t len)
 
 struct token *token_dup(struct token *old)
 {
-    struct token *new = malloc(sizeof(struct token));
-    if (new == NULL)
-        return NULL;
-
-    char *data = calloc(old->length + 1, sizeof(char));
-    if (data == NULL)
-    {
-        free(new);
-        return NULL;
-    }
-    memcpy(data, old->data, old->length);
-
-    new->type = old->type;
-    new->data = data;
-    new->length = old->length;
-
-    return new;
+    return token_create(old->type, old->data, old->length);
 }
 
 void token_destroy(struct token *token, bool empty_data)

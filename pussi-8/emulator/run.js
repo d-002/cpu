@@ -175,9 +175,9 @@ function execute(opcode, immediate, argsHi, argsLo) {
     const mmValue = r1.B;
     // MM addr = A
     const mmAddr = r1.A;
-    // B to IO value
+    // A to IO value
     const ioValue = r1.A;
-    // A to IO addr
+    // B to IO addr
     const ioAddr = r1Addr.B % specs.io;
     // PC into stack value
     const stackValue = state.programCounter.get();
@@ -279,6 +279,7 @@ function execute(opcode, immediate, argsHi, argsLo) {
             // reg w = A (from buffer)
             regWAddr = bufferedFromA;
             // reg trigger W, allow io into reg
+            console.log(r1Addr, r1, regWAddr % specs.registers, ioAddr);
             state.registers.data[regWAddr % specs.registers].set(state.io.data[ioAddr].get());
             break;
         case "OUT":

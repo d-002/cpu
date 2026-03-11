@@ -61,7 +61,7 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     struct token *destination = queue_dequeue(instruction->args_queue);
 
     struct instruction *i2 =
-        instruction_helper(instruction->file_line, instruction->real_line,
+        instruction_helper(instruction->file_line, instruction->real_line + 1,
                            "MOVEI", 2, r0, destination);
 
     if (i2 == NULL)

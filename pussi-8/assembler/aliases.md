@@ -42,14 +42,18 @@
 
 - `in port,register`
     ```
+    ldi [register value]
+    movei %r0,%r7
     ldi [port value]
-    in %r0,register
+    in %r0,%r7
     ```
 
 - `out register,port`
     ```
+    ldi [register value]
+    movei %r0,%r7
     ldi [port value]
-    out register,%r0
+    out %r7,%r0
     ```
 
 ## Jumps

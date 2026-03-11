@@ -122,8 +122,6 @@ int length_from_opcode(enum opcodes opcode)
     case MUL_3:
     case DIV_3:
     case MOD_3:
-    case IN_2:
-    case OUT_2:
         return 2;
     case JZ:
     case JEQ:
@@ -145,6 +143,9 @@ int length_from_opcode(enum opcodes opcode)
         // generated NOP instructions and shift jump values. Add to the readme
         // that this will solve most problems, but in some edge cases a
         // suboptimal choice is used.
+        return 4;
+    case IN_2:
+    case OUT_2:
         return 4;
     case JUMP:
         return 3;

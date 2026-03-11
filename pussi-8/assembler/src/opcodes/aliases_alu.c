@@ -35,7 +35,7 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     struct token *y = queue_dequeue(instruction->args_queue);
 
     struct instruction *i2 = instruction_helper(
-        instruction->file_line, instruction->real_line, "MOVEI", 2, r0, y);
+        instruction->file_line, instruction->real_line + 1, "MOVEI", 2, r0, y);
     if (i2 == NULL)
     {
         instruction_destroy(i1);
@@ -73,6 +73,7 @@ int handle_test(struct instruction *instruction, struct queue *out)
         goto err;
     token_destroy(instruction->opcode, true);
     instruction->opcode = opcode;
+    instruction->real_line += 1;
 
     struct token *copy = token_dup(instruction->args_queue->head->data);
     if (copy == NULL)
