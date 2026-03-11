@@ -52,7 +52,7 @@ int state_assignation(struct state *state, struct string *string)
     res = hash_map_insert(state->vars, pair);
     if (res != SUCCESS)
     {
-        int err;
+        int err = SUCCESS;
         if (res == HASH_MAP_DUPE_ERROR)
         {
             logerror(state->file_line, "Duplicate macro name: '%s'.", key);

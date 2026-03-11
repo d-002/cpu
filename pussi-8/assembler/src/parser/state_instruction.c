@@ -40,11 +40,10 @@ int state_label(struct state *state, struct string *string)
         .key = key,
         .value = value,
     };
-    int res = hash_map_insert(state->labels, pair);
-    if (res != SUCCESS)
+    int err = hash_map_insert(state->labels, pair);
+    if (err != SUCCESS)
     {
-        int err;
-        if (res == HASH_MAP_DUPE_ERROR)
+        if (err == HASH_MAP_DUPE_ERROR)
         {
             logerror(state->file_line, "Duplicate label name: '%s'.", key);
             err = VARS_ERROR;
@@ -59,15 +58,15 @@ int state_label(struct state *state, struct string *string)
         return err;
     }
 
-    res = eat_current_token(state, string, 0, 1);
-    if (res != SUCCESS)
-        return res;
+    err = eat_current_token(state, string, 0, 1);
+    if (err != SUCCESS)
+        return err;
 
     if (state->current_token->type == COLON)
     {
-        res = eat_current_token(state, string, 0, 1);
-        if (res != SUCCESS)
-            return res;
+        err = eat_current_token(state, string, 0, 1);
+        if (err != SUCCESS)
+            return err;
     }
 
     return SUCCESS;
@@ -116,26 +115,26 @@ int state_instruction(struct state *state, struct string *string)
         return ALLOC_ERROR;
     }
 
-    int res = skip_token(state, string, 0);
-    if (res != SUCCESS)
-        return res;
+    int err = skip_token(state, string, 0);
+    if (err != SUCCESS)
+        return err;
 
     // space after opcode if there are any arguments
-    res = get_current_token(state, string, 0);
-    if (res != SUCCESS)
-        return res;
+    err = get_current_token(state, string, 0);
+    if (err != SUCCESS)
+        return err;
 
     if (state->current_token->type != SPACE)
         return SUCCESS;
 
-    res = eat_current_token(state, string, 0, 1);
-    if (res != SUCCESS)
-        return res;
+    err = eat_current_token(state, string, 0, 1);
+    if (err != SUCCESS)
+        return err;
 
     // arguments
-    res = state_arguments(state, string, instruction);
+    err = state_arguments(state, string, instruction);
     state->instr_index++;
-    return res;
+    return err;
 }
 
 int state_potential_instruction(struct state *state, struct string *string)
@@ -143,20 +142,20 @@ int state_potential_instruction(struct state *state, struct string *string)
     // optional label parsing
     if (state->current_token->type == DOT)
     {
-        int res = eat_current_token(state, string, 0, 1);
-        if (res != SUCCESS)
-            return res;
-        res = state_label(state, string);
-        if (res != SUCCESS)
-            return res;
+        int err = eat_current_token(state, string, 0, 1);
+        if (err != SUCCESS)
+            return err;
+        err = state_label(state, string);
+        if (err != SUCCESS)
+            return err;
     }
 
     // space before main instruction part
     if (state->current_token->type == SPACE)
     {
-        int res = eat_current_token(state, string, 1, 1);
-        if (res != SUCCESS)
-            return res;
+        int err = eat_current_token(state, string, 1, 1);
+        if (err != SUCCESS)
+            return err;
     }
     else
     {
@@ -167,9 +166,9 @@ int state_potential_instruction(struct state *state, struct string *string)
     // continuing to an instruction
     if (state->current_token->type == OPCODE)
     {
-        int res = state_instruction(state, string);
-        if (res != SUCCESS)
-            return res;
+        int err = state_instruction(state, string);
+        if (err != SUCCESS)
+            return err;
     }
 
     return SUCCESS;

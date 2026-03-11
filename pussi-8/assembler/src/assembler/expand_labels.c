@@ -20,12 +20,14 @@ void next_label(struct state *state, char **label_name, int *label_line,
     {
         char *label_value = hash_map_get(state->labels, name);
         int line = -atoi(label_value);
-        if (line < 0) // already processed, label at line 0 should be ok
+        // check if already processed, label at line 0 falls into this case but
+        // this should not matter
+        if (line <= 0)
             continue;
         if (line < start_line)
             continue;
 
-        if (line <= *label_line || *label_name == NULL)
+        if (*label_name == NULL || line < *label_line)
         {
             *label_name = name;
             *label_line = line;
@@ -38,8 +40,8 @@ int resolve_labels(struct state *state)
     int file_line = 0; // inside the file
     int real_line = 0; // instruction index
 
-    char *label_name;
-    int label_line;
+    char *label_name = NULL;
+    int label_line = 0;
     next_label(state, &label_name, &label_line, file_line);
 
     for (struct instruction *instruction =
@@ -68,7 +70,7 @@ int resolve_labels(struct state *state)
 
             // don't stop at the last label, still need to update the
             // real_lines (so can't exit out of the loop early)
-            next_label(state, &label_name, &label_line, file_line + 1);
+            next_label(state, &label_name, &label_line, file_line);
         }
 
         instruction->real_line = real_line;
