@@ -110,7 +110,7 @@ PUSSI-8 can run 32 different instructions, listed below in order of opcode (0
 through 31 included).
 
 The provided assembler also supports quality-of-life aliases, exposed [here](
-https://github.com/d-002/cpu/blob/main/pussi-8/assembler/aliases.md).
+https://github.com/d-002/cpu/blob/main/pussi-8/assembler/docs/aliases.md).
 
 ## NOP
 

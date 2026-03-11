@@ -134,8 +134,8 @@ For example, `0b10` refers to the number 2.
 
 ## Instruction set and aliases
 
-The full instruction set and specifications can be found [here](
-https://github.com/d-002/cpu/blob/main/pussi-8/assembler/instruction_set.md).
+The full instruction set and specifications can be found [here](https://
+github.com/d-002/cpu/blob/main/pussi-8/assembler/docs/instruction_set.md).
 
 The provided assembler supports quality-of-life aliases, exposed [here](
-https://github.com/d-002/cpu/blob/main/pussi-8/assembler/aliases.md).
+https://github.com/d-002/cpu/blob/main/pussi-8/assembler/docs/aliases.md).
