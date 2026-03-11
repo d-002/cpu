@@ -11,6 +11,8 @@ The assembler uses libnbt by Celisium.
 
 - Relative jumps can only jump forward
 - Not many instructions in the page cache
-- Time is wasted in JUMP-like instructions, as we do not know in advance whether
-  they can be expanded into 1, 2 or 3 instructions (may be fixed later)
-- Unneccesary pointer access for IO ports
+- Unneccesary pointer access for IO ports in OUT instruction
+
+Assembly language / instruction set documentation:
+
+[Documentation](https://github.com/d-002/cpu/tree/main/pussi-8/assembler/docs)

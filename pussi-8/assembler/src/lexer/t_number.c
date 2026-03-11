@@ -8,7 +8,6 @@ int token_number(struct string *string, int line, struct token **out)
     enum token_type type = NUMBER_DEC;
     size_t i = 0;
 
-    ///
     if (string->stream[0] == '0' && string->length >= 2)
     {
         char next = string->stream[1];
@@ -30,7 +29,6 @@ int token_number(struct string *string, int line, struct token **out)
         }
     }
 
-    ///
     while (i < string->length)
     {
         char c = string->stream[i];
@@ -45,7 +43,6 @@ int token_number(struct string *string, int line, struct token **out)
         i++;
     }
 
-    ///
     struct token *token = token_create(type, string->stream, i);
     if (token == NULL)
     {

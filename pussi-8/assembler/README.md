@@ -1,13 +1,28 @@
-Installer.
+# Assembler
 
-README in progress.
+Assembler for the PUSSI-8.
 
-Manual installation for your system:
+Exports a program in a custom assembly language into both a binary file for the
+[emulator](https://github.com/d-002/cpu/tree/main/pussi-8/emulator) and a
+`.schem` Worldedit schematic to paste into the Minecraft computer instruction
+memory.
+
+## Documentation
+
+[Documentation](https://github.com/d-002/cpu/tree/main/pussi-8/assembler/docs)
+
+## Pre-built binaries
+
+Check out the [releases](https://github.com/d-002/cpu/releases) tab.
+
+## Building from source
+
+### Manual local installation for linux systems:
 
 - Make sure your have a compiling suite as well as `zlib` installed.
 - `make`
 
-Portable installation (for Linux systems):
+### Portable installation for Linux systems:
 
 - Install `musl-gcc`
 - Install zlib statically:  
@@ -19,7 +34,7 @@ Portable installation (for Linux systems):
   ```
 - Go back to the `assembler` directory and run `make portable`
 
-Windows (64bit) installation
+### Windows (64bit) installation:
 
 - Install `mingw-w64-gcc`, `mingw-w64-zlib`; these are the AUR package names
   because I use Arch (btw), I don't know about other distros' but they should be
@@ -30,17 +45,14 @@ Building multiple targets will most likely require a `make clean` in between.
 
 All installation methods will create a `./assembli` binary file.
 
-This installation does not work for Windows machines, please take a look at
-[WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
-
 ## Todo
 
-- assembly language and CPU instructions documentation
+- handle ctr/rtc
 - warning for using r0/r7 in operations that use them
 - more metadata in schematic?
 - coverage, add tests, add functional tests
 - import files in source file
 - better and faster jumps with NOP reduction
 - warning for useless operations (move %r0,%r0)
-- handle negative numbers
+- handle negative numbers, update docs
 - warnings for operations (except xor r,r) after side-effects from aliases

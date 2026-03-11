@@ -1,5 +1,10 @@
 # List of aliases
 
+Apart from the [PUSSI-8 instruction set](
+https://github.com/d-002/cpu/blob/main/pussi-8/assembler/instruction_set.md),
+the [assembler](https://github.com/d-002/cpu/tree/main/pussi-8/assembler)
+supports the following quality-of-life instructions:
+
 ## Memory management
 
 - `mov source,destination`
