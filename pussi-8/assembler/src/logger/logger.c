@@ -21,7 +21,7 @@ void loginfo(int file_line, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_inner(stdout, "[INFO ] ", file_line, format, args);
+    log_inner(stdout, "[INFO]  ", file_line, format, args);
     va_end(args);
 }
 
@@ -29,7 +29,7 @@ void logwarn(int file_line, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_inner(stderr, "[WARN ] ", file_line, format, args);
+    log_inner(stderr, "[WARN]  ", file_line, format, args);
     va_end(args);
 }
 

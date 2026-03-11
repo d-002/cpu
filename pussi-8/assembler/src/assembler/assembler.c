@@ -38,7 +38,7 @@ int assemble_file(struct cli_args *args, char *path, struct state *state)
     }
 
     res = to_machine_code(args, state, queue, temp_content, content);
-    if (args->run)
+    if (args->export)
     {
         if (!res)
             res = to_binary_file(args, path, content);

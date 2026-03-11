@@ -11,7 +11,7 @@ Test(Cli, Empty)
 {
     struct cli_args args;
     cr_expect(eq(int, parse_cli_args(0, NULL, &args), SUCCESS));
-    cr_expect(eq(int, args.run, 1));
+    cr_expect(eq(int, args.export, 1));
     cr_expect(eq(int, args.print, 0));
     cr_expect(eq(int, args.verbose, 0));
     cli_args_destroy(&args);
@@ -24,7 +24,7 @@ Test(Cli, AllCorrect)
     cr_expect(eq(int,
                  parse_cli_args(sizeof(argv) / sizeof(argv[0]), argv, &args),
                  SUCCESS));
-    cr_expect(eq(int, args.run, 1));
+    cr_expect(eq(int, args.export, 1));
     cr_expect(eq(int, args.print, 1));
     cr_expect(eq(int, args.verbose, 1));
     cr_expect(eq(int, args.files_queue->length, 2));

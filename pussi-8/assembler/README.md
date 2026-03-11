@@ -26,7 +26,6 @@ This installation does not work for Windows machines, please take a look at
 
 ## Todo
 
-- help message
 - warning for using r0/r7 in operations that use them
 - more metadata in schematic?
 - coverage, add tests, add functional tests

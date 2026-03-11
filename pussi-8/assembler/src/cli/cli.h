@@ -7,7 +7,7 @@
 
 struct cli_args
 {
-    bool run;
+    bool export;
     bool print;
     bool verbose;
     bool help;

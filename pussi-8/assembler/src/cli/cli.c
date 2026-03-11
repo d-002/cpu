@@ -14,7 +14,7 @@
 
 #define FLAG_VERBOSE 'v'
 #define FLAG_PRINT 'p'
-#define FLAG_NORUN 'n'
+#define FLAG_NOEXPORT 'n'
 #define FLAG_HELP 'h'
 
 int parse_arg(char c, struct cli_args *out)
@@ -30,8 +30,8 @@ int parse_arg(char c, struct cli_args *out)
     case FLAG_HELP:
         out->help = true;
         break;
-    case FLAG_NORUN:
-        out->run = false;
+    case FLAG_NOEXPORT:
+        out->export = false;
         break;
     case '?':
     default:
@@ -68,12 +68,12 @@ int parse_cli_args(int argc, char *argv[], struct cli_args *out)
     struct option options[] = {
         { "verbose", 0, NULL, FLAG_VERBOSE },
         { "print", 0, NULL, FLAG_PRINT },
-        { "norun", 0, NULL, FLAG_NORUN },
+        { "noexport", 0, NULL, FLAG_NOEXPORT },
         { "help", 0, NULL, FLAG_HELP },
         { NULL, 0, NULL, 0 },
     };
 
-    out->run = true;
+    out->export = true;
     out->print = false;
     out->verbose = false;
     out->help = false;
