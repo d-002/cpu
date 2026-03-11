@@ -122,6 +122,7 @@ int length_from_opcode(enum opcodes opcode)
     case MUL_3:
     case DIV_3:
     case MOD_3:
+    case OUT_2:
         return 2;
     case JZ:
     case JEQ:
@@ -145,7 +146,6 @@ int length_from_opcode(enum opcodes opcode)
         // suboptimal choice is used.
         return 4;
     case IN_2:
-    case OUT_2:
         return 4;
     case JUMP:
         return 3;

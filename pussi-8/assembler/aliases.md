@@ -50,10 +50,8 @@
 
 - `out register,port`
     ```
-    ldi [register value]
-    movei %r0,%r7
     ldi [port value]
-    out %r7,%r0
+    out register,%r0
     ```
 
 ## Jumps

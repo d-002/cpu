@@ -5,7 +5,7 @@ html, body {
     height: 100%;
     margin: 0;
 
-    font-size: 12px;
+    font-size: 10px;
     font-family: var(--font);
 }
 
@@ -20,7 +20,7 @@ body {
 h1 {
     flex-grow: 1;
     margin: 0;
-    padding: 1em 1em 0 1em;
+    padding: .5em .5em 0 .5em;
 
     font-size: 2.5rem;
     text-align: center;
@@ -30,7 +30,7 @@ h1 {
     overflow: auto;
     width: fit-content;
 
-    padding: 3rem;
+    padding: 2rem;
     box-sizing: border-box;
 
     display: flex;
@@ -44,12 +44,12 @@ h1 {
     box-sizing: border-box;
     background-color: #fff2ed33;
 
-    border: 2px solid #ebe9e62a;
+    border: 1px solid #ebe9e62a;
     box-shadow: 0 0 1em #00000010;
 }
 
 #main>.block {
-    padding: 2rem;
+    padding: 1.5rem;
 
     display: flex;
     flex-direction: column;
@@ -90,7 +90,7 @@ h1 {
 }
 
 .list {
-    max-height: 10em;
+    max-height: 16em;
     overflow: hidden auto;
 
     display: flex;
@@ -149,6 +149,10 @@ h1 {
 
 .data.writeDist2::before {
     background-color: #fb857440;
+}
+
+.data pre {
+    margin: 0;
 }
 
 .block input {

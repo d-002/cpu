@@ -11,11 +11,11 @@ last_operation = %r3
 state = %r4 ; whether we are waiting for a number or an operation
 
 ; operations, to compare with the user input
-add = 0
-sub = 1
-mul = 2
-div = 3
-clear = 255
+add = 1
+sub = 2
+mul = 3
+div = 4
+clear = 0
 
 ; encoded state
 state_expecting_number = 0
@@ -24,14 +24,13 @@ state_expecting_operation = 1
 ; init
     xor state,state
     xor res,res
+    xor last_operation,last_operation
     out res,output
     out res,error_indicator
+    out res,user_confirm
 
 ; main loop
 .loop:
-    ; wait for user input
-    xor %r7,%r7
-    out %r7,user_confirm
 .wait_input:
     in user_confirm,current
     test current
@@ -41,8 +40,8 @@ state_expecting_operation = 1
     in user_input,current
 
     ; tell the user the input has been read
-    xor %r7,%r7
-    out %r7,user_confirm
+    xor %r6,%r6
+    out %r6,user_confirm
 
     ; process the input depending on the state
     ldi state_expecting_number,%r0
@@ -66,34 +65,38 @@ state_expecting_operation = 1
 .number:
     ldi state_expecting_operation,state
     ldi add,%r0
-    xor current,%r0
+    xor last_operation,%r0
     jz _add
     ldi sub,%r0
-    xor current,%r0
+    xor last_operation,%r0
     jz _sub
     ldi mul,%r0
-    xor current,%r0
+    xor last_operation,%r0
     jz _mul
     ldi div,%r0
-    xor current,%r0
+    xor last_operation,%r0
     jz _div
     ldi clear,%r0
-    xor current,%r0
+    xor last_operation,%r0
     jz _number_after_clear
 
     j error
 
 ._add:
     add res,current
+    mov %r0,res
     j _output
 ._sub:
     sub res,current
+    mov %r0,res
     j _output
 ._mul:
     mul res,current
+    mov %r0,res
     j _output
 ._div:
     div res,current
+    mov %r0,res
     j _output
 ._number_after_clear:
     mov current,res
@@ -104,6 +107,6 @@ state_expecting_operation = 1
     j loop
 
 .error:
-    ldi 1,%r7
-    out %r7,error_indicator
+    ldi 1,%r6
+    out %r6,error_indicator
     halt

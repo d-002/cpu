@@ -79,7 +79,7 @@ class UiManager {
 
             if (detailed) {
                 const pre = document.createElement("span")
-                const post = document.createElement("span");
+                const post = document.createElement("pre");
                 pre.textContent = format_i(i) + " :";
                 onHover.innerHTML = display.timings.join("<br>");
                 post.textContent = "| " + display.detailed.join(", ");

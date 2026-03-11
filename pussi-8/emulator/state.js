@@ -69,10 +69,10 @@ export class Data {
             : this.#value - (1 << this.size);
 
         const num_dec_digits = Math.ceil(this.size * Math.log10(2));
-        detailed.push("dec: " + this.#value.toString().padStart(num_dec_digits, "0"));
-        detailed.push("signed: " + signed.toString().padStart(num_dec_digits, "0"));
+        detailed.push("dec: " + this.#value.toString().padStart(num_dec_digits, " "));
+        detailed.push("signed: " + signed.toString().padStart(num_dec_digits + 1, " "));
         detailed.push("bin: " + parts.join("_"));
-        detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
+        //detailed.push("hex: 0x" + this.#value.toString(16).toUpperCase().padStart(this.size / 4, "0"));
 
         timings.push(this.readTime == -1
             ? "Never read"
@@ -154,6 +154,8 @@ class State {
             cache.unusedCounter.reset(onlyTimes);
             cache.data.reset(onlyTimes);
         });
+        this.io.reset(onlyTimes);
+        this.stack.reset(onlyTimes);
         this.stackIndex.reset(onlyTimes);
         this.aluBuffer.reset(onlyTimes);
         this.stateRegister.reset(onlyTimes);

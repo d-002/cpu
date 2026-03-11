@@ -7,8 +7,7 @@
 #include "utils/errors.h"
 #include "utils/numstr.h"
 
-static int helper(struct instruction *instruction, struct queue *out,
-                  struct token **port_arg, struct token **register_arg)
+int handle_in_2(struct instruction *instruction, struct queue *out)
 {
     if (instruction->args_queue->length != 2)
     {
@@ -18,10 +17,10 @@ static int helper(struct instruction *instruction, struct queue *out,
     }
 
     // assuming there are no more than 10 IO ports for simplicity for now
-    int value = atoi_token(*port_arg);
+    int value = atoi_token(instruction->args_queue->head->data);
     char index = (value % 10) + '0';
     struct token *port_as_value = token_create(NUMBER_DEC, &index, 1);
-    value = atoi_token(*register_arg);
+    value = atoi_token(instruction->args_queue->tail->data);
     index = (value % 10) + '0';
     struct token *register_as_value = token_create(NUMBER_DEC, &index, 1);
     struct token *r0 = token_create(REGISTER, "%r0", 3);
@@ -52,21 +51,27 @@ static int helper(struct instruction *instruction, struct queue *out,
                            "LDI", 1, port_as_value);
     if (i1 == NULL || i2 == NULL || i3 == NULL)
     {
-        token_destroy(port_as_value, true);
+        if (i1 == NULL)
+            token_destroy(register_as_value, true);
+        if (i3 == NULL)
+            token_destroy(port_as_value, true);
+        if (i2 == NULL)
+        {
+            token_destroy(r0_dup, true);
+            token_destroy(r7_dup, true);
+        }
         token_destroy(r0, true);
         token_destroy(r7, true);
-        token_destroy(r0_dup, true);
-        token_destroy(r7_dup, true);
         instruction_destroy(i1);
         instruction_destroy(i2);
         instruction_destroy(i3);
         goto err;
     }
 
-    token_destroy(*port_arg, true);
-    token_destroy(*register_arg, true);
-    *port_arg = r0;
-    *register_arg = r7;
+    token_destroy(instruction->args_queue->head->data, true);
+    token_destroy(instruction->args_queue->tail->data, true);
+    instruction->args_queue->head->data = r0;
+    instruction->args_queue->tail->data = r7;
     instruction->real_line += 3;
 
     if (queue_enqueue(out, i1) || queue_enqueue(out, i2)
@@ -86,16 +91,52 @@ err:
     return ALLOC_ERROR;
 }
 
-int handle_in_2(struct instruction *instruction, struct queue *out)
-{
-    return helper(instruction, out,
-                  (struct token **)(&instruction->args_queue->head->data),
-                  (struct token **)(&instruction->args_queue->tail->data));
-}
-
 int handle_out_2(struct instruction *instruction, struct queue *out)
 {
-    return helper(instruction, out,
-                  (struct token **)(&instruction->args_queue->tail->data),
-                  (struct token **)(&instruction->args_queue->head->data));
+    if (instruction->args_queue->length != 2)
+    {
+        logerror(instruction->file_line, "Expected 2 arguments, got %ld.",
+                 instruction->args_queue->length);
+        return INSTRUCTION_ERROR;
+    }
+
+    // assuming there are no more than 10 IO ports for simplicity for now
+    int value = atoi_token(instruction->args_queue->tail->data);
+    char index = (value % 10) + '0';
+    struct token *port_as_value = token_create(NUMBER_DEC, &index, 1);
+    struct token *r0 = token_create(REGISTER, "%r0", 3);
+
+    if (port_as_value == NULL || r0 == NULL)
+    {
+        token_destroy(port_as_value, true);
+        token_destroy(r0, true);
+        goto err;
+    }
+
+    struct instruction *i =
+        instruction_helper(instruction->file_line, instruction->real_line,
+                           "LDI", 1, port_as_value);
+    if (i == NULL)
+    {
+        token_destroy(r0, true);
+        instruction_destroy(i);
+        goto err;
+    }
+
+    token_destroy(instruction->args_queue->tail->data, true);
+    instruction->args_queue->tail->data = r0;
+    instruction->real_line++;
+
+    if (queue_enqueue(out, i) || queue_enqueue(out, instruction))
+    {
+        instruction_destroy(i);
+        instruction_destroy(instruction);
+        goto err;
+    }
+
+    return SUCCESS;
+
+err:
+    log_alloc_error(instruction->file_line);
+    return ALLOC_ERROR;
 }
