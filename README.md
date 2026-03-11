@@ -12,6 +12,10 @@ This README is in inverse chronological order.
 
 ### [PUSSI-8 (2025 - ...)](https://github.com/d-002/cpu/tree/main/pussi-8)
 
+> [!NOTE]
+> This computer is currently under creation, most of the following specs are
+> subject to change.
+
 ![unfinished PUSSI-8](
 https://raw.githubusercontent.com/d-002/cpu/main/pussi-8/image.png)
 
@@ -20,10 +24,6 @@ incorporating some of my fresh knowledge on computer architecture.
 
 The main motivation for its specs was to make it run Tetris, or even a custom
 operating system.
-
-> [!NOTE]
-> This computer is currently under creation, most of the following specs are
-> subject to change.
 
 - Program
     - 1KB built-in analog ROM, or 512 2B instructions
@@ -62,6 +62,12 @@ operating system.
 ## First generation
 
 ### [DIKC-8 2 (2023 - 2025)](https://github.com/d-002/cpu/tree/main/dikc-8_2)
+
+> [!WARNING]
+> This computer is nonfunctional and discontinued.  
+> Although I spent a lot of time working on it, the integration and timing
+> parts took too much effort and the various issues / oversights made it easier
+> to start over, hence the second generation below:
 
 ![DIKC-8 2](
 https://raw.githubusercontent.com/d-002/cpu/main/dikc-8_2/image.png)
@@ -106,14 +112,8 @@ project and start over, hence the second generation.
       `JMP ...; LDI ...` instead.
     - 33-tick clock (0.3Hz)
 
-> [!WARNING]
-> This computer is nonfunctional and discontinued.  
-> Although I spent a lot of time working on it, the integration and timing
-> parts took too much effort and the various issues / oversights made it easier
-> to start over, hence the second generation below:
-
-### [smol DIKC-4 (April 2024)](
-https://github.com/d-002/cpu/tree/main/smol_dikc-4)
+### [smol DIKC-4 (April 2024)][1]
+[1]: https://github.com/d-002/cpu/tree/main/smol_dikc-4
 
 ![smol DIKC-4](
 https://raw.githubusercontent.com/d-002/cpu/main/smol_dikc-4/image.png)
