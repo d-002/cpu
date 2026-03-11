@@ -48,6 +48,10 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
 
     struct token *data = queue_dequeue(instruction->args_queue);
 
+    if (atoi_token(data) == 0)
+        logwarn(instruction->file_line,
+                "LDI alias with %%r0 as target is redundant.");
+
     struct instruction *i1 = instruction_helper(
         instruction->file_line, instruction->real_line, "LDI", 1, data);
     if (i1 == NULL)
@@ -90,7 +94,7 @@ err:
 }
 
 int helper(struct instruction *instruction, struct queue *out,
-           struct token **arg)
+           struct token **mem_arg, struct token *reg_arg, char *opcode_name)
 {
     if (instruction->args_queue->length != 2)
     {
@@ -99,7 +103,14 @@ int helper(struct instruction *instruction, struct queue *out,
         return INSTRUCTION_ERROR;
     }
 
-    int value = atoi_token(*arg);
+    if (atoi_token(reg_arg) == 0)
+        logwarn(
+            instruction->file_line,
+            "Used %%r0 as operand in %s will be overwritten by alias expansion",
+            opcode_name);
+
+    int value = atoi_token(*mem_arg);
+
     char *index = my_itoa(value);
     if (index == NULL)
         goto err;
@@ -124,8 +135,8 @@ int helper(struct instruction *instruction, struct queue *out,
         goto err;
     }
 
-    token_destroy(*arg, true);
-    *arg = r0;
+    token_destroy(*mem_arg, true);
+    *mem_arg = r0;
     instruction->real_line++;
 
     if (queue_enqueue(out, i) || queue_enqueue(out, instruction))
@@ -145,11 +156,13 @@ err:
 int handle_rtc_2(struct instruction *instruction, struct queue *out)
 {
     return helper(instruction, out,
-                  (struct token **)(&instruction->args_queue->tail->data));
+                  (struct token **)(&instruction->args_queue->tail->data),
+                  instruction->args_queue->head->data, "RTC");
 }
 
 int handle_ctr_2(struct instruction *instruction, struct queue *out)
 {
     return helper(instruction, out,
-                  (struct token **)(&instruction->args_queue->head->data));
+                  (struct token **)(&instruction->args_queue->head->data),
+                  instruction->args_queue->tail->data, "CTR");
 }

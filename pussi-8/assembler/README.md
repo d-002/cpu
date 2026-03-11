@@ -49,8 +49,6 @@ Windows one will create `.\assembli.exe`.
 
 ## Todo
 
-- warning for using r0/r7 in operations that use them
-- more metadata in schematic?
 - coverage, add tests, add functional tests
 - import files in source file
 - better and faster jumps with NOP reduction
