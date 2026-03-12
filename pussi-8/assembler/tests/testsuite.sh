@@ -46,14 +46,21 @@ check() {
         echo -e "\nStderr:"
         cat bin_stderr
     else
-        if [ $bin_code -ne $ref_code ]; then
+        if [ "$bin_code" -ne "$ref_code" ]; then
             printf "${RED}FAILED$RESET $test_name (wrong return code):\n"
             printf "Expected $ref_code, got $RED$bin_code$RESET\n"
             ok=false
         fi
-        if [ \( -z "$(cat ref_stdout)" -a -n "$(cat bin_stdout)" \) -o \( -n "$(cat ref_stdout)" -a -z "$(grep -i "$(cat ref_stdout)" bin_stdout)" \) ]; then
+        if [ \( -z "$(cat ref_stdout)" -a -n "$(cat bin_stdout)" \) -o \
+            \( -n "$(cat ref_stdout)" -a -z "$(grep -i "$(cat ref_stdout)" bin_stdout)" \) ]; then
             printf "${RED}FAILED$RESET $test_name (wrong output on stdout):\n"
             diff bin_stdout ref_stdout
+            ok=false
+        fi
+        if [ \( -z "$(cat ref_stderr)" -a -n "$(cat bin_stderr)" \) -o \
+            \( -n "$(cat ref_stderr)" -a -z "$(grep -i "$(cat ref_stderr)" bin_stderr)" \) ]; then
+            printf "${RED}FAILED$RESET $test_name (wrong errput on stderr):\n"
+            diff bin_stderr ref_stderr
             ok=false
         fi
     fi
@@ -104,3 +111,5 @@ if [ -n "$OUTPUT_FILE" ]; then
     echo "Set up to write percentage to '$OUTPUT_FILE', will write now"
     echo $percentage > "$OUTPUT_FILE"
 fi
+
+[ $failing = 0 ] && exit 0 || exit 1

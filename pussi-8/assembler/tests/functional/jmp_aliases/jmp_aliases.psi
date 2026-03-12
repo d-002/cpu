@@ -1,0 +1,16 @@
+.start
+    jz start
+    jnz start
+    jeq start
+    jne start
+    jcs start
+    jcc start
+    jpl start
+    jmi start
+    jvs start
+    jvc start
+    jos start
+    joc start
+    jus start
+    juc start
+    j start

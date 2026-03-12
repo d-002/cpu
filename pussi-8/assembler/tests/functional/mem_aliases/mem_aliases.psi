@@ -1,0 +1,4 @@
+    test %r0
+    mov %r0,%r1
+    rtc %r0,%m1
+    ctr %m0,%r1
