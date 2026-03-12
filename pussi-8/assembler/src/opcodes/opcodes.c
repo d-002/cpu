@@ -8,6 +8,9 @@
 #define TEST_SIMPLE(value)                                                     \
     if (COMP(value))                                                           \
         return value;
+#define TEST_ALU_2(value)                                                      \
+    if (COMP(value) && arg2 != EOL)                                            \
+        return value##_2;
 #define TEST_ALU_3(value)                                                      \
     if (COMP(value) && arg3 != EOL)                                            \
         return value##_3;
@@ -41,11 +44,11 @@ enum opcodes get_opcode(struct instruction *instruction)
     TEST_ALU_3(XNOR);
     TEST_ALU_3(AND);
     TEST_ALU_3(NAND);
-    TEST_ALU_3(NOT);
-    TEST_ALU_3(LSH);
-    TEST_ALU_3(RSH);
-    TEST_ALU_3(ROR);
-    TEST_ALU_3(ROL);
+    TEST_ALU_2(NOT);
+    TEST_ALU_2(LSH);
+    TEST_ALU_2(RSH);
+    TEST_ALU_2(ROR);
+    TEST_ALU_2(ROL);
     TEST_ALU_3(MUL);
     TEST_ALU_3(DIV);
     TEST_ALU_3(MOD);
@@ -118,11 +121,11 @@ int length_from_opcode(enum opcodes opcode)
     case XNOR_3:
     case AND_3:
     case NAND_3:
-    case NOT_3:
-    case LSH_3:
-    case RSH_3:
-    case ROR_3:
-    case ROL_3:
+    case NOT_2:
+    case LSH_2:
+    case RSH_2:
+    case ROR_2:
+    case ROL_2:
     case MUL_3:
     case DIV_3:
     case MOD_3:

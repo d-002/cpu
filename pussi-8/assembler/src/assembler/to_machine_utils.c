@@ -97,6 +97,7 @@ int handle_jump_special(int file_line, struct queue *content, int arg,
     }
 
     // if the target address is small enough, use a JUMPI instruction
+    loginfo(0, "%d", arg);
     if (arg < 256)
     {
         int res = add_to_content(file_line, content, (JUMPI << 8) + arg);

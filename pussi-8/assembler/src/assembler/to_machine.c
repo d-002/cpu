@@ -47,52 +47,52 @@ int gen_next_instruction(struct state *state, struct queue *queue)
         res = handle_ctr_2(instruction, queue);
         break;
     case OR_3:
-        res = handle_custom_calc(instruction, queue, "OR");
+        res = handle_custom_calc3(instruction, queue, "OR");
         break;
     case NOR_3:
-        res = handle_custom_calc(instruction, queue, "NOR");
+        res = handle_custom_calc3(instruction, queue, "NOR");
         break;
     case ADD_3:
-        res = handle_custom_calc(instruction, queue, "ADD");
+        res = handle_custom_calc3(instruction, queue, "ADD");
         break;
     case SUB_3:
-        res = handle_custom_calc(instruction, queue, "SUB");
+        res = handle_custom_calc3(instruction, queue, "SUB");
         break;
     case XOR_3:
-        res = handle_custom_calc(instruction, queue, "XOR");
+        res = handle_custom_calc3(instruction, queue, "XOR");
         break;
     case XNOR_3:
-        res = handle_custom_calc(instruction, queue, "XNOR");
+        res = handle_custom_calc3(instruction, queue, "XNOR");
         break;
     case AND_3:
-        res = handle_custom_calc(instruction, queue, "AND");
+        res = handle_custom_calc3(instruction, queue, "AND");
         break;
     case NAND_3:
-        res = handle_custom_calc(instruction, queue, "NAND");
+        res = handle_custom_calc3(instruction, queue, "NAND");
         break;
-    case NOT_3:
-        res = handle_custom_calc(instruction, queue, "NOT");
+    case NOT_2:
+        res = handle_custom_calc2(instruction, queue, "NOT");
         break;
-    case LSH_3:
-        res = handle_custom_calc(instruction, queue, "LSH");
+    case LSH_2:
+        res = handle_custom_calc2(instruction, queue, "LSH");
         break;
-    case RSH_3:
-        res = handle_custom_calc(instruction, queue, "RSH");
+    case RSH_2:
+        res = handle_custom_calc2(instruction, queue, "RSH");
         break;
-    case ROR_3:
-        res = handle_custom_calc(instruction, queue, "OOR");
+    case ROR_2:
+        res = handle_custom_calc2(instruction, queue, "OOR");
         break;
-    case ROL_3:
-        res = handle_custom_calc(instruction, queue, "ROL");
+    case ROL_2:
+        res = handle_custom_calc2(instruction, queue, "ROL");
         break;
     case MUL_3:
-        res = handle_custom_calc(instruction, queue, "MUL");
+        res = handle_custom_calc3(instruction, queue, "MUL");
         break;
     case DIV_3:
-        res = handle_custom_calc(instruction, queue, "DIV");
+        res = handle_custom_calc3(instruction, queue, "DIV");
         break;
     case MOD_3:
-        res = handle_custom_calc(instruction, queue, "MOD");
+        res = handle_custom_calc3(instruction, queue, "MOD");
         break;
     case JZ:
         res = handle_custom_jump(instruction, queue, "128");

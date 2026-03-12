@@ -32,6 +32,8 @@ supports the following quality-of-life instructions:
 
 ## Operations
 
+For all ALU operations, or div/mod/mul, to specify an output register value:
+
 - `alu/mul/div/mod a,b,y`
     ```
     [opcode] a,b

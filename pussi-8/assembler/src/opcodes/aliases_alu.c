@@ -5,22 +5,28 @@
 #include "aliases_utils.h"
 #include "logger/logger.h"
 #include "utils/errors.h"
+#include "utils/numstr.h"
 
-int handle_custom_calc(struct instruction *instruction, struct queue *out,
-                       char *opcode)
+static int handle_custom_calc_inner(struct instruction *instruction,
+                                    struct queue *out, char *opcode,
+                                    size_t num_args)
 {
-    if (instruction->args_queue->length != 3)
+    if (instruction->args_queue->length != num_args)
     {
-        logerror(instruction->file_line, "Expected 3 arguments, got %ld.",
-                 instruction->args_queue->length);
+        logerror(instruction->file_line, "Expected %d arguments, got %ld.",
+                 num_args, instruction->args_queue->length);
         return INSTRUCTION_ERROR;
     }
 
+    bool binary = num_args == 3;
     struct token *a = queue_dequeue(instruction->args_queue);
-    struct token *b = queue_dequeue(instruction->args_queue);
+    struct token *b = binary ? queue_dequeue(instruction->args_queue) : NULL;
 
-    struct instruction *i1 = instruction_helper(
-        instruction->file_line, instruction->real_line, opcode, 2, a, b);
+    struct instruction *i1 = binary
+        ? instruction_helper(instruction->file_line, instruction->real_line,
+                             opcode, 2, a, b)
+        : instruction_helper(instruction->file_line, instruction->real_line,
+                             opcode, 1, a);
     if (i1 == NULL)
     {
         token_destroy(a, true);
@@ -33,6 +39,11 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
     if (r0 == NULL)
         goto err;
     struct token *y = queue_dequeue(instruction->args_queue);
+
+    if (atoi_token(y) == 0)
+        logwarn(instruction->file_line,
+                "%s alias with %%r0 as target is redundant.",
+                instruction->opcode->data);
 
     struct instruction *i2 = instruction_helper(
         instruction->file_line, instruction->real_line + 1, "MOVEI", 2, r0, y);
@@ -57,6 +68,18 @@ int handle_custom_calc(struct instruction *instruction, struct queue *out,
 err:
     log_alloc_error(instruction->file_line);
     return ALLOC_ERROR;
+}
+
+int handle_custom_calc2(struct instruction *instruction, struct queue *out,
+                        char *opcode)
+{
+    return handle_custom_calc_inner(instruction, out, opcode, 2);
+}
+
+int handle_custom_calc3(struct instruction *instruction, struct queue *out,
+                        char *opcode)
+{
+    return handle_custom_calc_inner(instruction, out, opcode, 3);
 }
 
 int handle_test(struct instruction *instruction, struct queue *out)
