@@ -23,6 +23,7 @@ options.txt
 
 # binaries
 assembli
+assembli.exe
 unit
 
 # compiled assembli programs
