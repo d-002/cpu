@@ -17,8 +17,9 @@ options.txt
 # gcov
 *.gcno
 *.gcda
-report.*css
-report.*html
+**/assembler/report.*css
+**/assembler/report.*html
+**/assembler/report.*js
 
 # binaries
 assembli

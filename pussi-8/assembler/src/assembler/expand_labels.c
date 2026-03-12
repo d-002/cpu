@@ -80,6 +80,32 @@ int resolve_labels(struct state *state)
         real_line += add;
     }
 
+    // if some labels remain at the end, update their values as well
+    for (char *name = hash_map_iter_start(state->labels); name;
+         name = hash_map_iter_next(state->labels))
+    {
+        char *label_value = hash_map_get(state->labels, name);
+        int line = -atoi(label_value);
+        if (line <= 0)
+            continue;
+
+        char *encoded_line = my_itoa(real_line + 1);
+        if (encoded_line == NULL)
+        {
+            log_alloc_error(file_line + 1); // approximation
+            return ALLOC_ERROR;
+        }
+
+        struct pair pair = {
+            .key = name,
+            .value = encoded_line,
+        };
+
+        int res = hash_map_update(state->labels, pair);
+        if (res != SUCCESS)
+            return res;
+    }
+
     return SUCCESS;
 }
 
