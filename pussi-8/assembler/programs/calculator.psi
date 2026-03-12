@@ -44,7 +44,7 @@ state_expecting_operation = 1
     out %r6,user_confirm
 
     ; process the input depending on the state
-    ldi state_expecting_number,%r0
+    ldi state_expecting_number
     xor state,%r0
     jz number
 
@@ -52,7 +52,7 @@ state_expecting_operation = 1
     mov current,last_operation
     ldi state_expecting_number,state
 
-    ldi clear,%r0
+    ldi clear
     xor current,%r0
     jnz loop
 
@@ -64,19 +64,19 @@ state_expecting_operation = 1
 
 .number:
     ldi state_expecting_operation,state
-    ldi add,%r0
+    ldi add
     xor last_operation,%r0
     jz _add
-    ldi sub,%r0
+    ldi sub
     xor last_operation,%r0
     jz _sub
-    ldi mul,%r0
+    ldi mul
     xor last_operation,%r0
     jz _mul
-    ldi div,%r0
+    ldi div
     xor last_operation,%r0
     jz _div
-    ldi clear,%r0
+    ldi clear
     xor last_operation,%r0
     jz _number_after_clear
 

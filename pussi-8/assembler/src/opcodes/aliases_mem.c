@@ -48,10 +48,6 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
 
     struct token *data = queue_dequeue(instruction->args_queue);
 
-    if (atoi_token(data) == 0)
-        logwarn(instruction->file_line,
-                "LDI alias with %%r0 as target is redundant.");
-
     struct instruction *i1 = instruction_helper(
         instruction->file_line, instruction->real_line, "LDI", 1, data);
     if (i1 == NULL)
@@ -65,6 +61,10 @@ int handle_ldi_2(struct instruction *instruction, struct queue *out)
     if (r0 == NULL)
         goto err;
     struct token *destination = queue_dequeue(instruction->args_queue);
+
+    if (atoi_token(destination) == 0)
+        logwarn(instruction->file_line,
+                "LDI alias with %%r0 as target is redundant.");
 
     struct instruction *i2 =
         instruction_helper(instruction->file_line, instruction->real_line + 1,

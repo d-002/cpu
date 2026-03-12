@@ -1,6 +1,6 @@
 a = %r1
 b = %r2
-c = %r0
+c = %r3
 
     ldi 0,a
     ldi 1,b
