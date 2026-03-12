@@ -20,11 +20,12 @@ Test(Cli, Empty)
 Test(Cli, AllCorrect)
 {
     struct cli_args args;
-    char *argv[] = { NULL, "hello.txt", "--verbose", "--print", "world.md" };
+    char *argv[] = { NULL,      "hello.txt",  "--verbose",
+                     "--print", "--noexport", "world.md" };
     cr_expect(eq(int,
                  parse_cli_args(sizeof(argv) / sizeof(argv[0]), argv, &args),
                  SUCCESS));
-    cr_expect(eq(int, args.export, 1));
+    cr_expect(eq(int, args.export, 0));
     cr_expect(eq(int, args.print, 1));
     cr_expect(eq(int, args.verbose, 1));
     cr_expect(eq(int, args.files_queue->length, 2));

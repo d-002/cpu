@@ -150,13 +150,8 @@ int to_machine_i_jumps(struct instruction *instruction, enum opcodes opcode,
         // if that fails, try the single argument one with a register
         res = expect_n_args(instruction, 1, args, types, true);
         if (res == SUCCESS)
-        {
-            res = handle_jump_special(instruction->file_line, content, args[0],
-                                      types[0]);
-            if (res == JUMP_NO_SPECIAL)
-                break;
-            return res;
-        }
+            return handle_jump_special(instruction->file_line, content, args[0],
+                                       types[0]);
 
         // if that also fails, try the single argument one with a number
         types[0] = NUMBER_PSEUDOTYPE;

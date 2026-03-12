@@ -15,11 +15,11 @@ Usage:\n\
   assembli [--verbose] [--print] [--norun] [--help] { file }\n\
 \n\
 Options:\n\
-  --verbose: Show extra verbose information.\n\
-  --print: Prettyprint the compiled files as they are just before exporting.\n\
+  --verbose:  Show extra verbose information.\n\
+  --print:    Prettyprint the compiled files as they are just before exporting.\n\
   --noexport: Don't export to binary / schematic, only parse and run checks.\n\
               Useful in conjunction with --print.\n\
-  --help: Print this help message to the standard output.\n\
+  --help:     Print this help message to the standard output.\n\
 \n\
 Examples:\n\
   assembli --noexport program.psi\n\
