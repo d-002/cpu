@@ -65,7 +65,7 @@ coverage: dev
 
 clean:
 	# main clean
-	$(RM) $(TARGET) $(OBJ_MAIN) $(OBJ)
+	$(RM) $(TARGET) $(TARGET_WIN) $(OBJ_MAIN) $(OBJ)
 	$(RM) $(TARGET_UNIT) $(OBJ_UNIT)
 
 	# coverage clean
