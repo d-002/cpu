@@ -49,10 +49,8 @@ Windows one will create `.\assembli.exe`.
 
 ## Todo
 
-- coverage, add tests, add functional tests
-- import files in source files, update docs
-- better and faster jumps with NOP reduction
-- warning for useless operations (move %r0,%r0)
 - handle negative numbers, update docs
-- warnings for operations (except xor r,r) after side-effects from aliases
 - issues
+- warnings for operations (except xor r,r) after side-effects from aliases
+- better and faster jumps with NOP reduction
+- import files in source files, multiple files ecosystem, update docs
