@@ -133,7 +133,7 @@ def main() -> None:
     to_process = [
         splitext(basename(path))[0]
         for path, timestamp in programs.items()
-        if all(output.get(path, 0) < timestamp for output in outputs)
+        if any(output.get(path, 0) < timestamp for output in outputs)
     ]
 
     print(f'Found {len(to_process)} files to process.')
