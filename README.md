@@ -4,13 +4,19 @@ Utilities, world downloads, schematics for my Minecraft Computers and CPUs
 
 This README is in inverse chronological order.
 
-# TODO: link stripe readme, add image
-
 > [!WARNING]
 > Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
 > Same with PUSSI which means "Powerful Unit for Smart Systems of Information".
 
 ## Second generation
+
+### [Stripe (2026)](https://github.com/d-002/cpu/tree/main/stripe)
+
+# TODO fill up this section once ... :eyes:
+and also update the caption and branch name in the image url
+
+![unfinished Stripe](
+https://raw.githubusercontent.com/d-002/cpu/feat/stripe/stripe/image.png)
 
 ### [PUSSI-8 (2025 - ...)](https://github.com/d-002/cpu/tree/main/pussi-8)
 
