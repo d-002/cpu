@@ -1,10 +1,13 @@
 # stripe
 
-## specs
+# TODO description
 
-- RISC architecture, 13 different instructions
+## Specs
+
+- RISC architecture, 15 different instructions
 - ROM: 64 10-bits instructions
-- Registers: 8 (r0-r7), ALU and immediate instructions write to r0
+- Registers: 8 (r0-r7), instructions other than `MOV` write to r0
+- 6-bit input port, poll
 - Clock speed: 50 ticks (0.2Hz)
 - Screen: 8x8 lamp array
 - Sequential dual read, store in intermediary buffers
@@ -25,7 +28,7 @@ opcode a   b
 
 So copying the value from register r1 to r2 would be: `0010001010`
 
-## instruction set
+## Instruction set
 
 |opcode|name|description|action|
 |-|-|-|-|
@@ -42,11 +45,11 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |1010|JC|jump on carry|ra -> pc (if C set)|
 |1011|PIX|turn a pixel on|screen[ra,rb] = 1|
 |1100|RST|turn the screen off|screen[*] = 0|
-|1101|HLT|halt program|stop the clock|
-|1110|N/A|N/A|N/A|
+|1101|IN|read from port|io*4 -> r0|
+|1110|HLT|halt program|stop the clock|
 |1111|N/A|N/A|N/A, pulsed at the start of instructions|
 
-## helpful notes
+## Helpful notes
 
 As this is a RISC CPU, some useful things have to be implemented via code.
 For example, loading an immediate instruction to another register than r0
