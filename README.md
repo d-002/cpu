@@ -4,6 +4,8 @@ Utilities, world downloads, schematics for my Minecraft Computers and CPUs
 
 This README is in inverse chronological order.
 
+# TODO: link stripe readme, add image
+
 > [!WARNING]
 > Just to be clear, DIKC stands for "D_00's Incredible Keyboardless Computer".  
 > Same with PUSSI which means "Powerful Unit for Smart Systems of Information".
