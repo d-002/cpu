@@ -1,0 +1,10 @@
+[tool.ruff]
+indent-width = 4
+line-length = 80
+
+[tool.ruff.lint]
+select = ["E", "I", "ANN"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
