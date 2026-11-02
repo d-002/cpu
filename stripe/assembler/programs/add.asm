@@ -12,10 +12,10 @@
     xor r0,r1
     jz .ok
 
-.not_ok:
+.not_ok
     ldi 1
     hlt
-.ok:
+.ok
     ldi 0
-.end:
+.end
     hlt
