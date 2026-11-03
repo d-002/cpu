@@ -41,11 +41,6 @@ class CPU:
         self.flag_Z = 1
         self.flag_C = 0
 
-        # TODO remove
-        for i in range(8):
-            self.screen[i][i] = 1
-            self.registers[i] = i
-
     def prettyprint_instruction(self) -> str:
         opcode, a, b = self.instructions[self.pc]
         match opcode:
@@ -101,7 +96,34 @@ class CPUSprite(Sprite):
             self.force_render = False
             return True
 
-        return False
+        should_render = False
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = event.pos
+
+                # screen click
+                for x in range(8):
+                    x0 = MARGIN + PIXSIZE * x
+                    for y in range(8):
+                        y0 = MARGIN + PIXSIZE * y
+                        if x0 <= mx < x0 + PIXSIZE and y0 <= my < y0 + PIXSIZE:
+                            self.cpu.screen[y][x] ^= 1
+                            should_render = True
+
+                # register or port click
+                for i in range(9):
+                    x0 = MARGIN * (2 + i) + PIXSIZE * (8 + i)
+                    for y in range(8):
+                        y0 = MARGIN + PIXSIZE * y
+                        if x0 <= mx < x0 + PIXSIZE and y0 <= my < y0 + PIXSIZE:
+                            bit = 1 << (7 - y)
+                            if i == 8:
+                                self.cpu.port ^= bit
+                            else:
+                                self.cpu.registers[i] ^= bit
+                            should_render = True
+
+        return should_render
 
     def _display_bin_value(self, name: str, value: int, x: int, y: int) -> None:
         """
