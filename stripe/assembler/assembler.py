@@ -131,7 +131,7 @@ class Instruction:
                 | OpcodeEnum.ADD
                 | OpcodeEnum.PIX
             ):
-                arg_value = (self.parsed_args[0] << 3) + self.parsed_args[1]
+                arg_value = (self.parsed_args[1] << 3) + self.parsed_args[0]
 
         return (opcode_value << 6) + arg_value
 

@@ -20,9 +20,9 @@ RUNDELAY = 0.3  # in seconds
 class CPU:
     instructions: list[tuple[OpcodeEnum, int, int]]
     pc: int
-    instruction_cache: tuple[int, int, int]
+    # instruction_cache: tuple[int, int, int]
     registers: list[int]
-    values_cache: tuple[int, int]
+    # values_cache: tuple[int, int]
     screen: list[list[int]]
     port: int
     flag_Z: int
@@ -34,9 +34,7 @@ class CPU:
 
     def reset(self) -> None:
         self.pc = 0
-        self.instruction_cache = (0, 0, 0)
         self.registers = [0] * 8
-        self.values_cache = (0, 0)
         self.screen = [[0] * 8 for _ in range(8)]
         self.port = 0
         self.flag_Z = 1
@@ -57,12 +55,12 @@ class CPU:
         self.flag_C = int(res != res % 256)
 
     def prettyprint_instruction(self) -> str:
-        opcode, a, b = self.get_instruction()
+        opcode, b, a = self.get_instruction()
         match opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
                 args = ()
             case OpcodeEnum.LDI:
-                args = (str(a * 8 + b),)
+                args = (str(b * 8 + a),)
             case OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC | OpcodeEnum.IN:
                 args = (str(a),)
             case (
@@ -79,7 +77,7 @@ class CPU:
         return f'{opcode.value} {",".join(args)}'
 
     def step(self) -> None:
-        opcode, a, b = self.get_instruction()
+        opcode, b, a = self.get_instruction()
         ra, rb = self.instructions_cache = (
             self.registers[a],
             self.registers[b],
@@ -89,7 +87,7 @@ class CPU:
             case OpcodeEnum.NOP:
                 pass
             case OpcodeEnum.LDI:
-                self.registers[0] = a * 8 + b
+                self.registers[0] = b * 8 + a
             case OpcodeEnum.MOV:
                 self.registers[b] = ra
             case OpcodeEnum.SUB:
@@ -297,11 +295,13 @@ class RunSprite(Sprite):
         return should_render
 
     def render(self) -> None:
-        a, b = self.cpu.values_cache
+        _, b, a = self.cpu.get_instruction()
+        ra, rb = self.cpu.registers[a], self.cpu.registers[b]
+
         texts = [
             f'PC: {self.cpu.pc}/63',
             f'Flags: Z = {self.cpu.flag_Z}, C = {self.cpu.flag_C}',
-            f'Values cache: A = {a}, B = {b}',
+            f'Values cache: ra = {ra}, rb = {rb}',
             f'Instruction to run: {self.cpu.prettyprint_instruction()}',
             'Commands: <S> step, <Space> toggle run, <R> reset',
         ]
@@ -399,7 +399,9 @@ for i, line in enumerate(lines):
 pygame.init()
 pygame.display.set_caption('Sprite simulator')
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((MARGIN * 11 + PIXSIZE * 17, 480))
+screen = pygame.display.set_mode(
+    (MARGIN * 11 + PIXSIZE * 17, MARGIN * 4 + PIXSIZE * 8 + FONTSIZE * 6)
+)
 font = pygame.font.SysFont('monospace', FONTSIZE, bold=True)
 
 cpu = CPU(instructions)

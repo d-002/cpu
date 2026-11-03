@@ -22,7 +22,7 @@ The `a` operand is duplicated near the registers for wiring reasons.
 Instruction structure (msb):
 
 ```
-opcode a   b
+opcode b   a
 |0000|000|000|
 ```
 
@@ -33,7 +33,7 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |opcode|name|description|action|
 |-|-|-|-|
 |0000|NOP|no operation|do nothing|
-|0001|LDI|load immediate|a*8+b -> r0|
+|0001|LDI|load immediate|b*8+a -> r0|
 |0010|MOV|copy reg. value|ra -> rb|
 |0011|SUB|8-bit subtraction|ra-rb -> r0|
 |0100|XOR|bitwise xor|ra^rb -> r0|

@@ -1,5 +1,6 @@
 import enum
 
+
 class OpcodeEnum(str, enum.Enum):
     NOP = 'NOP'
     LDI = 'LDI'
