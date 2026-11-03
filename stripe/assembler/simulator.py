@@ -13,6 +13,33 @@ PIXSIZE = 30
 FONTSIZE = 16
 
 
+class CPU:
+    pc: int
+    instruction_cache: tuple[int, int, int]
+    registers: list[int]
+    values_cache: tuple[int, int]
+    screen: list[list[int]]
+    flag_Z: int
+    flag_C: int
+
+    def __init__(self) -> None:
+        self.reset()
+
+    def reset(self) -> None:
+        self.pc = 0
+        self.instruction_cache = (0, 0, 0)
+        self.registers = [0] * 8
+        self.values_cache = (0, 0)
+        self.screen = [[0] * 8 for _ in range(8)]
+        self.flag_Z = 1
+        self.flag_C = 0
+
+        # TODO remove
+        for i in range(8):
+            self.screen[i][i] = 1
+            self.registers[i] = i
+
+
 class Sprite(ABC):
     @abstractmethod
     def should_render(self, events: list[pygame.event.Event]) -> bool:
@@ -28,25 +55,13 @@ class Sprite(ABC):
         """
 
 
-class CPU(Sprite):
-    instruction_cache: tuple[int, int, int]
-    registers: list[int]
-    screen: list[list[int]]
+class CPUSprite(Sprite):
+    cpu: CPU
     force_render: bool
 
-    def __init__(self) -> None:
-        self.reset()
-
-    def reset(self) -> None:
-        self.instruction_cache = (0, 0, 0)
-        self.registers = [0] * 8
-        self.screen = [[0] * 8 for _ in range(8)]
+    def __init__(self, cpu: CPU) -> None:
+        self.cpu = cpu
         self.force_render = True
-
-        # TODO remove
-        for i in range(8):
-            self.screen[i][i] = 1
-            self.registers[i] = i
 
     def should_render(self, events: list[pygame.event.Event]) -> bool:
         if self.force_render:
@@ -62,7 +77,7 @@ class CPU(Sprite):
             BORDERCOL,
             (MARGIN - 2, MARGIN - 2, PIXSIZE * 8 + 4, PIXSIZE * 8 + 4),
         )
-        for y, line in enumerate(self.screen):
+        for y, line in enumerate(self.cpu.screen):
             for x, bit in enumerate(line):
                 pygame.draw.rect(
                     screen,
@@ -82,7 +97,7 @@ class CPU(Sprite):
         # registers
         x = MARGIN * 2 + PIXSIZE * 8
         for i in range(8):
-            value = self.registers[i]
+            value = self.cpu.registers[i]
             pygame.draw.rect(
                 screen,
                 BORDERCOL,
@@ -111,7 +126,7 @@ class CPU(Sprite):
             y += FONTSIZE
 
 
-def main() -> None:
+def main(sprites: list[Sprite]) -> None:
     global running
     running = True
 
@@ -128,7 +143,7 @@ def main() -> None:
                 )
 
         should_render: set[Sprite] = set()
-        for sprite in (cpu,):
+        for sprite in sprites:
             if sprite.should_render(events):
                 should_render.add(sprite)
 
@@ -158,6 +173,7 @@ screen = pygame.display.set_mode((MARGIN * 10 + PIXSIZE * 16, 480))
 font = pygame.font.SysFont('monospace', FONTSIZE, bold=True)
 
 cpu = CPU()
+cpu_sprite = CPUSprite(cpu)
 
 if __name__ == '__main__':
-    main()
+    main([cpu_sprite])
