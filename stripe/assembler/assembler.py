@@ -79,13 +79,24 @@ class Instruction:
                 value = int(arg[1])
             elif re.match('^[0-9]+$', arg):
                 value = int(arg)
-                if not 0 <= value <= 63:
+                modulo = (
+                    64
+                    if self.opcode
+                    in (
+                        OpcodeEnum.LDI,
+                        OpcodeEnum.JMP,
+                        OpcodeEnum.JZ,
+                        OpcodeEnum.JC,
+                    )
+                    else 8
+                )
+                if not 0 <= value < modulo:
                     print(
-                        '\033[31mWarning: Found value outside',
-                        f'the [0, 63] range: {value}\033[m',
+                        '\033[33mWarning: Found value outside the [0, '
+                        f'{modulo}) range for {self.opcode}: {value}\033[m',
                         file=sys.stderr,
                     )
-                value %= 64
+                value %= modulo
             else:
                 value = labels.get(arg)
                 if value is None:
@@ -103,10 +114,14 @@ class Instruction:
         match self.opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
                 arg_value = 0
-            case OpcodeEnum.LDI:
+            case (
+                OpcodeEnum.LDI
+                | OpcodeEnum.JMP
+                | OpcodeEnum.JZ
+                | OpcodeEnum.JC
+                | OpcodeEnum.IN
+            ):
                 arg_value = self.parsed_args[0]
-            case OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC | OpcodeEnum.IN:
-                arg_value = self.parsed_args[0] << 3
             case (
                 OpcodeEnum.MOV
                 | OpcodeEnum.SUB
