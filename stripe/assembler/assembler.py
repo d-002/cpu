@@ -99,17 +99,13 @@ class Instruction:
         if self.parsed_args is None:
             raise ValueError(f'Instruction not resolved: {self}')
 
-        opcode_value = 0
+        opcode_value = list(OpcodeEnum).index(self.opcode)
         match self.opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
                 arg_value = 0
-            case (
-                OpcodeEnum.LDI
-                | OpcodeEnum.JMP
-                | OpcodeEnum.JZ
-                | OpcodeEnum.JC
-                | OpcodeEnum.IN
-            ):
+            case OpcodeEnum.LDI:
+                arg_value = self.parsed_args[0]
+            case OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC | OpcodeEnum.IN:
                 arg_value = self.parsed_args[0] << 3
             case (
                 OpcodeEnum.MOV
@@ -121,8 +117,6 @@ class Instruction:
                 | OpcodeEnum.PIX
             ):
                 arg_value = (self.parsed_args[0] << 3) + self.parsed_args[1]
-            case _:
-                raise ValueError(f'Case unaccounted for "{self.opcode}"')
 
         return (opcode_value << 6) + arg_value
 

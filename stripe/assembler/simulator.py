@@ -44,7 +44,7 @@ class CPU:
             self.screen[i][i] = 1
             self.registers[i] = i
 
-    def format_instruction(self) -> str:
+    def prettyprint_instruction(self) -> str:
         opcode, a, b = self.instructions[self.pc]
         match opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
@@ -67,10 +67,8 @@ class CPU:
                 | OpcodeEnum.PIX
             ):
                 args = (str(a), str(b))
-#            case _:
-#                raise ValueError(f'Case unaccounted for "{self.opcode}"')
 
-        return f'{opcode.value} {','.join(args)}'
+        return f'{opcode.value} {",".join(args)}'
 
 
 class Sprite(ABC):
@@ -167,7 +165,7 @@ class CPUSprite(Sprite):
             f'PC: {self.cpu.pc}/63',
             f'Flags: Z = {self.cpu.flag_Z}, C = {self.cpu.flag_C}',
             f'Values cache: A = {a}, B = {b}',
-            f'Instruction to run: {self.cpu.format_instruction()}',
+            f'Instruction to run: {self.cpu.prettyprint_instruction()}',
         ]
         y = MARGIN * 3 + PIXSIZE * 8 + FONTSIZE
         for text in texts:
@@ -224,11 +222,13 @@ for i, line in enumerate(lines):
 
     if not re.match('^[01]{10}$', line):
         raise ValueError(f'Failed to parse input file at line {i + 1}')
-    instructions.append((
-        list(OpcodeEnum)[int(line[0:4], base=2)],
-        int(line[4:7], base=2),
-        int(line[7:10], base=2)
-    ))
+    instructions.append(
+        (
+            list(OpcodeEnum)[int(line[0:4], base=2)],
+            int(line[4:7], base=2),
+            int(line[7:10], base=2),
+        )
+    )
 
 pygame.init()
 pygame.display.set_caption('Sprite simulator')
