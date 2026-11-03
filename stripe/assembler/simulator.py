@@ -1,7 +1,10 @@
+import re
 import sys
 import pygame
 from abc import ABC, abstractmethod
 from os.path import isfile
+
+from common import OpcodeEnum
 
 FPS = 60
 BGCOL = (21, 24, 25)
@@ -14,6 +17,7 @@ FONTSIZE = 16
 
 
 class CPU:
+    instructions: list[tuple[OpcodeEnum, int, int]]
     pc: int
     instruction_cache: tuple[int, int, int]
     registers: list[int]
@@ -22,7 +26,8 @@ class CPU:
     flag_Z: int
     flag_C: int
 
-    def __init__(self) -> None:
+    def __init__(self, instructions: list[tuple[OpcodeEnum, int, int]]) -> None:
+        self.instructions = instructions
         self.reset()
 
     def reset(self) -> None:
@@ -38,6 +43,34 @@ class CPU:
         for i in range(8):
             self.screen[i][i] = 1
             self.registers[i] = i
+
+    def format_instruction(self) -> str:
+        opcode, a, b = self.instructions[self.pc]
+        match opcode:
+            case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
+                args = ()
+            case (
+                OpcodeEnum.LDI
+                | OpcodeEnum.JMP
+                | OpcodeEnum.JZ
+                | OpcodeEnum.JC
+                | OpcodeEnum.IN
+            ):
+                args = (str(a),)
+            case (
+                OpcodeEnum.MOV
+                | OpcodeEnum.SUB
+                | OpcodeEnum.XOR
+                | OpcodeEnum.AND
+                | OpcodeEnum.OR
+                | OpcodeEnum.ADD
+                | OpcodeEnum.PIX
+            ):
+                args = (str(a), str(b))
+#            case _:
+#                raise ValueError(f'Case unaccounted for "{self.opcode}"')
+
+        return f'{opcode.value} {','.join(args)}'
 
 
 class Sprite(ABC):
@@ -112,14 +145,30 @@ class CPUSprite(Sprite):
                     LIGHT_COLS[bit],
                     (x, MARGIN + (7 - y) * PIXSIZE, PIXSIZE, PIXSIZE - 1),
                 )
+
+            value = self.cpu.registers[i]
             screen.blit(
                 font.render(f'r{i}', True, FGCOL),
                 (x, MARGIN * 2 + PIXSIZE * 8),
             )
+            screen.blit(
+                font.render(str(value), True, FGCOL),
+                (x, MARGIN * 2 + PIXSIZE * 8 + FONTSIZE),
+            )
+            screen.blit(
+                font.render(str(value - 128), True, FGCOL),
+                (x, MARGIN * 2 + PIXSIZE * 8 + FONTSIZE * 2),
+            )
             x += PIXSIZE + MARGIN
 
         # PC and other info
-        texts = ['hello world', 'lorem ipsum']
+        a, b = self.cpu.values_cache
+        texts = [
+            f'PC: {self.cpu.pc}/63',
+            f'Flags: Z = {self.cpu.flag_Z}, C = {self.cpu.flag_C}',
+            f'Values cache: A = {a}, B = {b}',
+            f'Instruction to run: {self.cpu.format_instruction()}',
+        ]
         y = MARGIN * 3 + PIXSIZE * 8 + FONTSIZE
         for text in texts:
             screen.blit(font.render(text, True, FGCOL), (MARGIN, y))
@@ -165,6 +214,22 @@ if not isfile(bin_file) or not bin_file.endswith('bin'):
     print(f'File "{bin_file}" is not a valid Stripe .bin file')
     exit(1)
 
+instructions: list[tuple[OpcodeEnum, int, int]] = []
+with open(bin_file) as f:
+    lines = f.read().split('\n')
+for i, line in enumerate(lines):
+    line = line.split('#')[0].strip()
+    if not line:
+        continue
+
+    if not re.match('^[01]{10}$', line):
+        raise ValueError(f'Failed to parse input file at line {i + 1}')
+    instructions.append((
+        list(OpcodeEnum)[int(line[0:4], base=2)],
+        int(line[4:7], base=2),
+        int(line[7:10], base=2)
+    ))
+
 pygame.init()
 pygame.display.set_caption('Sprite simulator')
 clock = pygame.time.Clock()
@@ -172,7 +237,7 @@ ticks = pygame.time.get_ticks()
 screen = pygame.display.set_mode((MARGIN * 10 + PIXSIZE * 16, 480))
 font = pygame.font.SysFont('monospace', FONTSIZE, bold=True)
 
-cpu = CPU()
+cpu = CPU(instructions)
 cpu_sprite = CPUSprite(cpu)
 
 if __name__ == '__main__':
