@@ -11,6 +11,7 @@ INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
 INPUT_EXTENSION = '.asm'
 OUTPUT_EXTENSIONS = ['.bin', '.litematic']
+FORCE = '-f' in sys.argv or '--force' in sys.argv
 
 
 class OpcodeEnum(str, enum.Enum):
@@ -304,7 +305,8 @@ def main() -> None:
     to_process = [
         filename
         for filename, timestamp in programs.items()
-        if any(output.get(filename, 0) < timestamp for output in outputs)
+        if FORCE
+        or any(output.get(filename, 0) < timestamp for output in outputs)
     ]
 
     print(f'Found {len(to_process)} files to process.')

@@ -116,4 +116,5 @@ don't worry: the assembler detects which files should be re-assembled and does
 not touch programs whose output files are already present and have a more recent
 modification date.
 Though, if you feel a program should be re-assembled, feel free to manually
-delete the .bin and .litematic files.
+delete the .bin and .litematic files, or preferably to call the assembler with
+`-f` / `--force`.
