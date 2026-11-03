@@ -2,13 +2,13 @@
     ldi 10
     mov r0,r1
 # second number
-    ldi 255
+    ldi 63
     mov r0,r2
     add r1,r2
 
 # expected result and assert
     mov r0,r1
-    ldi 9
+    ldi 73
     xor r0,r1
     jz .ok
 
