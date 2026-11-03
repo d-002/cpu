@@ -85,3 +85,35 @@ Conditions can be done with flags manipulation and jumps:
 ```
 
 Less or equal / more can be achieved by swapping r1 and r2.
+
+## Assembler
+
+An assembler file is provided, look at the example files to see the
+capabilities.
+I'm too lazy to make an actual doc on the language, it's really not too
+different from other assembly languageS.
+
+The commands below are ran from the `assembler` subdirectory.
+
+Use [uv](https://docs.astral.sh/uv/) to run the assembler: `uv run assembler.py`
+It requires [Litemapy](https://github.com/SmylerMC/litemapy), but this should
+not be an issue with uv.
+
+It will check and assemble all files in `programs/*.str` into:
+
+- `assembler/bin/*.bin`: really just a text file that represents the memory
+  content of the CPU.
+  Not compressed into an actual binary file because the instructions are not a
+  multiple of 8 bits long.
+- `assembler/schematics/*.litematic`: a schematic file, readable with
+  [Litematica](https://modrinth.com/mod/litematica). \
+  You are advised to symlink the schematics directory for easier access, for
+  example:
+  `ln -s schematics path/to/.minecraft/schematics/stripe-asm`
+
+If you fear this assembling process will be slow if you have a lot of files,
+don't worry: the assembler detects which files should be re-assembled and does
+not touch programs whose output files are already present and have a more recent
+modification date.
+Though, if you feel a program should be re-assembled, feel free to manually
+delete the .bin and .litematic files.
