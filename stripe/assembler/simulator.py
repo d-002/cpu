@@ -67,6 +67,56 @@ class CPU:
 
         return f'{opcode.value} {",".join(args)}'
 
+    def _alu_op(self, res: int) -> None:
+        """
+        Helper to set the flags and r0 value after an ALU operation
+        """
+
+        self.registers[0] = res % 256
+        self.flag_Z = res % 256 == 0
+        self.flag_C = res != res % 256
+
+    def run_instruction(self) -> None:
+        opcode, a, b = self.instructions[self.pc]
+        ra, rb = self.instructions_cache = (self.registers[a],
+                                            self.registers[b])
+
+        match opcode:
+            case OpcodeEnum.NOP:
+                pass
+            case OpcodeEnum.LDI:
+                self.registers[0] = a * 8 + b
+            case OpcodeEnum.MOV:
+                self.registers[b] = ra
+            case OpcodeEnum.SUB:
+                self._alu_op(ra - rb)
+            case OpcodeEnum.XOR:
+                self._alu_op(ra ^ rb)
+            case OpcodeEnum.AND:
+                self._alu_op(ra & rb)
+            case OpcodeEnum.OR:
+                self._alu_op(ra | rb)
+            case OpcodeEnum.ADD:
+                self._alu_op(ra + rb)
+            case OpcodeEnum.JMP:
+                self.pc = ra
+            case OpcodeEnum.JZ:
+                if self.flag_Z:
+                    self.pc = ra
+            case OpcodeEnum.JC:
+                if self.flag_C:
+                    self.pc = ra
+            case OpcodeEnum.PIX:
+                self.screen[rb][ra] = 1
+            case OpcodeEnum.RST:
+                self.screen = [[0]*8 for _ in range(8)]
+            case OpcodeEnum.IN:
+                self.registers[0] = self.port
+            case OpcodeEnum.HLT:
+                pass # will be handled in the sprite that handles the loop
+
+        self.pc = (self.pc + 1) % 64
+
 
 class Sprite(ABC):
     @abstractmethod
@@ -116,7 +166,6 @@ class ScreenSprite(Sprite):
         return should_render
 
     def render(self) -> None:
-        # screen
         pygame.draw.rect(
             screen,
             BORDERCOL,
