@@ -191,6 +191,11 @@ def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
             print(f'\033[31m{e}\033[m', file=sys.stderr)
             exit(1)
 
+    if len(instructions) > 64:
+        raise ValueError(
+            f'Too many instructions: uses {len(instructions)} out of 64'
+        )
+
     return labels, instructions
 
 
