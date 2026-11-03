@@ -296,7 +296,8 @@ def main() -> None:
         print(f'[{percentage:3}%] \033[1;32mBuilt target {file}\033[m')
     t1 = time.time()
 
-    print(f'Built {len(to_process)} targets in {(t1 - t0) * 1000:.3f}ms.')
+    s = 's' if len(to_process) > 1 else ''
+    print(f'Built {len(to_process)} target{s} in {(t1 - t0) * 1000:.3f}ms.')
 
 
 if __name__ == '__main__':

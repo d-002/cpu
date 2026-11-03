@@ -1,5 +1,5 @@
 # first number
-    ldi 21
+    ldi 19
     mov r0,r1
 # second number
     ldi 23

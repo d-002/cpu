@@ -14,6 +14,7 @@ LIGHT_COLS = ((41, 32, 26), (237, 199, 145))
 MARGIN = 15
 PIXSIZE = 30
 FONTSIZE = 16
+RUNDELAY = 0.3  # in seconds
 
 
 class CPU:
@@ -41,18 +42,28 @@ class CPU:
         self.flag_Z = 1
         self.flag_C = 0
 
+    def get_instruction(self) -> tuple[OpcodeEnum, int, int]:
+        if self.pc < len(self.instructions):
+            return self.instructions[self.pc]
+        return (OpcodeEnum.NOP, 0, 0)
+
+    def _alu_op(self, res: int) -> None:
+        """
+        Helper to set the flags and r0 value after an ALU operation
+        """
+
+        self.registers[0] = res % 256
+        self.flag_Z = int(res % 256 == 0)
+        self.flag_C = int(res != res % 256)
+
     def prettyprint_instruction(self) -> str:
-        opcode, a, b = self.instructions[self.pc]
+        opcode, a, b = self.get_instruction()
         match opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
                 args = ()
-            case (
-                OpcodeEnum.LDI
-                | OpcodeEnum.JMP
-                | OpcodeEnum.JZ
-                | OpcodeEnum.JC
-                | OpcodeEnum.IN
-            ):
+            case OpcodeEnum.LDI:
+                args = (str(a * 8 + b),)
+            case OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC | OpcodeEnum.IN:
                 args = (str(a),)
             case (
                 OpcodeEnum.MOV
@@ -67,19 +78,12 @@ class CPU:
 
         return f'{opcode.value} {",".join(args)}'
 
-    def _alu_op(self, res: int) -> None:
-        """
-        Helper to set the flags and r0 value after an ALU operation
-        """
-
-        self.registers[0] = res % 256
-        self.flag_Z = res % 256 == 0
-        self.flag_C = res != res % 256
-
-    def run_instruction(self) -> None:
-        opcode, a, b = self.instructions[self.pc]
-        ra, rb = self.instructions_cache = (self.registers[a],
-                                            self.registers[b])
+    def step(self) -> None:
+        opcode, a, b = self.get_instruction()
+        ra, rb = self.instructions_cache = (
+            self.registers[a],
+            self.registers[b],
+        )
 
         match opcode:
             case OpcodeEnum.NOP:
@@ -109,11 +113,11 @@ class CPU:
             case OpcodeEnum.PIX:
                 self.screen[rb][ra] = 1
             case OpcodeEnum.RST:
-                self.screen = [[0]*8 for _ in range(8)]
+                self.screen = [[0] * 8 for _ in range(8)]
             case OpcodeEnum.IN:
                 self.registers[0] = self.port
             case OpcodeEnum.HLT:
-                pass # will be handled in the sprite that handles the loop
+                pass  # will be handled in the sprite that handles the loop
 
         self.pc = (self.pc + 1) % 64
 
@@ -250,10 +254,14 @@ class RunSprite(Sprite):
     """
 
     cpu: CPU
+    run: bool
+    prev_step: float | None  # timestamp in seconds if run, None otherwise
     force_render: bool
 
     def __init__(self, cpu: CPU) -> None:
         self.cpu = cpu
+        self.run = False
+        self.prev_step = None
         self.force_render = True
 
     def should_render(self, events: list[pygame.event.Event]) -> bool:
@@ -263,7 +271,28 @@ class RunSprite(Sprite):
 
         should_render = False
 
-        # ticks = pygame.time.get_ticks()
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    self.cpu.step()
+                    should_render = True
+                elif event.key == pygame.K_SPACE:
+                    self.run = not self.run
+                    self.prev_step = None
+                    should_render = True
+                elif event.key == pygame.K_r:
+                    self.cpu.reset()
+                    should_render = True
+
+        if self.run:
+            timestamp = pygame.time.get_ticks() / 1000
+            if self.prev_step is None or timestamp - self.prev_step > RUNDELAY:
+                self.prev_step = timestamp
+                self.cpu.step()
+                should_render = True
+
+                if self.cpu.get_instruction()[0] == OpcodeEnum.HLT:
+                    self.run = False
 
         return should_render
 
