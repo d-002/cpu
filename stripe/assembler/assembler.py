@@ -1,35 +1,18 @@
 import os
 import time
-import enum
 import sys
 import re
 import getpass
-from os.path import splitext, join, getmtime, basename
+from os.path import splitext, join, getmtime
 from litemapy import Schematic, Region, BlockState  # pyright: ignore
+
+from common import OpcodeEnum
 
 INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
 INPUT_EXTENSION = '.asm'
 OUTPUT_EXTENSIONS = ['.bin', '.litematic']
 FORCE = '-f' in sys.argv or '--force' in sys.argv
-
-
-class OpcodeEnum(str, enum.Enum):
-    NOP = 'NOP'
-    LDI = 'LDI'
-    MOV = 'MOV'
-    SUB = 'SUB'
-    XOR = 'XOR'
-    AND = 'AND'
-    OR = 'OR'
-    ADD = 'ADD'
-    JMP = 'JMP'
-    JZ = 'JZ'
-    JC = 'JC'
-    PIX = 'PIX'
-    RST = 'RST'
-    IN = 'IN'
-    HLT = 'HLT'
 
 
 args_len = {
