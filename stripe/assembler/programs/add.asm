@@ -1,14 +1,14 @@
 # first number
-    ldi 10
+    ldi 21
     mov r0,r1
 # second number
-    ldi 63
+    ldi 23
     mov r0,r2
     add r1,r2
 
 # expected result and assert
     mov r0,r1
-    ldi 73
+    ldi 42
     xor r0,r1
     jz .ok
 

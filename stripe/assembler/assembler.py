@@ -3,7 +3,9 @@ import time
 import enum
 import sys
 import re
+import getpass
 from os.path import splitext, join, getmtime, basename
+from litemapy import Schematic, Region, BlockState
 
 INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
@@ -236,13 +238,47 @@ def assemble(filename: str) -> None:
     Assemble a Stripe assembly file into the corresponding binary and schematic
     files.
     """
+
     source_file = join(INPUT_DIR, filename + INPUT_EXTENSION)
     bin_file = join(OUTPUT_DIRS[0], filename + OUTPUT_EXTENSIONS[0])
     schematic_file = join(OUTPUT_DIRS[1], filename + OUTPUT_EXTENSIONS[1])
 
+    # assembling
     labels, instructions = parse_instructions(source_file)
     resolve_labels(labels, instructions)
     encoded = encode_instructions(instructions)
+
+    # bin export
+    with open(bin_file, 'w') as f:
+        for instruction in encoded:
+            f.write(f'{bin(instruction)[2:]:0>10}\n')
+
+    # schematic export
+    reg = Region(0, 0, 0, 31, 15, 32)
+    schem = Schematic(
+        name=filename,
+        author=getpass.getuser(),
+        regions={filename: reg},
+        lm_version=5,
+    )
+    blocks = [
+        BlockState('minecraft:red_wool'),
+        BlockState('minecraft:redstone_wire'),
+    ]
+
+    index = 0
+    for x in range(8):
+        for y in range(8):
+            value = 0 if index >= len(encoded) else encoded[index]
+            index += 1
+
+            for z in range(10):
+                bit = value & 1
+                value >>= 1
+
+                reg[x * 2, y * 2, z * 2] = blocks[bit]
+
+    schem.save(schematic_file)
 
 
 def main() -> None:
