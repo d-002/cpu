@@ -83,6 +83,8 @@ class CPU:
             self.registers[b],
         )
 
+        self.pc = (self.pc + 1) % 64
+
         match opcode:
             case OpcodeEnum.NOP:
                 pass
@@ -116,8 +118,6 @@ class CPU:
                 self.registers[0] = self.port
             case OpcodeEnum.HLT:
                 pass  # will be handled in the sprite that handles the loop
-
-        self.pc = (self.pc + 1) % 64
 
 
 class Sprite(ABC):

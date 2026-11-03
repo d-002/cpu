@@ -86,6 +86,17 @@ Conditions can be done with flags manipulation and jumps:
 
 Less or equal / more can be achieved by swapping r1 and r2.
 
+One another important notice is that jumping uses a **register** for the value,
+it is not an immediate.
+Don't forget to store the target value in a register beforehand:
+
+```asm
+    ldi .label
+    jmp r0
+
+.label
+```
+
 ## Assembler
 
 An assembler file is provided, look at the example files to see the
