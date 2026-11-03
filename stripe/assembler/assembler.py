@@ -146,7 +146,7 @@ class Instruction:
 def list_files(parent_dir: str, extension: str) -> dict[str, float]:
     """
     List files in a directory with the given extension, returning a dict of
-    {full file path: modification timestamp}
+    {relative filename without extension: modification timestamp}
     """
 
     files: dict[str, float] = {}
@@ -155,7 +155,7 @@ def list_files(parent_dir: str, extension: str) -> dict[str, float]:
             continue
 
         path = join(parent_dir, file)
-        files[path] = getmtime(path)
+        files[splitext(file)[0]] = getmtime(path)
 
     return files
 
@@ -293,9 +293,9 @@ def main() -> None:
     ]
 
     to_process = [
-        splitext(basename(path))[0]
-        for path, timestamp in programs.items()
-        if any(output.get(path, 0) < timestamp for output in outputs)
+        filename
+        for filename, timestamp in programs.items()
+        if any(output.get(filename, 0) < timestamp for output in outputs)
     ]
 
     print(f'Found {len(to_process)} files to process.')
