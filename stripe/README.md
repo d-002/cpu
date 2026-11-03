@@ -105,6 +105,8 @@ It will check and assemble all files in `programs/*.str` into:
   contents of the CPU.
   Not compressed into actual binary files because the instructions are not a
   multiple of 8 bits long.
+  This also allows to add optional "comments" at the end of lines, that will be
+  displayed in the simulator (see below) for a better view of the program.
 - `assembler/schematics/*.litematic`: schematic files, readable with
   [Litematica](https://modrinth.com/mod/litematica). \
   You are advised to symlink the schematics directory for easier access, for
@@ -118,3 +120,18 @@ modification date.
 Though, if you feel a program should be re-assembled, feel free to manually
 delete the .bin and .litematic files, or preferably to call the assembler with
 `-f` / `--force`.
+
+## Simulator
+
+Once a program is assembled in its .bin file, the simulator
+(`uv run simulator.py file.bin`, requires
+[pygame](https://www.pygame.org/docs/)) can be used to view the state of the CPU
+during the execution of a program, and also debug it without having to run the
+actual Minecraft CPU.
+
+The controls and information are displayed in the interface.
+Additionally, one can click on the screen, registers and input port to alter
+their state during the execution of the program.
+
+Note that only the tun mode will stop at HLT instructions, these can be bypassed
+when manually stepping through a given program.
