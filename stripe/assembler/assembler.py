@@ -5,7 +5,7 @@ import sys
 import re
 import getpass
 from os.path import splitext, join, getmtime, basename
-from litemapy import Schematic, Region, BlockState
+from litemapy import Schematic, Region, BlockState # pyright: ignore
 
 INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
@@ -54,7 +54,7 @@ class Label:
     name: str
     value: int
 
-    def __init__(self, name: str, index) -> None:
+    def __init__(self, name: str, index: int) -> None:
         self.name = name
         self.value = index
 
@@ -88,7 +88,7 @@ class Instruction:
         return f'Instruction<{self.opcode.name}, {args}>'
 
     def resolve(self, labels: dict[str, int]):
-        parsed_args = []
+        parsed_args: list[int] = []
 
         for arg in self.args:
             if re.match('^r[0-7]$', arg):
@@ -149,7 +149,7 @@ def list_files(parent_dir: str, extension: str) -> dict[str, float]:
     {full file path: modification timestamp}
     """
 
-    files = {}
+    files: dict[str, float] = {}
     for file in os.listdir(parent_dir):
         if splitext(file)[1] != extension:
             continue
@@ -161,8 +161,8 @@ def list_files(parent_dir: str, extension: str) -> dict[str, float]:
 
 
 def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
-    labels = []
-    instructions = []
+    labels: list[Label] = []
+    instructions: list[Instruction] = []
 
     with open(path) as f:
         lines = f.read().split('\n')
@@ -209,7 +209,7 @@ def resolve_labels(
     Edit the list of instructions in-place.
     """
 
-    labels_dict = {}
+    labels_dict: dict[str, int] = {}
     for label in labels:
         if label.name in labels_dict:
             raise ValueError(f'Found duplicate label name: "{label.name}"')
@@ -225,7 +225,7 @@ def encode_instructions(instructions: list[Instruction]) -> list[int]:
     actual MSB machine instructions.
     """
 
-    encoded = []
+    encoded: list[int] = []
 
     for instruction in instructions:
         encoded.append(instruction.encoded())
