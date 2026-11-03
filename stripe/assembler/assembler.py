@@ -5,7 +5,7 @@ import sys
 import re
 import getpass
 from os.path import splitext, join, getmtime, basename
-from litemapy import Schematic, Region, BlockState # pyright: ignore
+from litemapy import Schematic, Region, BlockState  # pyright: ignore
 
 INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
@@ -254,29 +254,38 @@ def assemble(filename: str) -> None:
             f.write(f'{bin(instruction)[2:]:0>10}\n')
 
     # schematic export
-    reg = Region(0, 0, 0, 31, 15, 32)
+    reg = Region(0, 0, 0, 15, 15, 20)
     schem = Schematic(
         name=filename,
         author=getpass.getuser(),
         regions={filename: reg},
         lm_version=5,
     )
-    blocks = [
-        BlockState('minecraft:red_wool'),
-        BlockState('minecraft:redstone_wire'),
-    ]
 
     index = 0
-    for x in range(8):
-        for y in range(8):
+    for y in range(8):
+        for x in range(8):
             value = 0 if index >= len(encoded) else encoded[index]
             index += 1
 
             for z in range(10):
                 bit = value & 1
                 value >>= 1
+                if bit == 0:
+                    block = BlockState('minecraft:red_wool')
+                else:
+                    if (x + y) % 2:
+                        kwargs = {'east': 'up'}
+                    else:
+                        kwargs = {'west': 'up'}
+                    block = BlockState(
+                        'minecraft:redstone_wire',
+                        north='side',
+                        south='side',
+                        **kwargs,
+                    )
 
-                reg[x * 2, y * 2, z * 2] = blocks[bit]
+                reg[14 - x * 2, y * 2, z * 2 + (z > 2)] = block
 
     schem.save(schematic_file)
 

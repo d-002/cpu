@@ -91,7 +91,7 @@ Less or equal / more can be achieved by swapping r1 and r2.
 An assembler file is provided, look at the example files to see the
 capabilities.
 I'm too lazy to make an actual doc on the language, it's really not too
-different from other assembly languageS.
+different from other assembly languages.
 
 The commands below are ran from the `assembler` subdirectory.
 
@@ -101,11 +101,11 @@ not be an issue with uv.
 
 It will check and assemble all files in `programs/*.str` into:
 
-- `assembler/bin/*.bin`: really just a text file that represents the memory
-  content of the CPU.
-  Not compressed into an actual binary file because the instructions are not a
+- `assembler/bin/*.bin`: really just text files that represent the memory
+  contents of the CPU.
+  Not compressed into actual binary files because the instructions are not a
   multiple of 8 bits long.
-- `assembler/schematics/*.litematic`: a schematic file, readable with
+- `assembler/schematics/*.litematic`: schematic files, readable with
   [Litematica](https://modrinth.com/mod/litematica). \
   You are advised to symlink the schematics directory for easier access, for
   example:
