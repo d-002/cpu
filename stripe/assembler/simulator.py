@@ -23,6 +23,7 @@ class CPU:
     registers: list[int]
     values_cache: tuple[int, int]
     screen: list[list[int]]
+    port: int
     flag_Z: int
     flag_C: int
 
@@ -36,6 +37,7 @@ class CPU:
         self.registers = [0] * 8
         self.values_cache = (0, 0)
         self.screen = [[0] * 8 for _ in range(8)]
+        self.port = 0
         self.flag_Z = 1
         self.flag_C = 0
 
@@ -80,7 +82,7 @@ class Sprite(ABC):
         """
 
     @abstractmethod
-    def render(self, screen: pygame.Surface) -> None:
+    def render(self) -> None:
         """
         Render the sprite on the screen.
         """
@@ -101,7 +103,35 @@ class CPUSprite(Sprite):
 
         return False
 
-    def render(self, screen: pygame.Surface) -> None:
+    def _display_bin_value(self, name: str, value: int, x: int, y: int) -> None:
+        """
+        Cleanly render an 8-bit value as (top to bottom): a pixel array, its
+        name as text, then unsigned and signed representations.
+        """
+
+        screen.blit(
+            font.render(name, True, FGCOL),
+            (x, y),
+        )
+        screen.blit(
+            font.render(str(value), True, FGCOL),
+            (x, y + FONTSIZE),
+        )
+        screen.blit(
+            font.render(str((value + 128) % 256 - 128), True, FGCOL),
+            (x, y + FONTSIZE * 2),
+        )
+
+        for y in range(8):
+            bit = value & 1
+            value >>= 1
+            pygame.draw.rect(
+                screen,
+                LIGHT_COLS[bit],
+                (x, MARGIN + (7 - y) * PIXSIZE, PIXSIZE, PIXSIZE - 1),
+            )
+
+    def render(self) -> None:
         # screen
         pygame.draw.rect(
             screen,
@@ -128,36 +158,21 @@ class CPUSprite(Sprite):
         # registers
         x = MARGIN * 2 + PIXSIZE * 8
         for i in range(8):
-            value = self.cpu.registers[i]
             pygame.draw.rect(
                 screen,
                 BORDERCOL,
                 (x - 2, MARGIN - 2, PIXSIZE + 4, PIXSIZE * 8 + 4),
             )
 
-            for y in range(8):
-                bit = value & 1
-                value >>= 1
-                pygame.draw.rect(
-                    screen,
-                    LIGHT_COLS[bit],
-                    (x, MARGIN + (7 - y) * PIXSIZE, PIXSIZE, PIXSIZE - 1),
-                )
-
-            value = self.cpu.registers[i]
-            screen.blit(
-                font.render(f'r{i}', True, FGCOL),
-                (x, MARGIN * 2 + PIXSIZE * 8),
-            )
-            screen.blit(
-                font.render(str(value), True, FGCOL),
-                (x, MARGIN * 2 + PIXSIZE * 8 + FONTSIZE),
-            )
-            screen.blit(
-                font.render(str(value - 128), True, FGCOL),
-                (x, MARGIN * 2 + PIXSIZE * 8 + FONTSIZE * 2),
+            self._display_bin_value(
+                f'r{i}', self.cpu.registers[i], x, MARGIN * 2 + PIXSIZE * 8
             )
             x += PIXSIZE + MARGIN
+
+        # input port
+        self._display_bin_value(
+            f'port', self.cpu.port, x, MARGIN * 2 + PIXSIZE * 8
+        )
 
         # PC and other info
         a, b = self.cpu.values_cache
@@ -197,7 +212,7 @@ def main(sprites: list[Sprite]) -> None:
         if should_render:
             screen.fill(BGCOL)
             for sprite in should_render:
-                sprite.render(screen)
+                sprite.render()
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -234,7 +249,7 @@ pygame.init()
 pygame.display.set_caption('Sprite simulator')
 clock = pygame.time.Clock()
 ticks = pygame.time.get_ticks()
-screen = pygame.display.set_mode((MARGIN * 10 + PIXSIZE * 16, 480))
+screen = pygame.display.set_mode((MARGIN * 11 + PIXSIZE * 17, 480))
 font = pygame.font.SysFont('monospace', FONTSIZE, bold=True)
 
 cpu = CPU(instructions)
