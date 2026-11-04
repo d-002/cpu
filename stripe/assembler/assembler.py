@@ -62,16 +62,22 @@ class Label:
 
 
 class Instruction:
+    line_text: str
+    line_index: int
     opcode: OpcodeEnum
     args: list[str]
     parsed_args: list[int] | None
 
-    def __init__(self, opcode: str, args: list[str]):
+    def __init__(
+        self, line_text: str, line_index: int, opcode: str, args: list[str]
+    ):
         opcode = opcode.upper()
 
         if opcode not in OpcodeEnum:
             raise ValueError(f'Opcode not found: "{opcode}"')
 
+        self.line_text = line_text
+        self.line_index = line_index
         self.opcode = OpcodeEnum[opcode]
         self.args = args
         self.parsed_args = None
@@ -121,7 +127,12 @@ class Instruction:
 
         self.parsed_args = parsed_args
 
-    def encoded(self) -> int:
+    def encoded(self) -> tuple[int, str]:
+        """
+        Return both the encoded (as an integer) machine code, and the comment to
+        add directly after in the bin file.
+        """
+
         if self.parsed_args is None:
             raise ValueError(f'Instruction not resolved: {self}')
 
@@ -148,7 +159,8 @@ class Instruction:
             ):
                 arg_value = (self.parsed_args[1] << 3) + self.parsed_args[0]
 
-        return (opcode_value << 6) + arg_value
+        comment = f' # {self.line_index}:{self.line_text}'
+        return (opcode_value << 6) + arg_value, comment
 
 
 def list_files(parent_dir: str, extension: str) -> dict[str, float]:
@@ -185,12 +197,15 @@ def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
             if line[0] == '.':
                 labels.append(Label(line, instruction_index))
             else:
-                parts = [part.strip() for part in re.split(' |,', line) if
-                         part.strip()]
+                parts = [
+                    part.strip()
+                    for part in re.split(' |,', line)
+                    if part.strip()
+                ]
                 opcode = parts[0]
                 args = parts[1:]
 
-                instructions.append(Instruction(opcode, args))
+                instructions.append(Instruction(line, file_index, opcode, args))
                 instruction_index += 1
 
         except Exception as e:
@@ -227,13 +242,22 @@ def resolve_labels(
         instruction.resolve(labels_dict)
 
 
-def encode_instructions(instructions: list[Instruction]) -> list[int]:
+def encode_instructions(
+    instructions: list[Instruction],
+) -> list[tuple[int, str]]:
     """
     Encode all instructions in the list into a list of numbers, which are the
     actual MSB machine instructions.
+
+    Return a list of tuples:
+
+    (
+        machine code,
+        comment to add right after in the bine file
+    )
     """
 
-    encoded: list[int] = []
+    encoded: list[tuple[int, str]] = []
 
     for instruction in instructions:
         encoded.append(instruction.encoded())
@@ -273,7 +297,7 @@ def assemble(filename: str) -> None:
         print(f'-- Exporting to {bin_file}')
     with open(bin_file, 'w') as f:
         for instruction in encoded:
-            f.write(f'{bin(instruction)[2:]:0>10}\n')
+            f.write(f'{bin(instruction[0])[2:]:0>10}{instruction[1]}\n')
 
     # schematic export
     if args.verbose:
@@ -289,7 +313,7 @@ def assemble(filename: str) -> None:
     index = 0
     for y in range(8):
         for x in range(8):
-            value = 0 if index >= len(encoded) else encoded[index]
+            value = 0 if index >= len(encoded) else encoded[index][0]
             index += 1
 
             for z in range(10):
