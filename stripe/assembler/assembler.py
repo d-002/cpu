@@ -217,8 +217,14 @@ def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
             exit(1)
 
     if len(instructions) > 64:
-        raise ValueError(
-            f'Too many instructions: uses {len(instructions)} out of 64'
+        print(
+            '\033[33mWarning: too many instructions: '
+            f'{len(instructions)} out of 64.\033[m',
+            file=sys.stderr,
+        )
+        print(
+            'Not throwing an error to allow you to test in the simulator,',
+            'but the program will be truncated in the schematic.',
         )
 
     return labels, instructions
