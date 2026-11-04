@@ -14,10 +14,19 @@ OUTPUT_DIRS = ['bin', 'schematics']
 INPUT_EXTENSION = '.asm'
 OUTPUT_EXTENSIONS = ['.bin', '.litematic']
 
-parser = argparse.ArgumentParser(prog='Stripe assembler', description=\
-        'Assembler and code checker for Stripe .str files')
-parser.add_argument('-f', '--force', action='store_true')
-parser.add_argument('-v', '--verbose', action='store_true')
+parser = argparse.ArgumentParser(
+    prog='Stripe assembler',
+    description='Assembler and code checker for Stripe .str files',
+)
+parser.add_argument(
+    '-f', '--force', action='store_true', help='force re-assemble'
+)
+parser.add_argument(
+    '-v',
+    '--verbose',
+    action='store_true',
+    help='display extra information when assembling',
+)
 args = parser.parse_args()
 
 
@@ -248,16 +257,32 @@ def assemble(filename: str) -> None:
     schematic_file = join(OUTPUT_DIRS[1], filename + OUTPUT_EXTENSIONS[1])
 
     # assembling
+    if args.verbose:
+        print('-- Parsing instructions')
     labels, instructions = parse_instructions(source_file)
+
+    if args.verbose:
+        print(
+            f'-- Found {len(instructions)}/64 instructions,',
+            f'or {round(len(instructions) / 64 * 100)}% of ROM storage.',
+        )
+        print('-- Resolving labels')
     resolve_labels(labels, instructions)
+
+    if args.verbose:
+        print('-- Encoding instructions')
     encoded = encode_instructions(instructions)
 
     # bin export
+    if args.verbose:
+        print(f'-- Exporting to {bin_file}')
     with open(bin_file, 'w') as f:
         for instruction in encoded:
             f.write(f'{bin(instruction)[2:]:0>10}\n')
 
     # schematic export
+    if args.verbose:
+        print(f'-- Exporting to {schematic_file}')
     reg = Region(0, 0, 0, 15, 15, 20)
     schem = Schematic(
         name=filename,
