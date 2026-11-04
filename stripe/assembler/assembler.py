@@ -3,6 +3,7 @@ import time
 import sys
 import re
 import getpass
+import argparse
 from os.path import splitext, join, getmtime
 from litemapy import Schematic, Region, BlockState  # pyright: ignore
 
@@ -12,7 +13,12 @@ INPUT_DIR = 'programs'
 OUTPUT_DIRS = ['bin', 'schematics']
 INPUT_EXTENSION = '.asm'
 OUTPUT_EXTENSIONS = ['.bin', '.litematic']
-FORCE = '-f' in sys.argv or '--force' in sys.argv
+
+parser = argparse.ArgumentParser(prog='Stripe assembler', description=\
+        'Assembler and code checker for Stripe .str files')
+parser.add_argument('-f', '--force', action='store_true')
+parser.add_argument('-v', '--verbose', action='store_true')
+args = parser.parse_args()
 
 
 args_len = {
@@ -302,7 +308,7 @@ def main() -> None:
     to_process = [
         filename
         for filename, timestamp in programs.items()
-        if FORCE
+        if args.force
         or any(output.get(filename, 0) < timestamp for output in outputs)
     ]
 
