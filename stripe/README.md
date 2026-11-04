@@ -132,6 +132,9 @@ Though, if you feel a program should be re-assembled, feel free to manually
 delete the .bin and .litematic files, or preferably to call the assembler with
 `-f` / `--force`.
 
+You can also display extra information with `-v` / `--verbose`.
+Use `-h` / `--help` for help.
+
 ## Simulator
 
 Once a program is assembled in its .bin file, the simulator
