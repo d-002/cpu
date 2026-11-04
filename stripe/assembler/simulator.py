@@ -10,11 +10,13 @@ FPS = 60
 BGCOL = (21, 24, 25)
 FGCOL = (217, 220, 221)
 BORDERCOL = (63, 63, 63)
+HIGHLCOL = (80, 80, 80)
 LIGHT_COLS = ((41, 32, 26), (237, 199, 145))
 MARGIN = 15
 PIXSIZE = 30
 FONTSIZE = 16
 RUNDELAY = 0.3  # in seconds
+W, H = MARGIN * 11 + PIXSIZE * 17, MARGIN * 5 + PIXSIZE * 8 + FONTSIZE * 11
 
 
 class Instruction:
@@ -333,6 +335,71 @@ class RunSprite(Sprite):
             y += FONTSIZE
 
 
+class DebugSprite(Sprite):
+    """
+    Sprite for displaying debug symbols and a preview of the lines being
+    executed
+    """
+
+    cpu: CPU
+    force_render: bool
+    prev_pc: int
+
+    def __init__(self, cpu: CPU) -> None:
+        self.cpu = cpu
+        self.force_render = True
+        self.prev_pc = cpu.pc
+
+    def should_render(self, events: list[pygame.event.Event]) -> bool:
+        if self.force_render:
+            self.force_render = False
+            return True
+
+        if cpu.pc == self.prev_pc:
+            return False
+
+        self.prev_pc = cpu.pc
+        return True
+
+    def render(self) -> None:
+        y = MARGIN * 4 + PIXSIZE * 8 + FONTSIZE * 6
+        SHIFT = 50
+        pygame.draw.rect(
+            screen,
+            BORDERCOL,
+            (
+                MARGIN + SHIFT - 2,
+                y - 2,
+                W - MARGIN * 2 - SHIFT + 4,
+                FONTSIZE * 5 + 4,
+            ),
+        )
+
+        i0 = max(0, self.cpu.pc - 2)
+        for i in range(min(5, len(self.cpu.instructions) - i0)):
+            if i + i0 == self.cpu.pc:
+                pygame.draw.rect(
+                    screen,
+                    HIGHLCOL,
+                    (
+                        MARGIN + SHIFT - 2,
+                        y,
+                        W - MARGIN * 2 - SHIFT + 4,
+                        FONTSIZE,
+                    ),
+                )
+
+            inst = self.cpu.instructions[i + i0]
+            screen.blit(
+                font.render(str(inst.line_index), True, FGCOL), (MARGIN, y)
+            )
+
+            screen.blit(
+                font.render(inst.line_text, True, FGCOL), (MARGIN + SHIFT, y)
+            )
+            y += FONTSIZE
+
+
 def display_bin_value(name: str, value: int, x: int, y: int) -> None:
     """
     Cleanly render an 8-bit value as (top to bottom): a pixel array, its
@@ -425,15 +492,14 @@ for i, line in enumerate(lines):
 pygame.init()
 pygame.display.set_caption('Sprite simulator')
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode(
-    (MARGIN * 11 + PIXSIZE * 17, MARGIN * 4 + PIXSIZE * 8 + FONTSIZE * 6)
-)
+screen = pygame.display.set_mode((W, H))
 font = pygame.font.SysFont('monospace', FONTSIZE, bold=True)
 
 cpu = CPU(instructions)
 screen_sprite = ScreenSprite(cpu)
 registers_sprite = RegistersSprite(cpu)
 run_sprite = RunSprite(cpu)
+debug_sprite = DebugSprite(cpu)
 
 if __name__ == '__main__':
-    main([screen_sprite, registers_sprite, run_sprite])
+    main([screen_sprite, registers_sprite, run_sprite, debug_sprite])
