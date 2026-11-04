@@ -17,8 +17,30 @@ FONTSIZE = 16
 RUNDELAY = 0.3  # in seconds
 
 
+class Instruction:
+    opcode: OpcodeEnum
+    a: int
+    b: int
+    line_text: str
+    line_index: int
+
+    def __init__(
+        self,
+        opcode: OpcodeEnum,
+        a: int,
+        b: int,
+        line_text: str,
+        line_index: int,
+    ) -> None:
+        self.opcode = opcode
+        self.a = a
+        self.b = b
+        self.line_text = line_text
+        self.line_index = line_index
+
+
 class CPU:
-    instructions: list[tuple[OpcodeEnum, int, int]]
+    instructions: list[Instruction]
     pc: int
     # instruction_cache: tuple[int, int, int]
     registers: list[int]
@@ -28,7 +50,7 @@ class CPU:
     flag_Z: int
     flag_C: int
 
-    def __init__(self, instructions: list[tuple[OpcodeEnum, int, int]]) -> None:
+    def __init__(self, instructions: list[Instruction]) -> None:
         self.instructions = instructions
         self.reset()
 
@@ -40,10 +62,10 @@ class CPU:
         self.flag_Z = 1
         self.flag_C = 0
 
-    def get_instruction(self) -> tuple[OpcodeEnum, int, int]:
+    def get_instruction(self) -> Instruction:
         if self.pc < len(self.instructions):
             return self.instructions[self.pc]
-        return (OpcodeEnum.NOP, 0, 0)
+        return Instruction(OpcodeEnum.NOP, 0, 0, '[dummy]', 0)
 
     def _alu_op(self, res: int) -> None:
         """
@@ -55,14 +77,14 @@ class CPU:
         self.flag_C = int(res != res % 256)
 
     def prettyprint_instruction(self) -> str:
-        opcode, b, a = self.get_instruction()
-        match opcode:
+        inst = self.get_instruction()
+        match inst.opcode:
             case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
                 args = ()
             case OpcodeEnum.LDI:
-                args = (str(b * 8 + a),)
+                args = (str(inst.b * 8 + inst.a),)
             case OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC | OpcodeEnum.IN:
-                args = (str(a),)
+                args = (str(inst.a),)
             case (
                 OpcodeEnum.MOV
                 | OpcodeEnum.SUB
@@ -72,26 +94,26 @@ class CPU:
                 | OpcodeEnum.ADD
                 | OpcodeEnum.PIX
             ):
-                args = (str(a), str(b))
+                args = (str(inst.a), str(inst.b))
 
-        return f'{opcode.value} {",".join(args)}'
+        return f'{inst.opcode.value} {",".join(args)}'
 
     def step(self) -> None:
-        opcode, b, a = self.get_instruction()
+        inst = self.get_instruction()
         ra, rb = self.instructions_cache = (
-            self.registers[a],
-            self.registers[b],
+            self.registers[inst.a],
+            self.registers[inst.b],
         )
 
         self.pc = (self.pc + 1) % 64
 
-        match opcode:
+        match inst.opcode:
             case OpcodeEnum.NOP:
                 pass
             case OpcodeEnum.LDI:
-                self.registers[0] = b * 8 + a
+                self.registers[0] = inst.b * 8 + inst.a
             case OpcodeEnum.MOV:
-                self.registers[b] = ra
+                self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
                 self._alu_op(ra - rb)
             case OpcodeEnum.XOR:
@@ -289,14 +311,14 @@ class RunSprite(Sprite):
                 self.cpu.step()
                 should_render = True
 
-                if self.cpu.get_instruction()[0] == OpcodeEnum.HLT:
+                if self.cpu.get_instruction().opcode == OpcodeEnum.HLT:
                     self.run = False
 
         return should_render
 
     def render(self) -> None:
-        _, b, a = self.cpu.get_instruction()
-        ra, rb = self.cpu.registers[a], self.cpu.registers[b]
+        inst = self.cpu.get_instruction()
+        ra, rb = self.cpu.registers[inst.a], self.cpu.registers[inst.b]
 
         texts = [
             f'PC: {self.cpu.pc}/63',
@@ -378,21 +400,25 @@ if not isfile(bin_file) or not bin_file.endswith('bin'):
     print(f'File "{bin_file}" is not a valid Stripe .bin file')
     exit(1)
 
-instructions: list[tuple[OpcodeEnum, int, int]] = []
+instructions: list[Instruction] = []
 with open(bin_file) as f:
     lines = f.read().split('\n')
 for i, line in enumerate(lines):
-    line = line.split('#')[0].strip()
     if not line:
         continue
+    if not re.match('^[01]{10} # \\d+:.+$', line):
+        raise ValueError(f'Failed to parse file at line {i + 1}: "{line}"')
 
-    if not re.match('^[01]{10}$', line):
-        raise ValueError(f'Failed to parse input file at line {i + 1}')
+    instruction, comment = line.split('#')
+    line_index, line_text = comment.split(':')
+
     instructions.append(
-        (
-            list(OpcodeEnum)[int(line[0:4], base=2)],
-            int(line[4:7], base=2),
-            int(line[7:10], base=2),
+        Instruction(
+            list(OpcodeEnum)[int(instruction[0:4], base=2)],
+            int(instruction[7:10], base=2),
+            int(instruction[4:7], base=2),
+            line_text.strip(),
+            int(line_index.strip()),
         )
     )
 
@@ -411,5 +437,3 @@ run_sprite = RunSprite(cpu)
 
 if __name__ == '__main__':
     main([screen_sprite, registers_sprite, run_sprite])
-
-# TODO "debugging symbols", store original program lines in comments and display
