@@ -185,15 +185,10 @@ def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
             if line[0] == '.':
                 labels.append(Label(line, instruction_index))
             else:
-                parts = line.split(' ')
-                if not 1 <= len(parts) <= 2:
-                    raise ValueError(f'Invalid syntax: "{line}"')
-                opcode = parts[0].strip()
-                args = (
-                    []
-                    if len(parts) == 1
-                    else [arg.strip() for arg in parts[1].split(',')]
-                )
+                parts = [part.strip() for part in re.split(' |,', line) if
+                         part.strip()]
+                opcode = parts[0]
+                args = parts[1:]
 
                 instructions.append(Instruction(opcode, args))
                 instruction_index += 1
