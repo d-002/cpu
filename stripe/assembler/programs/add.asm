@@ -10,7 +10,8 @@
     mov r0,r1
     ldi 42
     xor r0,r1
-    jz .ok
+    ldi .ok
+    jz r0
 
 .not_ok
     ldi 1
