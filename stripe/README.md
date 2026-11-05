@@ -33,7 +33,7 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |opcode|name|description|action|
 |-|-|-|-|
 |0000|NOP|no operation|do nothing|
-|0001|LDI|load immediate|b*8+a -> r0|
+|0001|LDI|load immediate|(b<<3)+a -> r0|
 |0010|MOV|copy reg. value|ra -> rb|
 |0011|SUB|8-bit subtraction|ra-rb -> r0|
 |0100|XOR|bitwise xor|ra^rb -> r0|
@@ -45,7 +45,7 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |1010|JC|jump on carry|ra -> pc (if C set)|
 |1011|PIX|turn a pixel on|screen[ra,rb] = 1|
 |1100|RST|turn the screen off|screen[*] = 0|
-|1101|IN|read from port|io*4 -> r0|
+|1101|IN|read from port|port<<2 -> r0|
 |1110|HLT|halt program|stop the clock|
 |1111|N/A|N/A|N/A, pulsed at the start of instructions|
 
