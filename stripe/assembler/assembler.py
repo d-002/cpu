@@ -44,7 +44,7 @@ args_len = {
     OpcodeEnum.JC: 1,
     OpcodeEnum.PIX: 2,
     OpcodeEnum.RST: 0,
-    OpcodeEnum.IN: 1,
+    OpcodeEnum.IN: 0,
     OpcodeEnum.HLT: 0,
 }
 
@@ -138,14 +138,12 @@ class Instruction:
 
         opcode_value = list(OpcodeEnum).index(self.opcode)
         match self.opcode:
-            case OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT:
+            case (
+                OpcodeEnum.NOP | OpcodeEnum.RST | OpcodeEnum.HLT | OpcodeEnum.IN
+            ):
                 arg_value = 0
             case (
-                OpcodeEnum.LDI
-                | OpcodeEnum.JMP
-                | OpcodeEnum.JZ
-                | OpcodeEnum.JC
-                | OpcodeEnum.IN
+                OpcodeEnum.LDI | OpcodeEnum.JMP | OpcodeEnum.JZ | OpcodeEnum.JC
             ):
                 arg_value = self.parsed_args[0]
             case (
