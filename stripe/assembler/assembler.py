@@ -215,7 +215,9 @@ def parse_instructions(path: str) -> tuple[list[Label], list[Instruction]]:
                 opcode = parts[0]
                 args = parts[1:]
 
-                instructions.append(Instruction(line, file_index, opcode, args))
+                instructions.append(
+                    Instruction(line, file_index + 1, opcode, args)
+                )
                 instruction_index += 1
 
         except Exception as e:
