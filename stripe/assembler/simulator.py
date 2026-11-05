@@ -374,7 +374,7 @@ class DebugSprite(Sprite):
 
     def render(self) -> None:
         y = MARGIN * 4 + PIXSIZE * 8 + FONTSIZE * 6
-        SHIFT = 50
+        SHIFT = 100
         pygame.draw.rect(
             screen,
             BORDERCOL,
@@ -402,7 +402,7 @@ class DebugSprite(Sprite):
 
             inst = self.cpu.instructions[i + i0]
             screen.blit(
-                font.render(str(inst.line_index), True, FGCOL), (MARGIN, y)
+                font.render(f'Line {inst.line_index}', True, FGCOL), (MARGIN, y)
             )
 
             screen.blit(
