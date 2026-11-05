@@ -137,7 +137,7 @@ class CPU:
                 if self.flag_C:
                     self.pc = ra
             case OpcodeEnum.PIX:
-                self.screen[rb & 7][ra & 7] = 1
+                self.screen[7 - (rb & 7)][ra & 7] = 1
             case OpcodeEnum.RST:
                 self.screen = [[0] * 8 for _ in range(8)]
             case OpcodeEnum.IN:
