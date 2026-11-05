@@ -448,7 +448,7 @@ def main(sprites: list[Sprite]) -> None:
         events = pygame.event.get()
 
         for event in events:
-            if event.type == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 running = (
@@ -467,6 +467,8 @@ def main(sprites: list[Sprite]) -> None:
 
         pygame.display.flip()
         clock.tick(FPS)
+
+    pygame.quit()
 
 
 if len(sys.argv) != 2:
