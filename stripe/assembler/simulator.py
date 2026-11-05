@@ -107,7 +107,8 @@ class CPU:
             self.registers[inst.b],
         )
 
-        self.pc = (self.pc + 1) % 64
+        # allow running past the 64 instructions for testing longer files
+        self.pc = (self.pc + 1) % max(64, len(self.instructions))
 
         match inst.opcode:
             case OpcodeEnum.NOP:
