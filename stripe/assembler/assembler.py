@@ -16,7 +16,7 @@ OUTPUT_EXTENSIONS = ['.bin', '.litematic']
 
 parser = argparse.ArgumentParser(
     prog='Stripe assembler',
-    description='Assembler and code checker for Stripe .str files',
+    description='Assembler and code checker for Stripe .asm files',
 )
 parser.add_argument(
     '-f', '--force', action='store_true', help='force re-assemble'

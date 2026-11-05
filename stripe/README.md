@@ -110,7 +110,7 @@ Use [uv](https://docs.astral.sh/uv/) to run the assembler: `uv run assembler.py`
 It requires [Litemapy](https://github.com/SmylerMC/litemapy), but this should
 not be an issue with uv.
 
-It will check and assemble all files in `programs/*.str` into:
+It will check and assemble all files in `programs/*.asm` into:
 
 - `assembler/bin/*.bin`: really just text files that represent the memory
   contents of the CPU.
