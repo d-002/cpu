@@ -4,7 +4,7 @@ import sys
 import re
 import getpass
 import argparse
-from os.path import splitext, join, getmtime
+from os.path import splitext, join, getmtime, isdir, dirname
 from litemapy import Schematic, Region, BlockState  # pyright: ignore
 
 from common import OpcodeEnum
@@ -171,10 +171,20 @@ def list_files(parent_dir: str, extension: str) -> dict[str, float]:
 
     files: dict[str, float] = {}
     for file in os.listdir(parent_dir):
+        path = join(parent_dir, file)
+        if isdir(path):
+            files.update(
+                {
+                    join(file, subpath): timestamp
+                    for subpath, timestamp in list_files(
+                        path, extension
+                    ).items()
+                }
+            )
+
         if splitext(file)[1] != extension:
             continue
 
-        path = join(parent_dir, file)
         files[splitext(file)[0]] = getmtime(path)
 
     return files
@@ -301,6 +311,7 @@ def assemble(filename: str) -> None:
     # bin export
     if args.verbose:
         print(f'-- Exporting to {bin_file}')
+    os.makedirs(dirname(bin_file), exist_ok=True)
     with open(bin_file, 'w') as f:
         for instruction in encoded:
             f.write(f'{bin(instruction[0])[2:]:0>10}{instruction[1]}\n')
@@ -341,6 +352,7 @@ def assemble(filename: str) -> None:
 
                 reg[14 - x * 2, y * 2, z * 2 + (z > 2)] = block
 
+    os.makedirs(dirname(schematic_file), exist_ok=True)
     schem.save(schematic_file)
 
 
@@ -367,7 +379,7 @@ def main() -> None:
     t0 = time.time()
     for i, file in enumerate(to_process):
         percentage = round((i + 1) / len(to_process) * 100)
-        print(f'[{percentage:3}%] \033[32mBuilding STR {file}\033[m')
+        print(f'[{percentage:3}%] \033[32mBuilding ASM {file}\033[m')
         assemble(file)
         print(f'[{percentage:3}%] \033[1;32mBuilt target {file}\033[m')
     t1 = time.time()
