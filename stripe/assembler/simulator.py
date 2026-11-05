@@ -15,7 +15,8 @@ LIGHT_COLS = ((41, 32, 26), (237, 199, 145))
 MARGIN = 15
 PIXSIZE = 30
 FONTSIZE = 16
-RUNDELAY = 0.3  # in seconds
+MINDELAY = 1 / FPS
+MAXDELAY = 0.3
 W, H = MARGIN * 11 + PIXSIZE * 17, MARGIN * 5 + PIXSIZE * 8 + FONTSIZE * 11
 
 
@@ -280,12 +281,14 @@ class RunSprite(Sprite):
     run: bool
     prev_step: float | None  # timestamp in seconds if run, None otherwise
     force_render: bool
+    delay: float
 
     def __init__(self, cpu: CPU) -> None:
         self.cpu = cpu
         self.run = False
         self.prev_step = None
         self.force_render = True
+        self.delay = MAXDELAY
 
     def should_render(self, events: list[pygame.event.Event]) -> bool:
         if self.force_render:
@@ -306,10 +309,17 @@ class RunSprite(Sprite):
                 elif event.key == pygame.K_r:
                     self.cpu.reset()
                     should_render = True
+                elif event.key == pygame.K_LEFT:
+                    self.delay = min(self.delay * 1.5, MAXDELAY)
+                elif event.key == pygame.K_RIGHT:
+                    self.delay = max(self.delay / 1.5, MINDELAY)
 
         if self.run:
             timestamp = pygame.time.get_ticks() / 1000
-            if self.prev_step is None or timestamp - self.prev_step > RUNDELAY:
+            if (
+                self.prev_step is None
+                or timestamp - self.prev_step > self.delay
+            ):
                 self.prev_step = timestamp
                 self.cpu.step()
                 should_render = True
@@ -328,7 +338,7 @@ class RunSprite(Sprite):
             f'Flags: Z = {self.cpu.flag_Z}, C = {self.cpu.flag_C}',
             f'Values cache: ra = {ra}, rb = {rb}',
             f'Instruction to run: {self.cpu.prettyprint_instruction()}',
-            'Commands: <S> step, <Space> toggle run, <R> reset',
+            '<S> step, <Space> toggle run (arrows: change speed), <R> reset',
         ]
         y = MARGIN * 3 + PIXSIZE * 8 + FONTSIZE
         for text in texts:
