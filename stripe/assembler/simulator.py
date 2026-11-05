@@ -17,7 +17,8 @@ PIXSIZE = 30
 FONTSIZE = 16
 MINDELAY = 1 / FPS
 MAXDELAY = 0.3
-W, H = MARGIN * 11 + PIXSIZE * 17, MARGIN * 5 + PIXSIZE * 8 + FONTSIZE * 11
+W = MARGIN * 11 + PIXSIZE * 17
+H = MARGIN * 5 + PIXSIZE * 8 + FONTSIZE * 11
 
 
 class Instruction:
@@ -115,7 +116,7 @@ class CPU:
             case OpcodeEnum.NOP:
                 pass
             case OpcodeEnum.LDI:
-                self.registers[0] = inst.b * 8 + inst.a
+                self.registers[0] = (inst.b << 3) + inst.a
             case OpcodeEnum.MOV:
                 self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
@@ -141,7 +142,7 @@ class CPU:
             case OpcodeEnum.RST:
                 self.screen = [[0] * 8 for _ in range(8)]
             case OpcodeEnum.IN:
-                self.registers[0] = self.port
+                self.registers[0] = self.port << 1
             case OpcodeEnum.HLT:
                 pass  # will be handled in the sprite that handles the loop
 
@@ -241,7 +242,7 @@ class RegistersSprite(Sprite):
 
                 for i in range(9):
                     x0 = MARGIN * (2 + i) + PIXSIZE * (8 + i)
-                    for y in range(8):
+                    for y in range(2 if i == 8 else 0, 8):
                         y0 = MARGIN + PIXSIZE * y
                         if x0 <= mx < x0 + PIXSIZE and y0 <= my < y0 + PIXSIZE:
                             bit = 1 << (7 - y)
@@ -264,12 +265,14 @@ class RegistersSprite(Sprite):
             )
 
             display_bin_value(
-                f'r{i}', self.cpu.registers[i], x, MARGIN * 2 + PIXSIZE * 8
+                f'r{i}', self.cpu.registers[i], x, MARGIN * 2 + PIXSIZE * 8, 8
             )
             x += PIXSIZE + MARGIN
 
         # input port
-        display_bin_value(f'port', self.cpu.port, x, MARGIN * 2 + PIXSIZE * 8)
+        display_bin_value(
+            f'port', self.cpu.port, x, MARGIN * 2 + PIXSIZE * 8, 6
+        )
 
 
 class RunSprite(Sprite):
@@ -411,10 +414,12 @@ class DebugSprite(Sprite):
             y += FONTSIZE
 
 
-def display_bin_value(name: str, value: int, x: int, y: int) -> None:
+def display_bin_value(
+    name: str, value: int, x: int, y: int, n_bits: int
+) -> None:
     """
-    Cleanly render an 8-bit value as (top to bottom): a pixel array, its
-    name as text, then unsigned and signed representations.
+    Cleanly render a n_bits-bit value as (top to bottom): a pixel array, its
+    name as text, then unsigned and signed (8-bit) representations.
     """
 
     screen.blit(
@@ -430,7 +435,7 @@ def display_bin_value(name: str, value: int, x: int, y: int) -> None:
         (x, y + FONTSIZE * 2),
     )
 
-    for y in range(8):
+    for y in range(n_bits):
         bit = value & 1
         value >>= 1
         pygame.draw.rect(
