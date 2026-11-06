@@ -1,0 +1,25 @@
+[project]
+name = "stripe-assembler"
+version = "0.1.0"
+description = "Assembler and schematic generator for Stripe assembly files"
+requires-python = ">=3.13"
+dependencies = [
+    "litemapy>=0.11.0b0",
+    "pygame>=2.6.1",
+]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "strict"
+
+[tool.ruff]
+indent-width = 4
+line-length = 80
+
+[tool.ruff.lint]
+select = ["E", "I", "ANN"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
