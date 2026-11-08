@@ -350,7 +350,7 @@ def assemble(filename: str) -> None:
                         **kwargs,
                     )
 
-                reg[14 - x * 2, y * 2, z * 2 + (z > 2)] = block
+                reg[14 - x * 2, y * 2, 18 - z * 2 + (z < 7)] = block
 
     os.makedirs(dirname(schematic_file), exist_ok=True)
     schem.save(schematic_file)
