@@ -142,7 +142,7 @@ class CPU:
             case OpcodeEnum.RST:
                 self.screen = [[0] * 8 for _ in range(8)]
             case OpcodeEnum.IN:
-                self.registers[0] = self.port << 1
+                self.registers[0] = self.port << 2
             case OpcodeEnum.HLT:
                 pass  # will be handled in the sprite that handles the loop
 
