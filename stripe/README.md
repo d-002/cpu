@@ -51,6 +51,8 @@ So copying the value from register r1 to r2 would be: `0010001010`
 
 ## Helpful notes
 
+### Few unitary instructions
+
 As this is a RISC CPU, some useful things have to be implemented via code.
 For example, loading an immediate instruction to another register than r0
 requires a `mov`:
@@ -84,12 +86,22 @@ Conditions can be done with flags manipulation and jumps:
   // ...
 ```
 
+### Comparisons trick
+
 Less or equal / more can be achieved by swapping r1 and r2.
 
-One last important note: on program end, the CPU runs the instruction right
-after the HLT.
+### Program end
+
+On program end, the CPU runs the instruction right after the HLT.
 Careful if it displays something to the screen for example, better place a NOP
 there if there is still room in the ROM.
+
+### C flag
+
+The carry flag behaves in a weird way:
+
+- `SUB`: Z is set iff $a \ge b$
+- All other ALU operations: Z is set iff $a + b \ge 256$
 
 ## Assembler
 

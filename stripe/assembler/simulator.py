@@ -71,19 +71,6 @@ class CPU:
             return self.instructions[self.pc]
         return Instruction(OpcodeEnum.NOP, 0, 0, '[dummy]', 0)
 
-    def _alu_op(self, res: int) -> None:
-        """
-        Helper to set the flags and r0 value after an ALU operation
-        """
-
-        self.registers[0] = res % 256
-        self.flag_Z = int(res % 256 == 0)
-        self.flag_C = int(res != res % 256)
-
-        # no-borrow overflow for subtraction
-        if res < 0:
-            self.flag_C = 0
-
     def prettyprint_instruction(self) -> str:
         inst = self.get_instruction()
         match inst.opcode:
@@ -125,15 +112,25 @@ class CPU:
             case OpcodeEnum.MOV:
                 self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
-                self._alu_op(rb - ra)
+                self.registers[0] = (rb - ra) % 256
+                self.flag_Z = self.registers[0] == 0
+                self.flag_C = ra >= rb
             case OpcodeEnum.XOR:
-                self._alu_op(rb ^ ra)
+                self.registers[0] = (rb ^ ra) % 256
+                self.flag_Z = self.registers[0] == 0
+                self.flag_C = ra + rb >= 256
             case OpcodeEnum.AND:
-                self._alu_op(rb & ra)
+                self.registers[0] = (rb & ra) % 256
+                self.flag_Z = self.registers[0] == 0
+                self.flag_C = ra + rb >= 256
             case OpcodeEnum.OR:
-                self._alu_op(rb | ra)
+                self.registers[0] = (rb | ra) % 256
+                self.flag_Z = self.registers[0] == 0
+                self.flag_C = ra + rb >= 256
             case OpcodeEnum.ADD:
-                self._alu_op(rb + ra)
+                self.registers[0] = (rb + ra) % 256
+                self.flag_Z = self.registers[0] == 0
+                self.flag_C = ra + rb >= 256
             case OpcodeEnum.JMP:
                 self.pc = imm_value
             case OpcodeEnum.JZ:

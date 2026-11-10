@@ -16,11 +16,12 @@
     jmp .fail
 
 .next2
-    or r1,r2
+    or r1,r1
     jz .fail
 
 .next3
-    add r2,r1
+# should carry out because uses the AND logic here (see readme)
+    and r2,r1
     jc .next4
     jmp .fail
 
