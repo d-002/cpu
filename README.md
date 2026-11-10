@@ -55,8 +55,9 @@ operating system.
     - ALU with addition, subtraction, all bitwise operations, bit shifts and
       barrels
     - Big math units for multiplication and division
-    - State register for use in conditional jumps: zero, carry, negative, signed
-    overflow, stack overflow and underflow, constant 1, constant 0
+    - State register for use in conditional jumps: zero, carry (no-borrow),
+      negative, signed overflow, stack overflow and underflow, constant 1,
+      constant 0
     - Conditional absolute and relative jumps
     - Built-in 32-bits timer, counts operations, individually readable bytes
 - Misc

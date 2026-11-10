@@ -13,7 +13,7 @@
 - Sequential dual read, store in intermediary buffers
 - Fetch, Decode, Read, Execute, optional Writeback
 
-ALU operations set the Z (zero) and C (carry) flags.
+ALU operations set the Z (zero) and C (carry, no-borrow) flags.
 There are no operations with carry (ex ADD and not ADC).
 
 The decoded instruction is stored in separate buffers for the 4-bit opcode and
@@ -85,6 +85,11 @@ Conditions can be done with flags manipulation and jumps:
 ```
 
 Less or equal / more can be achieved by swapping r1 and r2.
+
+One last important note: on program end, the CPU runs the instruction right
+after the HLT.
+Careful if it displays something to the screen for example, better place a NOP
+there if there is still room in the ROM.
 
 ## Assembler
 
