@@ -80,6 +80,10 @@ class CPU:
         self.flag_Z = int(res % 256 == 0)
         self.flag_C = int(res != res % 256)
 
+        # no-borrow overflow for subtraction
+        if res < 0:
+            self.flag_C = 0
+
     def prettyprint_instruction(self) -> str:
         inst = self.get_instruction()
         match inst.opcode:
