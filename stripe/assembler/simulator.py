@@ -483,7 +483,7 @@ if len(sys.argv) != 2:
 
 bin_file = sys.argv[1]
 if not isfile(bin_file) or not bin_file.endswith('bin'):
-    print(f'File "{bin_file}" is not a valid Stripe .bin file')
+    print(f'File "{bin_file}" does not exist or is not a .bin file')
     exit(1)
 
 instructions: list[Instruction] = []
