@@ -120,15 +120,15 @@ class CPU:
             case OpcodeEnum.MOV:
                 self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
-                self._alu_op(ra - rb)
+                self._alu_op(rb - ra)
             case OpcodeEnum.XOR:
-                self._alu_op(ra ^ rb)
+                self._alu_op(rb ^ ra)
             case OpcodeEnum.AND:
-                self._alu_op(ra & rb)
+                self._alu_op(rb & ra)
             case OpcodeEnum.OR:
-                self._alu_op(ra | rb)
+                self._alu_op(rb | ra)
             case OpcodeEnum.ADD:
-                self._alu_op(ra + rb)
+                self._alu_op(rb + ra)
             case OpcodeEnum.JMP:
                 self.pc = ra
             case OpcodeEnum.JZ:

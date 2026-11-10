@@ -35,11 +35,11 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |0000|NOP|no operation|do nothing|
 |0001|LDI|load immediate|(b<<3)+a -> r0|
 |0010|MOV|copy reg. value|ra -> rb|
-|0011|SUB|8-bit subtraction|ra-rb -> r0|
-|0100|XOR|bitwise xor|ra^rb -> r0|
-|0101|AND|bitwise and|ra&rb -> r0|
-|0110|OR|bitwise or|ra\|rb -> r0|
-|0111|ADD|8-bit addition|ra+rb -> r0|
+|0011|SUB|8-bit subtraction|rb-ra -> r0|
+|0100|XOR|bitwise xor|rb^ra -> r0|
+|0101|AND|bitwise and|rb&ra -> r0|
+|0110|OR|bitwise or|rb\|ra -> r0|
+|0111|ADD|8-bit addition|rb+ra -> r0|
 |1000|JMP|unconditional jump|ra -> pc|
 |1001|JZ|jump on zero|ra -> pc (if Z set)|
 |1010|JC|jump on carry|ra -> pc (if C set)|
