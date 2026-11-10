@@ -100,17 +100,7 @@ class Instruction:
                 value = int(arg[1])
             elif re.match('^[0-9]+$', arg):
                 value = int(arg)
-                modulo = (
-                    64
-                    if self.opcode
-                    in (
-                        OpcodeEnum.LDI,
-                        OpcodeEnum.JMP,
-                        OpcodeEnum.JZ,
-                        OpcodeEnum.JC,
-                    )
-                    else 8
-                )
+                modulo = 64 if self.opcode == OpcodeEnum.LDI else 8
                 if not 0 <= value < modulo:
                     print(
                         '\033[33mWarning: Found value outside the [0, '

@@ -108,6 +108,7 @@ class CPU:
             self.registers[inst.a],
             self.registers[inst.b],
         )
+        imm_value = (inst.b << 3) + inst.a
 
         # allow running past the 64 instructions for testing longer files
         self.pc = (self.pc + 1) % max(64, len(self.instructions))
@@ -116,7 +117,7 @@ class CPU:
             case OpcodeEnum.NOP:
                 pass
             case OpcodeEnum.LDI:
-                self.registers[0] = (inst.b << 3) + inst.a
+                self.registers[0] = imm_value
             case OpcodeEnum.MOV:
                 self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
@@ -130,13 +131,13 @@ class CPU:
             case OpcodeEnum.ADD:
                 self._alu_op(rb + ra)
             case OpcodeEnum.JMP:
-                self.pc = ra
+                self.pc = imm_value
             case OpcodeEnum.JZ:
                 if self.flag_Z:
-                    self.pc = ra
+                    self.pc = imm_value
             case OpcodeEnum.JC:
                 if self.flag_C:
-                    self.pc = ra
+                    self.pc = imm_value
             case OpcodeEnum.PIX:
                 self.screen[7 - (rb & 7)][ra & 7] = 1
             case OpcodeEnum.RST:
