@@ -40,9 +40,9 @@ So copying the value from register r1 to r2 would be: `0010001010`
 |0101|AND|bitwise and|rb&ra -> r0|
 |0110|OR|bitwise or|rb\|ra -> r0|
 |0111|ADD|8-bit addition|rb+ra -> r0|
-|1000|JMP|unconditional jump|ra -> pc|
-|1001|JZ|jump on zero|ra -> pc (if Z set)|
-|1010|JC|jump on carry|ra -> pc (if C set)|
+|1000|JMP|unconditional jump|(b<<3)+a -> pc|
+|1001|JZ|jump on zero|(b<<3)+a -> pc (if Z set)|
+|1010|JC|jump on carry|(b<<3)+a -> pc (if C set)|
 |1011|PIX|turn a pixel on|screen[ra,rb] = 1|
 |1100|RST|turn the screen off|screen[*] = 0|
 |1101|IN|read from port|port<<2 -> r0|
@@ -85,17 +85,6 @@ Conditions can be done with flags manipulation and jumps:
 ```
 
 Less or equal / more can be achieved by swapping r1 and r2.
-
-One another important notice is that jumping uses a **register** for the value,
-it is not an immediate.
-Don't forget to store the target value in a register beforehand:
-
-```asm
-    ldi .label
-    jmp r0
-
-.label
-```
 
 ## Assembler
 
