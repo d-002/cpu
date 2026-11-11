@@ -11,7 +11,7 @@ BGCOL = (21, 24, 25)
 FGCOL = (217, 220, 221)
 BORDERCOL = (63, 63, 63)
 HIGHLCOL = (80, 80, 80)
-LIGHT_COLS = ((41, 32, 26), (237, 199, 145))
+LIGHT_COLS = ((41, 32, 26), (237, 199, 145), (78, 82, 85))
 MARGIN = 15
 PIXSIZE = 30
 FONTSIZE = 16
@@ -46,11 +46,9 @@ class Instruction:
 class CPU:
     instructions: list[Instruction]
     pc: int
-    # instruction_cache: tuple[int, int, int]
-    registers: list[int]
-    # values_cache: tuple[int, int]
-    screen: list[list[int]]
-    port: int
+    registers: list[int | None]
+    screen: list[list[int | None]]
+    port: int | None
     flag_Z: int
     flag_C: int
 
@@ -60,9 +58,9 @@ class CPU:
 
     def reset(self) -> None:
         self.pc = 0
-        self.registers = [0] * 8
-        self.screen = [[0] * 8 for _ in range(8)]
-        self.port = 0
+        self.registers = [None] * 8
+        self.screen = [[None] * 8 for _ in range(8)]
+        self.port = None
         self.flag_Z = 1
         self.flag_C = 0
 
@@ -112,25 +110,30 @@ class CPU:
             case OpcodeEnum.MOV:
                 self.registers[inst.b] = ra
             case OpcodeEnum.SUB:
-                self.registers[0] = (rb - ra) % 256
-                self.flag_Z = self.registers[0] == 0
-                self.flag_C = ra >= rb
+                if ra is not None and rb is not None:
+                    self.registers[0] = (rb - ra) % 256
+                    self.flag_Z = self.registers[0] == 0
+                    self.flag_C = ra >= rb
             case OpcodeEnum.XOR:
-                self.registers[0] = (rb ^ ra) % 256
-                self.flag_Z = self.registers[0] == 0
-                self.flag_C = ra + rb >= 256
+                if ra is not None and rb is not None:
+                    self.registers[0] = (rb ^ ra) % 256
+                    self.flag_Z = self.registers[0] == 0
+                    self.flag_C = ra + rb >= 256
             case OpcodeEnum.AND:
-                self.registers[0] = (rb & ra) % 256
-                self.flag_Z = self.registers[0] == 0
-                self.flag_C = ra + rb >= 256
+                if ra is not None and rb is not None:
+                    self.registers[0] = (rb & ra) % 256
+                    self.flag_Z = self.registers[0] == 0
+                    self.flag_C = ra + rb >= 256
             case OpcodeEnum.OR:
-                self.registers[0] = (rb | ra) % 256
-                self.flag_Z = self.registers[0] == 0
-                self.flag_C = ra + rb >= 256
+                if ra is not None and rb is not None:
+                    self.registers[0] = (rb | ra) % 256
+                    self.flag_Z = self.registers[0] == 0
+                    self.flag_C = ra + rb >= 256
             case OpcodeEnum.ADD:
-                self.registers[0] = (rb + ra) % 256
-                self.flag_Z = self.registers[0] == 0
-                self.flag_C = ra + rb >= 256
+                if ra is not None and rb is not None:
+                    self.registers[0] = (rb + ra) % 256
+                    self.flag_Z = self.registers[0] == 0
+                    self.flag_C = ra + rb >= 256
             case OpcodeEnum.JMP:
                 self.pc = imm_value
             case OpcodeEnum.JZ:
@@ -140,11 +143,13 @@ class CPU:
                 if self.flag_C:
                     self.pc = imm_value
             case OpcodeEnum.PIX:
-                self.screen[7 - (rb & 7)][ra & 7] = 1
+                if ra is not None and rb is not None:
+                    self.screen[7 - (rb & 7)][ra & 7] = 1
             case OpcodeEnum.RST:
                 self.screen = [[0] * 8 for _ in range(8)]
             case OpcodeEnum.IN:
-                self.registers[0] = self.port << 2
+                if self.port is not None:
+                    self.registers[0] = self.port << 2
             case OpcodeEnum.HLT:
                 pass  # will be handled in the sprite that handles the loop
 
@@ -191,7 +196,10 @@ class ScreenSprite(Sprite):
                     for y in range(8):
                         y0 = MARGIN + PIXSIZE * y
                         if x0 <= mx < x0 + PIXSIZE and y0 <= my < y0 + PIXSIZE:
-                            self.cpu.screen[y][x] ^= 1
+                            value = self.cpu.screen[y][x]
+                            if value is None:
+                                value = 0
+                            self.cpu.screen[y][x] = value ^ 1
                             should_render = True
 
         return should_render
@@ -206,7 +214,7 @@ class ScreenSprite(Sprite):
             for x, bit in enumerate(line):
                 pygame.draw.rect(
                     screen,
-                    LIGHT_COLS[bit],
+                    LIGHT_COLS[2 if bit is None else bit],
                     (
                         MARGIN + PIXSIZE * x,
                         MARGIN + PIXSIZE * y,
@@ -249,9 +257,15 @@ class RegistersSprite(Sprite):
                         if x0 <= mx < x0 + PIXSIZE and y0 <= my < y0 + PIXSIZE:
                             bit = 1 << (7 - y)
                             if i == 8:
-                                self.cpu.port ^= bit
+                                value = self.cpu.port
+                                if value is None:
+                                    value = 0
+                                self.cpu.port = value ^ bit
                             else:
-                                self.cpu.registers[i] ^= bit
+                                value = self.cpu.registers[i]
+                                if value is None:
+                                    value = 0
+                                self.cpu.registers[i] = value ^ bit
                             should_render = True
 
         return should_render
@@ -417,7 +431,7 @@ class DebugSprite(Sprite):
 
 
 def display_bin_value(
-    name: str, value: int, x: int, y: int, n_bits: int
+    name: str, value: int | None, x: int, y: int, n_bits: int
 ) -> None:
     """
     Cleanly render a n_bits-bit value as (top to bottom): a pixel array, its
@@ -429,17 +443,25 @@ def display_bin_value(
         (x, y),
     )
     screen.blit(
-        font.render(str(value), True, FGCOL),
+        font.render('?' if value is None else str(value), True, FGCOL),
         (x, y + FONTSIZE),
     )
+    if value is None:
+        value_str = '?'
+    else:
+        value_str = str((value + 128) % 256 - 128)
     screen.blit(
-        font.render(str((value + 128) % 256 - 128), True, FGCOL),
+        font.render(value_str, True, FGCOL),
         (x, y + FONTSIZE * 2),
     )
 
     for y in range(n_bits):
-        bit = value & 1
-        value >>= 1
+        if value is None:
+            bit = 2
+        else:
+            bit = value & 1
+            value >>= 1
+
         pygame.draw.rect(
             screen,
             LIGHT_COLS[bit],
