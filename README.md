@@ -10,6 +10,14 @@ This README is in inverse chronological order.
 
 ## Second generation
 
+### [Stripe (2026)](https://github.com/d-002/cpu/tree/main/stripe)
+
+# TODO fill up this section once ... :eyes:
+and also update the caption and branch name in the image url
+
+![unfinished Stripe](
+https://raw.githubusercontent.com/d-002/cpu/feat/stripe/stripe/image.png)
+
 ### [PUSSI-8 (2025 - ...)](https://github.com/d-002/cpu/tree/main/pussi-8)
 
 > [!NOTE]
@@ -47,8 +55,9 @@ operating system.
     - ALU with addition, subtraction, all bitwise operations, bit shifts and
       barrels
     - Big math units for multiplication and division
-    - State register for use in conditional jumps: zero, carry, negative, signed
-    overflow, stack overflow and underflow, constant 1, constant 0
+    - State register for use in conditional jumps: zero, carry (no-borrow),
+      negative, signed overflow, stack overflow and underflow, constant 1,
+      constant 0
     - Conditional absolute and relative jumps
     - Built-in 32-bits timer, counts operations, individually readable bytes
 - Misc
