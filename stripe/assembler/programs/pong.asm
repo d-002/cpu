@@ -38,7 +38,7 @@
     ldi .left_down
     jz r0
     ldi 1
-    sub r4,r0
+    sub r0,r4
     mov r0,r4
 .left_down
     ldi 8
@@ -62,7 +62,7 @@
     ldi .right_down
     jz r0
     ldi 1
-    sub r5,r0
+    sub r0,r5
     mov r0,r5
 .right_down
     ldi 32
@@ -85,7 +85,7 @@
     ldi .bounce_x
     jz r0
     ldi 0
-    sub r0,r6
+    sub r6,r0
     mov r0,r6
 
 
@@ -100,7 +100,7 @@
     mov r0,r7
     ldi 1
     add r0,r2
-    sub r0,r7
+    sub r7,r0
     mov r0,r7
     ldi 3
     xor r0,r7
@@ -116,7 +116,7 @@
     jmp r0
 .hit
     ldi 0
-    sub r0,r3
+    sub r3,r0
     mov r0,r3
 .move_ball
     add r1,r3
@@ -131,14 +131,14 @@
     pix r7,r4
     add r4,r6
     pix r7,r0
-    sub r4,r6
+    sub r6,r4
     pix r7,r0
     ldi 7
     mov r0,r7
     pix r7,r5
     add r5,r6
     pix r7,r0
-    sub r5,r6
+    sub r6,r5
     pix r7,r0
     pix r1,r2
     ldi .frame
