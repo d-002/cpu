@@ -113,7 +113,7 @@ class CPU:
                 if ra is not None and rb is not None:
                     self.registers[0] = (rb - ra) % 256
                     self.flag_Z = self.registers[0] == 0
-                    self.flag_C = ra >= rb
+                    self.flag_C = ra < rb
             case OpcodeEnum.XOR:
                 if ra is not None and rb is not None:
                     self.registers[0] = (rb ^ ra) % 256

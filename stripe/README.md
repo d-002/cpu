@@ -96,12 +96,19 @@ On program end, the CPU runs the instruction right after the HLT.
 Careful if it displays something to the screen for example, better place a NOP
 there if there is still room in the ROM.
 
-### C flag
+### Flags
 
-The carry flag behaves in a weird way:
+The carry (C) flag behaves in a weird way:
 
-- `SUB`: Z is set iff $a \ge b$
-- All other ALU operations: Z is set iff $a + b \ge 256$
+- `SUB a,b`: C is set iff $b \gt a$ (strict inequality)
+- All other ALU operations (ex `OR a,b`): C is set iff $a + b \ge 256$
+
+So when not doing a SUB, the carry behaves like an addition, regardless of the
+operator.
+The Z flag does use the current operation though, so `XOR r0,r0` will behave as
+expected (in this case it is unset).
+
+Flags are only set by ALU operations.
 
 ## Assembler
 
