@@ -110,7 +110,7 @@
     and r0,r7
     ldi .hit
     jz r0
-    
+
 .miss
     ldi 0
     jmp r0
