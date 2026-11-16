@@ -35,6 +35,7 @@
     jz .left_down
     ldi 1
     sub r0,r1
+    mov r0,r1
 # fallthrough: slow because of an useless check, but saves an instruction
 
 .left_down
@@ -43,6 +44,7 @@
     jz .right_up
     ldi 1
     add r0,r1
+    mov r0,r1
 
 .right_up
     ldi 16
@@ -50,6 +52,7 @@
     jz .right_down
     ldi 1
     sub r0,r2
+    mov r0,r2
 
 .right_down
     ldi 32
@@ -57,6 +60,7 @@
     jz .ball
     ldi 1
     add r0,r2
+    mov r0,r2
 
 .ball
 .bounce_y
@@ -73,8 +77,6 @@
     mov r0,r6
 
 .bounce_x_wall
-    ldi 8
-    mov r0,r7
     add r3,r5
     and r0,r7
     jz .move_ball
@@ -88,14 +90,12 @@
     mov r0,r7
     ldi 2
     sub r0,r7
-    jc .miss
+    jc .init
 
-.miss
-    jmp .init
 .hit
     ldi 0
-    sub r3,r0
-    mov r0,r3
+    sub r5,r0
+    mov r0,r5
 
 .move_ball
     add r3,r5
